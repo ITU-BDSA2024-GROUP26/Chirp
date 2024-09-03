@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 
 const string csvPath = "chirp_cli_db.csv";
-
+// test comment 
 switch (args[0])
 {
     case "read":
