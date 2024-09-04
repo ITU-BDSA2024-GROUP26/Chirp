@@ -19,7 +19,8 @@ switch (args[0])
         {
             var records = csv.GetRecords<Cheep>();
             foreach(var record in records) {
-                Console.WriteLine(record.Author + ": " + record.Message + " @" + record.Timestamp);
+                var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
+                Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
             }
         }
 
