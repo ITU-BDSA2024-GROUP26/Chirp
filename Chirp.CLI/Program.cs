@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper;
+using CsvHelper.Configuration;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -33,13 +35,19 @@ switch (args[0])
         var user = Environment.UserName;
         var message = args[1];
         var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var entry = $"{user},\"{message}\",{unixTime}";
-    
+        Cheep output = new(user, $"\"{message}\"", unixTime);
+
+        var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
+            ShouldQuote = (args) => false
+        };
+
         using var writer = new StreamWriter(csvPath, true);
-        writer.WriteLine(entry);
+        using var csvWriter = new CsvWriter(writer, csvConfig);
+        csvWriter.WriteRecord<Cheep>(output);
+        csvWriter.NextRecord();
         break;
     }
 }
 
 
-public record Cheep(long Timestamp, string Author, string Message);
+public record Cheep(string Author, string Message, long Timestamp);
