@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
+using CsvHelper;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -13,20 +14,16 @@ switch (args[0])
 {
     case "read":
     {
-        var csvParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-        using var reader = new StreamReader(csvPath);
-        reader.ReadLine();
-        while (reader.ReadLine() is { } line)
+        using (var reader = new StreamReader(csvPath))
+        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
-            if(!patName.IsMatch(line) || !patMsg.IsMatch(line) || !patTime.IsMatch(line)) { continue; }
-            //var splitLine = csvParser.Split(line);
-            var user = patName.Match(line).Groups[1].Value;
-            var unixTime = long.Parse(patTime.Match(line).Groups[1].Value);
-            var dateTime = DateTimeOffset.FromUnixTimeSeconds(unixTime).ToLocalTime();
-            var formattedTime = dateTime.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture);
-            var message = patMsg.Match(line).Groups[1].Value;
-            Console.WriteLine($"{user} @ {formattedTime}: {message}");
+            var records = csv.GetRecords<Cheep>();
+            foreach(var record in records) {
+                Console.WriteLine(record.Author + ": " + record.Message + " @" + record.Timestamp);
+            }
         }
+
+        
 
         break;
     }
@@ -42,3 +39,6 @@ switch (args[0])
         break;
     }
 }
+
+
+public record Cheep(long Timestamp, string Author, string Message);
