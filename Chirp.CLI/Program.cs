@@ -1,5 +1,8 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -13,20 +16,17 @@ switch (args[0])
 {
     case "read":
     {
-        var csvParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-        using var reader = new StreamReader(csvPath);
-        reader.ReadLine();
-        while (reader.ReadLine() is { } line)
+        using (var reader = new StreamReader(csvPath))
+        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
-            if(!patName.IsMatch(line) || !patMsg.IsMatch(line) || !patTime.IsMatch(line)) { continue; }
-            //var splitLine = csvParser.Split(line);
-            var user = patName.Match(line).Groups[1].Value;
-            var unixTime = long.Parse(patTime.Match(line).Groups[1].Value);
-            var dateTime = DateTimeOffset.FromUnixTimeSeconds(unixTime).ToLocalTime();
-            var formattedTime = dateTime.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture);
-            var message = patMsg.Match(line).Groups[1].Value;
-            Console.WriteLine($"{user} @ {formattedTime}: {message}");
+            var records = csv.GetRecords<Cheep>();
+            foreach(var record in records) {
+                var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
+                Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
+            }
         }
+
+        
 
         break;
     }
@@ -35,10 +35,19 @@ switch (args[0])
         var user = Environment.UserName;
         var message = args[1];
         var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var entry = $"{user},\"{message}\",{unixTime}";
-    
+        Cheep output = new(user, $"\"{message}\"", unixTime);
+
+        var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
+            ShouldQuote = (args) => false
+        };
+
         using var writer = new StreamWriter(csvPath, true);
-        writer.WriteLine(entry);
+        using var csvWriter = new CsvWriter(writer, csvConfig);
+        csvWriter.WriteRecord<Cheep>(output);
+        csvWriter.NextRecord();
         break;
     }
 }
+
+
+public record Cheep(string Author, string Message, long Timestamp);
