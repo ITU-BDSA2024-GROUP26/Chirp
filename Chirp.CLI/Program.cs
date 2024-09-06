@@ -38,10 +38,20 @@ void readCSVFile(String csvFilePath)
     {
         var records = csv.GetRecords<Cheep>();
         foreach(var record in records) {
+             printCheeps(record); 
+        }
+
+       
+       
+    }
+}
+
+void printCheeps(Cheep record) {
+
             var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
             Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
-        }
-    }
+    
+
 }
 
 
