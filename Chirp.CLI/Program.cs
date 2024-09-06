@@ -16,18 +16,7 @@ switch (args[0])
 {
     case "read":
     {
-        using (var reader = new StreamReader(csvPath))
-        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-        {
-            var records = csv.GetRecords<Cheep>();
-            foreach(var record in records) {
-                var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
-                Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
-            }
-        }
-
-        
-
+        readCSVFile(csvPath);
         break;
     }
     case "cheep":
@@ -35,18 +24,39 @@ switch (args[0])
         var user = Environment.UserName;
         var message = args[1];
         var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        Cheep output = new(user, $"\"{message}\"", unixTime);
-
-        var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
-            ShouldQuote = (args) => false
-        };
-
-        using var writer = new StreamWriter(csvPath, true);
-        using var csvWriter = new CsvWriter(writer, csvConfig);
-        csvWriter.WriteRecord<Cheep>(output);
-        csvWriter.NextRecord();
+        
+        writeToCsvFile(user, message, unixTime);
         break;
     }
+}
+
+
+void readCSVFile(String csvFilePath)
+{
+    using (var reader = new StreamReader(csvFilePath))
+    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+    {
+        var records = csv.GetRecords<Cheep>();
+        foreach(var record in records) {
+            var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
+            Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
+        }
+    }
+}
+
+
+void writeToCsvFile(String user, String message, long Timestamp)
+{
+    Cheep output = new(user, $"\"{message}\"", Timestamp);
+
+    var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
+        ShouldQuote = (args) => false
+    };
+
+    using var writer = new StreamWriter(csvPath, true);
+    using var csvWriter = new CsvWriter(writer, csvConfig);
+    csvWriter.WriteRecord<Cheep>(output);
+    csvWriter.NextRecord();
 }
 
 
