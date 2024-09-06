@@ -34,9 +34,15 @@ switch (args[0])
         var user = Environment.UserName;
         var message = args[1];
         var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        // test case for individual cheep
         Cheep output = new(user, $"\"{message}\"", unixTime);
-
         database.Store(output);
+
+        // test case for list of cheeps
+        // List<Cheep> testList = new List<Cheep>{new(user, $"\"{message} #1\"", unixTime), 
+        // new(user, $"\"{message} #2\"", unixTime),
+        // new(user, $"\"{message} #3\"", unixTime)};
+        // database.Store(testList);
         
         break;
     }
