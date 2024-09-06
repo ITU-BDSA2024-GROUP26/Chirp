@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Chirp.CLI;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -38,7 +39,7 @@ void readCSVFile(String csvFilePath)
     {
         var records = csv.GetRecords<Cheep>();
         foreach(var record in records) {
-             printCheeps(record); 
+             UserInterface.printCheeps(record); 
         }
 
        
@@ -46,13 +47,6 @@ void readCSVFile(String csvFilePath)
     }
 }
 
-void printCheeps(Cheep record) {
-
-            var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
-            Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
-    
-
-}
 
 
 void writeToCsvFile(String user, String message, long Timestamp)
