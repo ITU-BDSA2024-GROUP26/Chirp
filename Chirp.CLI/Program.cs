@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
+using SimpleDB;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -11,6 +12,7 @@ Regex patMsg = new Regex("(?:\\s*\"+\\s*)(.+)(?:\\s*\"+\\s*)");
 Regex patName = new Regex("(\\w+)(?:\\s*,\\s*)");
 // captures a number of arbitrary length with a ',' and spaces in front
 Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
+
 
 switch (args[0])
 {
