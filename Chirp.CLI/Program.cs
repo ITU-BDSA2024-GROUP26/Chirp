@@ -13,19 +13,16 @@ Regex patName = new Regex("(\\w+)(?:\\s*,\\s*)");
 // captures a number of arbitrary length with a ',' and spaces in front
 Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
 
+IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>(csvPath);
 
 switch (args[0])
 {
     case "read":
     {
-        using (var reader = new StreamReader(csvPath))
-        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-        {
-            var records = csv.GetRecords<Cheep>();
-            foreach(var record in records) {
-                var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
-                Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
-            }
+        var records = database.Read();
+        foreach(var record in records) {
+            var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
+            Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
         }
 
         
@@ -39,14 +36,8 @@ switch (args[0])
         var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         Cheep output = new(user, $"\"{message}\"", unixTime);
 
-        var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
-            ShouldQuote = (args) => false
-        };
-
-        using var writer = new StreamWriter(csvPath, true);
-        using var csvWriter = new CsvWriter(writer, csvConfig);
-        csvWriter.WriteRecord<Cheep>(output);
-        csvWriter.NextRecord();
+        database.Store(output);
+        
         break;
     }
 }
