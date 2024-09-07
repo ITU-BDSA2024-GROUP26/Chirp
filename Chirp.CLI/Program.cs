@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper;
@@ -17,7 +18,7 @@ switch (args[0])
 {
     case "read":
     {
-        readCSVFile(csvPath);
+        ReadCsvFile(csvPath);
         break;
     }
     case "cheep":
@@ -26,32 +27,33 @@ switch (args[0])
         var message = args[1];
         var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         
-        writeToCsvFile(user, message, unixTime);
+        WriteToCsvFile(user, message, unixTime);
         break;
     }
 }
 
 
-void readCSVFile(String csvFilePath)
+void ReadCsvFile(string csvFilePath)
 {
     using (var reader = new StreamReader(csvFilePath))
     using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
     {
         var records = csv.GetRecords<Cheep>();
-        foreach(var record in records) {
-             UserInterface.printCheeps(record); 
-        }
-
-       
-       
+        UserInterface.PrintCheeps(records);
+        
+        //foreach(var record in records)
+        //{
+            //UserInterface.printCheeps(record); 
+       // }
+        
     }
 }
 
 
 
-void writeToCsvFile(String user, String message, long Timestamp)
+void WriteToCsvFile(string user, string message, long timestamp)
 {
-    Cheep output = new(user, $"\"{message}\"", Timestamp);
+    Cheep output = new(user, $"\"{message}\"", timestamp);
 
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
         ShouldQuote = (args) => false
