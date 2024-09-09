@@ -16,6 +16,7 @@ Regex patName = new Regex("(\\w+)(?:\\s*,\\s*)");
 Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
 
 
+// inspired by https://learn.microsoft.com/en-us/dotnet/standard/commandline/define-commands
 var rootCommand = new RootCommand();
 var readCommand = new Command("read", "First-level subcommand");
 rootCommand.Add(readCommand);
