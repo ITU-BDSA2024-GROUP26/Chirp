@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.CommandLine;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,23 +15,29 @@ Regex patName = new Regex("(\\w+)(?:\\s*,\\s*)");
 // captures a number of arbitrary length with a ',' and spaces in front
 Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
 
-switch (args[0])
+
+var rootCommand = new RootCommand();
+var readCommand = new Command("read", "First-level subcommand");
+rootCommand.Add(readCommand);
+var cheepCommand = new Command("cheep", "Second level subcommand");
+rootCommand.Add(cheepCommand);
+var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
+cheepCommand.Add(cheepArgument);
+
+
+readCommand.SetHandler(() =>
 {
-    case "read":
-    {
-        ReadCsvFile(csvPath);
-        break;
-    }
-    case "cheep":
-    {
-        var user = Environment.UserName;
-        var message = args[1];
-        var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    ReadCsvFile(csvPath);
+});
+
+cheepCommand.SetHandler((cheepMessage) =>
+{
+    var user = Environment.UserName;
+    var message = cheepMessage;
+    var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         
-        WriteToCsvFile(user, message, unixTime);
-        break;
-    }
-}
+    WriteToCsvFile(user, message, unixTime);
+}, cheepArgument);
 
 
 void ReadCsvFile(string csvFilePath)
@@ -41,14 +48,8 @@ void ReadCsvFile(string csvFilePath)
         var records = csv.GetRecords<Cheep>();
         UserInterface.PrintCheeps(records);
         
-        //foreach(var record in records)
-        //{
-            //UserInterface.printCheeps(record); 
-       // }
-        
     }
 }
-
 
 
 void WriteToCsvFile(string user, string message, long timestamp)
