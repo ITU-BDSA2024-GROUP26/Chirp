@@ -40,6 +40,8 @@ cheepCommand.SetHandler((cheepMessage) =>
     WriteToCsvFile(user, message, unixTime);
 }, cheepArgument);
 
+await rootCommand.InvokeAsync(args);
+
 
 void ReadCsvFile(string csvFilePath)
 {
