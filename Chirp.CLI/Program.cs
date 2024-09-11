@@ -20,7 +20,7 @@ Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
 var rootCommand = new RootCommand();
 var readCommand = new Command("read", "First-level subcommand");
 rootCommand.Add(readCommand);
-var cheepCommand = new Command("cheep", "Second level subcommand");
+var cheepCommand = new Command("cheep", "First-level subcommand");
 rootCommand.Add(cheepCommand);
 var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
 cheepCommand.Add(cheepArgument);
