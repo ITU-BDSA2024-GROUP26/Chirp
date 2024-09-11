@@ -18,10 +18,13 @@ Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
 
 // inspired by https://learn.microsoft.com/en-us/dotnet/standard/commandline/define-commands
 var rootCommand = new RootCommand();
+
 var readCommand = new Command("read", "First-level subcommand");
 rootCommand.Add(readCommand);
+
 var cheepCommand = new Command("cheep", "First-level subcommand");
 rootCommand.Add(cheepCommand);
+
 var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
 cheepCommand.Add(cheepArgument);
 IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>(csvPath);
@@ -40,7 +43,7 @@ cheepCommand.SetHandler((cheepMessage) =>
     var message = args[1];
     var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     // test case for individual cheep
-    Cheep output = new(user, $""{message}"", unixTime);
+    Cheep output = new(user, $"\"{message}\"", unixTime);
     database.Store(output);
 }, cheepArgument);
 
