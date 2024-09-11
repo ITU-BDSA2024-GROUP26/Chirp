@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
+using SimpleDB;
 using Chirp.CLI;
 
 const string csvPath = "chirp_cli_db.csv";
@@ -15,7 +16,6 @@ Regex patName = new Regex("(\\w+)(?:\\s*,\\s*)");
 // captures a number of arbitrary length with a ',' and spaces in front
 Regex patTime = new Regex("(?:\\s*,\\s*)(\\d+)");
 
-
 // inspired by https://learn.microsoft.com/en-us/dotnet/standard/commandline/define-commands
 var rootCommand = new RootCommand();
 var readCommand = new Command("read", "First-level subcommand");
@@ -24,50 +24,26 @@ var cheepCommand = new Command("cheep", "First-level subcommand");
 rootCommand.Add(cheepCommand);
 var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
 cheepCommand.Add(cheepArgument);
+IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>(csvPath);
+
 
 
 readCommand.SetHandler(() =>
 {
-    ReadCsvFile(csvPath);
+    var records = database.Read();
+    UserInterface.PrintCheeps(records);
 });
 
 cheepCommand.SetHandler((cheepMessage) =>
 {
     var user = Environment.UserName;
-    var message = cheepMessage;
+    var message = args[1];
     var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        
-    WriteToCsvFile(user, message, unixTime);
+    // test case for individual cheep
+    Cheep output = new(user, $""{message}"", unixTime);
+    database.Store(output);
 }, cheepArgument);
 
 await rootCommand.InvokeAsync(args);
-
-
-void ReadCsvFile(string csvFilePath)
-{
-    using (var reader = new StreamReader(csvFilePath))
-    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-    {
-        var records = csv.GetRecords<Cheep>();
-        UserInterface.PrintCheeps(records);
-        
-    }
-}
-
-
-void WriteToCsvFile(string user, string message, long timestamp)
-{
-    Cheep output = new(user, $"\"{message}\"", timestamp);
-
-    var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
-        ShouldQuote = (args) => false
-    };
-
-    using var writer = new StreamWriter(csvPath, true);
-    using var csvWriter = new CsvWriter(writer, csvConfig);
-    csvWriter.WriteRecord<Cheep>(output);
-    csvWriter.NextRecord();
-}
-
 
 public record Cheep(string Author, string Message, long Timestamp);
