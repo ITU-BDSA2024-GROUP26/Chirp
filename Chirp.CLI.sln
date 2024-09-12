@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI", "Chirp.CLI\Chirp.CLI.csproj", "{E2D29883-5951-4FDE-B507-111C20D81034}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.Client", "src\Chirp.CLI.Client\Chirp.CLI.Client.csproj", "{E2D29883-5951-4FDE-B507-111C20D81034}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDB", "SimpleDB\SimpleDB.csproj", "{41151EBE-F1CF-457A-9D54-B4BFFFD5407F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDB", "src\SimpleDB\SimpleDB.csproj", "{41151EBE-F1CF-457A-9D54-B4BFFFD5407F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{10608897-7CB9-4683-9541-8865C1A5D2E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.Client.Tests", "tests\Chirp.CLI.Client.Tests\Chirp.CLI.Client.Tests.csproj", "{75DCFB2B-F301-495C-B3A9-EF5D2896096F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.SimpleDB.Tests", "tests\Chirp.CLI.SimpleDB.Tests\Chirp.CLI.SimpleDB.Tests.csproj", "{4AD863B1-783E-47B6-945C-EEA044005626}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.CSVDatabase.Tests", "tests\Chirp.CLI.CSVDatabase.Tests\Chirp.CLI.CSVDatabase.Tests.csproj", "{4AD863B1-783E-47B6-945C-EEA044005626}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurdationPlatforms) = preSolution

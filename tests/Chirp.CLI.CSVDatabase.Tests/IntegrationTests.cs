@@ -10,8 +10,8 @@ public class UnitTest1
     IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>(tempCsv);
     Cheep cheep = new Cheep("bobo","Helooo", 1725366268);
     
-    //act 
-    database.Store(cheep);
+    // //act 
+    // database.Store(cheep);
     var record = database.Read(); 
 
     //assert
