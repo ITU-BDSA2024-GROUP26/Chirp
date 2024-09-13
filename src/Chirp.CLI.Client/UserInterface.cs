@@ -4,22 +4,22 @@ using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace Chirp.CLI;
+namespace Chirp.CLI.Client;
 
 public static class UserInterface
 {
-    public static void PrintCheeps(IEnumerable<Cheep> cheeps) {
-       
+    public static void PrintCheeps(IEnumerable<Cheep> cheeps) 
+    {
         foreach (var cheep in cheeps)
         {
-            var dateTime = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp).ToLocalTime();
-            Console.WriteLine(cheep.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + cheep.Message);
+            Console.WriteLine(cheep.Author +" @ " + FormatTimestamp(cheep.Timestamp) +  ": " + cheep.Message);
         }
-        
-            //var dateTime = DateTimeOffset.FromUnixTimeSeconds(record.Timestamp).ToLocalTime();
-            //Console.WriteLine(record.Author +" @ " + dateTime.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) +  ": " + record.Message);
+    }
     
-
-}
+    public static string FormatTimestamp(long unixTime)
+    {
+        return DateTimeOffset.FromUnixTimeSeconds(unixTime).ToLocalTime()
+            .ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture);
+    }
 
 }

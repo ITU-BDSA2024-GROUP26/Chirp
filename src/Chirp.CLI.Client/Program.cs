@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
 using SimpleDB;
-using Chirp.CLI;
+using Chirp.CLI.Client;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
