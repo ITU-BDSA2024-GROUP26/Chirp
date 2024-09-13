@@ -9,9 +9,26 @@ using System.Security.Cryptography.X509Certificates;
 // sealed ensures you cannot create further subclasses of CSVDatabase
 public sealed class CSVDatabase<T> : IDatabaseRepository<T>
 {
+    private static CSVDatabase<T> instance; 
+
+    private CSVDatabase() {}
+
+    public static CSVDatabase<T> getInstance()
+    {
+        
+        if (instance == null)
+        {
+            instance = new CSVDatabase<T>();
+        }
+        return instance;
+    }
+
+
     private readonly string csvPath;
     private readonly CsvConfiguration csvWriterConfig;
     private readonly CsvConfiguration csvReaderConfig;
+
+
     public CSVDatabase(string csvPath)
     {
         this.csvPath = csvPath;
