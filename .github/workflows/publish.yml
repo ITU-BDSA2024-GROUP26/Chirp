@@ -31,14 +31,13 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 7.x.x
-          
+
       - name: Test # ensures that the code passes all tests before we release it 
         shell: bash
         run: |
           for dir in tests/*; do
               if [ -d "$dir" ]; then
                   dotnet test "$dir"
-                  echo "qwe1\n"
               fi
           done
       
