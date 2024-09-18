@@ -1,0 +1,63 @@
+# Initial code from the blogpost provided in the tips : https://patriksvensson.se/posts/2020/03/creating-release-artifacts-with-github-actions
+# and then modified to fit our requirements
+name: Publish
+
+on:
+  release:
+    types: [published]
+  push:
+    tags: 
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Release
+    strategy:
+      matrix:
+        kind: ['linux', 'windows', 'macOS']
+        include:
+          - kind: linux
+            target: linux-x64
+          - kind: windows
+            target: win-x64
+          - kind: macOS
+            target: osx-x64
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7.x.x
+      
+      - name: Test # ensures that the code passes all tests before we release it 
+        run: dotnet test tests/*
+      
+      - name: Build
+        shell: bash
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          release_name="Chirp-$tag-${{ matrix.target }}"
+
+          # Build everything
+          dotnet publish src/Chirp.CLI/Chirp.CLI.csproj -c Release -o "$release_name"
+
+          # Pack files
+          if [ "${{ matrix.target }}" == "win-x64" ]; then
+            # Pack to zip for Windows
+            7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          else
+          tar czvf "${release_name}.tar.gz" "$release_name"
+          fi
+
+          # Delete output directory
+          rm -r "$release_name"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "Chirp*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
