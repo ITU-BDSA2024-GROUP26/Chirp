@@ -1,1 +1,0 @@
-namespace Chirp.CLI.SimpleDB.Tests;
