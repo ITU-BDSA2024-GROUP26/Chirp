@@ -27,13 +27,13 @@ rootCommand.Add(cheepCommand);
 
 var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
 cheepCommand.Add(cheepArgument);
-IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>(csvPath);
+CSVDatabase<Cheep>.setPath(csvPath);
 
 
 
 readCommand.SetHandler(() =>
 {
-    var records = database.Read();
+    var records = CSVDatabase.getInstance().Read();
     UserInterface.PrintCheeps(records);
 });
 
@@ -44,7 +44,7 @@ cheepCommand.SetHandler((cheepMessage) =>
     var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     // test case for individual cheep
     Cheep output = new(user, $"\"{message}\"", unixTime);
-    database.Store(output);
+    CSVDatabase.getInstance().Store(output);
 }, cheepArgument);
 
 await rootCommand.InvokeAsync(args);

@@ -10,8 +10,19 @@ using System.Security.Cryptography.X509Certificates;
 public sealed class CSVDatabase<T> : IDatabaseRepository<T>
 {
     private static CSVDatabase<T> instance; 
+    private readonly string csvPath;
+    private readonly CsvConfiguration csvWriterConfig;
+    private readonly CsvConfiguration csvReaderConfig;
 
-    private CSVDatabase() {}
+    private CSVDatabase()
+    {
+        // invariant culture ensures proper parsing of decimal numbers(with .) as well as timestamps
+        this.csvWriterConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
+            ShouldQuote = (args) => false, // Ensures that we don't end up with double qoutes around qouted text  
+            HasHeaderRecord = false // ensures that we don't write additional headers inside the file
+        };
+        csvReaderConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
+    }
 
     public static CSVDatabase<T> getInstance()
     {
@@ -23,22 +34,9 @@ public sealed class CSVDatabase<T> : IDatabaseRepository<T>
         return instance;
     }
 
-
-    private readonly string csvPath;
-    private readonly CsvConfiguration csvWriterConfig;
-    private readonly CsvConfiguration csvReaderConfig;
-
-
-    public CSVDatabase(string csvPath)
+    public static void setPath(string path)
     {
-        this.csvPath = csvPath;
-
-        // invariant culture ensures proper parsing of decimal numbers(with .) as well as timestamps
-        this.csvWriterConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
-            ShouldQuote = (args) => false, // Ensures that we don't end up with double qoutes around qouted text  
-            HasHeaderRecord = false // ensures that we don't write additional headers inside the file
-        };
-        csvReaderConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
+        csvPath = path;
     }
 
     public IEnumerable<T> Read(int? limit = null)
