@@ -9,19 +9,38 @@ using System.Security.Cryptography.X509Certificates;
 // sealed ensures you cannot create further subclasses of CSVDatabase
 public sealed class CSVDatabase<T> : IDatabaseRepository<T>
 {
-    private readonly string csvPath;
+    private static CSVDatabase<T> instance; 
+    private static string csvPath;
     private readonly CsvConfiguration csvWriterConfig;
     private readonly CsvConfiguration csvReaderConfig;
-    public CSVDatabase(string csvPath)
-    {
-        this.csvPath = csvPath;
 
+    private CSVDatabase()
+    {
+        if (csvPath == null)
+        {
+            throw new System.Exception("CSV Path not set");
+        }
         // invariant culture ensures proper parsing of decimal numbers(with .) as well as timestamps
         this.csvWriterConfig = new CsvConfiguration(CultureInfo.InvariantCulture) {
             ShouldQuote = (args) => false, // Ensures that we don't end up with double qoutes around qouted text  
             HasHeaderRecord = false // ensures that we don't write additional headers inside the file
         };
         csvReaderConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
+    }
+
+    public static CSVDatabase<T> getInstance()
+    {
+        
+        if (instance == null)
+        {
+            instance = new CSVDatabase<T>();
+        }
+        return instance;
+    }
+
+    public static void SetPath(string path)
+    {
+        csvPath = path;
     }
 
     public IEnumerable<T> Read(int? limit = null)
