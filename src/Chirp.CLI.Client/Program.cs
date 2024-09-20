@@ -25,7 +25,7 @@ rootCommand.Add(readCommand);
 var cheepCommand = new Command("cheep", "First-level subcommand");
 rootCommand.Add(cheepCommand);
 
-var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
+var cheepArgument = new Argument<string>("Cheep Message", description: "message");
 cheepCommand.Add(cheepArgument);
 
 var databaseOption = new Option<string>(
@@ -43,7 +43,15 @@ CSVDatabase<Cheep>.SetPath(csvPath);
 
 readCommand.SetHandler((databaseUrl) =>
 {
-    
+    using (HttpClient = new HttpClient())
+    {
+        HttpResponseMessage response = client.GetAsync(databaseUrl + "/cheeps");
+
+        DataModel responseBody = response.Content.ReadFromJsonAsync<DataModel>().Result;
+
+
+
+    }
     var records = CSVDatabase<Cheep>.getInstance().Read();
     UserInterface.PrintCheeps(records);
 },
@@ -56,7 +64,7 @@ cheepCommand.SetHandler((string cheepMessage, string databaseUrl) =>
     // test case for individual cheep
     Cheep output = new(user, $"\"{cheepMessage}\"", unixTime);
     CSVDatabase<Cheep>.getInstance().Store(output);
-}, 
+},
 cheepArgument,
 databaseOption);
 
