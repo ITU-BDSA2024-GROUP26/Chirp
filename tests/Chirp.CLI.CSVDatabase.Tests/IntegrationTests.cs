@@ -1,6 +1,6 @@
 namespace Chirp.CLI.SimpleDB.Tests;
 
-public class UnitTest1
+public class IntegrationTests 
 {
     
     [Fact]
@@ -40,6 +40,15 @@ public class UnitTest1
             Assert.Equal(cheep,output);
         }
     
+    }
+    
+    [Fact]
+    public void fileTest()
+    {
+        const string tempCsv = "/Users/jovananovovic/Documents/file.csv";
+        CSVDatabase<Cheep>.SetPath(tempCsv);
+        Cheep cheep = new Cheep("juju","Hello kitti <3 ;)", 1690979858);
+        CSVDatabase<Cheep>.getInstance().Store(cheep);
     }
     
 }
