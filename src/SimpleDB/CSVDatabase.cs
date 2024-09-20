@@ -41,8 +41,20 @@ public sealed class CSVDatabase<T> : IDatabaseRepository<T>
     public static void SetPath(string path)
     {
         csvPath = path;
+        
+        // Check if the file exists, if not, create it and add the header
+        if(!File.Exists(csvPath))
+        {
+            using (var writer = new StreamWriter(csvPath, false)) // Create new file (overwrite if exists)
+            using (var csvWriter = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false }))
+            {
+                // Write the fixed header "Author, Message, Timestamp"
+                writer.WriteLine("Author,Message,Timestamp");
+                writer.Flush(); // Ensure that the header is written to the file
+            }
+        }
     }
-
+    
     public IEnumerable<T> Read(int? limit = null)
     {
         using (var reader = new StreamReader(csvPath)) 
