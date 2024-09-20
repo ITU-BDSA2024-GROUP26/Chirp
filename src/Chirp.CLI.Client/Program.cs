@@ -7,6 +7,8 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using SimpleDB;
 using Chirp.CLI.Client;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -41,19 +43,13 @@ CSVDatabase<Cheep>.SetPath(csvPath);
 
 
 
-readCommand.SetHandler((databaseUrl) =>
+readCommand.SetHandler(async (databaseUrl) =>
 {
-    using (HttpClient = new HttpClient())
-    {
-        HttpResponseMessage response = client.GetAsync(databaseUrl + "/cheeps");
-
-        DataModel responseBody = response.Content.ReadFromJsonAsync<DataModel>().Result;
-
-
-
-    }
-    var records = CSVDatabase<Cheep>.getInstance().Read();
-    UserInterface.PrintCheeps(records);
+    using HttpClient client = new HttpClient();
+    string response = await client.GetStringAsync(databaseUrl + "/cheeps");
+    Console.WriteLine(response);
+    // var records = CSVDatabase<Cheep>.getInstance().Read();
+    // UserInterface.PrintCheeps(records);
 },
 databaseOption);
 
