@@ -27,25 +27,38 @@ rootCommand.Add(cheepCommand);
 
 var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
 cheepCommand.Add(cheepArgument);
+
+var databaseOption = new Option<string>(
+    aliases: ["-d", "--database"],
+    description: "Database url",
+    getDefaultValue: () => "https://bdsagroup26chirpremotedb.azurewebsites.net"
+);
+
+rootCommand.AddGlobalOption(databaseOption);
+
+
 CSVDatabase<Cheep>.SetPath(csvPath);
 
 
 
-readCommand.SetHandler(() =>
+readCommand.SetHandler((databaseUrl) =>
 {
+    
     var records = CSVDatabase<Cheep>.getInstance().Read();
     UserInterface.PrintCheeps(records);
-});
+},
+databaseOption);
 
-cheepCommand.SetHandler((cheepMessage) =>
+cheepCommand.SetHandler((string cheepMessage, string databaseUrl) =>
 {
     var user = Environment.UserName;
-    var message = args[1];
     var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     // test case for individual cheep
-    Cheep output = new(user, $"\"{message}\"", unixTime);
+    Cheep output = new(user, $"\"{cheepMessage}\"", unixTime);
     CSVDatabase<Cheep>.getInstance().Store(output);
-}, cheepArgument);
+}, 
+cheepArgument,
+databaseOption);
 
 await rootCommand.InvokeAsync(args);
 
