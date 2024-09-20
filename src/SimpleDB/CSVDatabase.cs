@@ -55,6 +55,32 @@ public sealed class CSVDatabase<T> : IDatabaseRepository<T>
         }
     }
     
+    // Checks if the header exists and returns true if it does, false otherwise
+    private bool CheckHeader()
+    {
+        if (!File.Exists(csvPath)) return false; // File doesn't exist, so no header
+
+        using var reader = new StreamReader(csvPath);
+        string firstLine = reader.ReadLine();
+
+        // Check if the first line is equal to the expected header
+        return firstLine == "Author,Message,Timestamp";
+    }
+
+    // Method to clear the file and write the correct header if the header is missing
+    private void EnsureHeader()
+    {
+        if (!CheckHeader()) // If the header is missing
+        {
+            using (var writer = new StreamWriter(csvPath, false)) // Overwrite the file
+            {
+                // Write the correct header
+                writer.WriteLine("Author,Message,Timestamp");
+                writer.Flush(); // Ensure header is written
+            }
+        }
+    }
+
     public IEnumerable<T> Read(int? limit = null)
     {
         using (var reader = new StreamReader(csvPath)) 
@@ -74,6 +100,7 @@ public sealed class CSVDatabase<T> : IDatabaseRepository<T>
 
     public void Store(T record)
     {
+        EnsureHeader(); // Ensure the correct header is present before storing a cheep
         using var writer = new StreamWriter(csvPath, true);
         using var csvWriter = new CsvWriter(writer, csvWriterConfig);
         csvWriter.WriteRecord<T>(record);
@@ -82,6 +109,7 @@ public sealed class CSVDatabase<T> : IDatabaseRepository<T>
 
     public void Store(IEnumerable<T> records)
     {
+        EnsureHeader(); // Ensure the correct header is present before storing cheeps
         using var writer = new StreamWriter(csvPath, true);
         using var csvWriter = new CsvWriter(writer, csvWriterConfig);
         csvWriter.WriteRecords<T>(records);
