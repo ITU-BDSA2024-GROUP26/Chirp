@@ -56,13 +56,13 @@ readCommand.SetHandler(async (databaseUrl) =>
 },
 databaseOption);
 
-cheepCommand.SetHandler((string cheepMessage, string databaseUrl) =>
+cheepCommand.SetHandler(async (string cheepMessage, string databaseUrl) =>
 {
     var user = Environment.UserName;
     var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-    // test case for individual cheep
-    Cheep output = new(user, $"\"{cheepMessage}\"", unixTime);
-    CSVDatabase<Cheep>.getInstance().Store(output);
+    Cheep cheep = new(user, $"\"{cheepMessage}\"", unixTime);
+    using HttpClient client = new HttpClient();
+    await client.PostAsJsonAsync(databaseUrl + "/cheep", cheep);
 },
 cheepArgument,
 databaseOption);
