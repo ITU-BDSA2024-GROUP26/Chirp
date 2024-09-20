@@ -9,6 +9,7 @@ using SimpleDB;
 using Chirp.CLI.Client;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -45,11 +46,13 @@ CSVDatabase<Cheep>.SetPath(csvPath);
 
 readCommand.SetHandler(async (databaseUrl) =>
 {
+    // Cheeps record uses PascalCase, but the JSON response is lowercase, so this is needed
+    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
     using HttpClient client = new HttpClient();
-    string response = await client.GetStringAsync(databaseUrl + "/cheeps");
-    Console.WriteLine(response);
-    // var records = CSVDatabase<Cheep>.getInstance().Read();
-    // UserInterface.PrintCheeps(records);
+    string response = await client.GetStringAsync(databaseUrl + "/cheeps"); // Send the get request
+    List<Cheep> cheeps = JsonSerializer.Deserialize<List<Cheep>>(response, options); // convert into Cheep objects
+    UserInterface.PrintCheeps(cheeps);
 },
 databaseOption);
 
