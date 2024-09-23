@@ -21,7 +21,7 @@ zip -r testzip.zip .
 az webapp deploy --resource-group toej_rg_4712 --name bdsagroup26chirpremotedb --src-path testzip.zip
 
 # add some temp data
-python3 ../t.py
+python3 ../post_initial_data.py
 
 # and validate 
 curl https://bdsagroup26chirpremotedb.azurewebsites.net/cheeps
