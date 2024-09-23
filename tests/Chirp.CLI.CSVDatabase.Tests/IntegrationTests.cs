@@ -36,22 +36,49 @@ public class UnitTest1
         }
     }
     
-    [Fact]
-    public void readTest()
+    [Theory]
+    [InlineData("ropf", "Hello, BDSA students!", 1690891760)]
+    public void readTest(string author, string message, int timestamp)
     {
-        
+        string[] testAuthors = { "adho", "adho", "ropf"};
+        string[] testMessages = {
+            "\"Welcome to the course!\"", 
+            "\"I hope you had a good summer.\"", 
+            "\"Cheeping cheeps on Chirp :)\""
+        };
+        int[] timestamps = { 1690978778,  1690979858,  1690981487 };
+        //arange 
         //arange 
         const string tempCsv = "tempTestFile.csv";
-        CSVDatabase<Cheep>.SetPath(tempCsv);
-        Cheep cheep = new Cheep("juju","Hello kitti <3 ;)", 1690979858);
-        
-        // //act 
-        var record = CSVDatabase<Cheep>.getInstance().Read();
+        FileInfo fInfo = new(tempCsv);
+        if(fInfo.Exists) {
+            fInfo.Delete();
+        }
+        List<Cheep> cheeps = new List<Cheep>(); 
+        // we are NOT testing whether the file is created in the proper manner at the moment
+        // so we ensure that the headers are correct
+        using var writer = new StreamWriter(fInfo.FullName, true);
+        using var csvWriter = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture) {
+            ShouldQuote = (args) => false, // Ensures that we don't end up with double qoutes around qouted text  
+            HasHeaderRecord = false // ensures that we don't write additional headers inside the file
+        });
+        for(int i = 0; i < testAuthors.Length; i++) {
+            cheeps.Add(new Cheep(testAuthors[i], testMessages[i], timestamps[i]));
+            csvWriter.WriteRecord(cheeps.Last());
+        }
+        cheeps.Add(new Cheep(author, message, timestamp));
+        csvWriter.WriteRecord(cheeps.Last());
+        csvWriter.NextRecord();
 
+        CSVDatabase<Cheep>.SetPath(tempCsv);
+        //act 
+        var records = CSVDatabase<Cheep>.getInstance().Read();
         //assert
-        foreach (var output in record)
+        int k = 0;
+        foreach (var output in records)
         {
-            Assert.Equal(cheep,output);
+            Assert.Equal(cheeps[k], output);
+            k++;
         }
     
     }
