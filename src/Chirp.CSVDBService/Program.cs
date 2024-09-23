@@ -2,11 +2,12 @@ using SimpleDB;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
-CSVDatabase<Cheep>.SetPath("csvdb.csv");
+//CSVDatabase<Cheep>.SetPath("csvdb.csv");
+List<Cheep> cheepList = new List<Cheep>(100);
 
-app.MapGet("/cheeps", () => CSVDatabase<Cheep>.getInstance().Read());
+app.MapGet("/cheeps", () => cheepList);
 app.MapPost("/cheep", (Cheep cheep) => {
-    CSVDatabase<Cheep>.getInstance().Store(cheep);
+    cheepList.Add(cheep);
     });
 app.Run();
 
