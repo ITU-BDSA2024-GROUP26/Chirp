@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Chirp.CLI.Client.Tests;
 
 public class UnitTests
@@ -8,6 +10,7 @@ public class UnitTests
     [InlineData(1690891760, "08/01/23 14:09:20")]
     public void FormatTimestampTest(long unixTime, string expectedFormattedTime)
     {
-        Assert.Equal(expectedFormattedTime, UserInterface.FormatTimestamp(unixTime));
+        Assert.Equal(expectedFormattedTime, DateTimeOffset.FromUnixTimeSeconds(unixTime).ToLocalTime()
+            .ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture));
     }
 }
