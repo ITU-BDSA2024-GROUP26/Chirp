@@ -1,37 +1,48 @@
-using System;
 using System.Diagnostics;
-using System.Globalization;
-using Xunit;
-using Chirp.CLI;
-using System.Net.Mime;
-using Xunit.Abstractions;
-using System.Runtime.InteropServices;
-using System.IO;
 using System.Net;
+using Xunit.Abstractions;
 
 namespace Chirp.CLI.Client.Tests;
 
 
 /// <summary>
-/// Contains end to end tests for the Chirp CLI Client, verifying both reading and cheeping functionalities. 
+/// Contains end-to-end tests for the Chirp CLI Client, verifying both reading and cheeping functionalities. 
 /// </summary>
-public class EndToEndTests
+public class EndToEndTests : IAsyncLifetime
 {
+    private Process _serviceProcess;
+    private string _csvPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "testCSVDB.csv"));
+    private const string localDatabaseUrl = "http://localhost:5000";
+
+    public async Task InitializeAsync()
+    {
+        // Arrange: Set up the test environment. 
+        ArrangeDatabase();
+        await ArrangeCSVDBServiceAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        _serviceProcess.Kill();
+        await _serviceProcess.WaitForExitAsync();
+        _serviceProcess.Dispose();
+        File.Delete(_csvPath);
+    }
+
+
     /// <summary>
     /// Creates a test CSV database with predefined cheeps. 
     /// </summary>
-    /// <returns> The path to the created CSV file. </returns> 
-    public static string ArrangeDatabase()
+    private void ArrangeDatabase()
     {
-        // Define the path for the temporary CSV database.
-        var csvPath = "testCSVDB.csv";
-
         // Define the content of the CSV file with predefined cheeps. 
-        var content = @"Author,Message,Timestamp
-ropf,""Hello, BDSA students!"",1690891760
-adho,""Welcome to the course!"",1690978778";
-        File.WriteAllText(csvPath, content);
-        return csvPath;
+        const string content = """
+                               Author,Message,Timestamp
+                               ropf,"Hello, BDSA students!",1690891760
+                               adho,"Welcome to the course!",1690978778
+                               
+                               """;
+        File.WriteAllText(_csvPath, content);
     }
 
     /// <summary>
@@ -41,13 +52,13 @@ adho,""Welcome to the course!"",1690978778";
     /// <returns> The process running the CSV databse web service. </returns>
     /// <exception cref="Exception"> Thrown if the service fails to start within the expected time. </exception>
     /// Async return type (for the group): Inspired by https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/async-return-types
-    public static async Task<Process> ArrangeCSVDBServiceAsync(string csvPath)
+    private async Task ArrangeCSVDBServiceAsync()
     {
         // Configure the process start information for the CSVDBService. 
         var startInfo = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = $"run -- -p {csvPath} --urls http://localhost:5000",
+            Arguments = $"run -- -p {_csvPath}",
             UseShellExecute = false, // Required to redirect output streams.
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -60,130 +71,54 @@ adho,""Welcome to the course!"",1690978778";
 
         // Start the CSVDBService process. 
         process.Start();
-
-        //Log the standard output of the service for debugging purposes. 
-        _ = Task.Run(() =>
-        {
-            while (!process.StandardOutput.EndOfStream)
-            {
-                string line = process.StandardOutput.ReadLine();
-                Console.WriteLine($"[CSVDBService] {line}");
-            }
-        });
-
-        // Log the standard error of the service for debugging purposes. 
-        _ = Task.Run(() =>
-        {
-            while (!process.StandardError.EndOfStream)
-            {
-                string line = process.StandardError.ReadLine();
-                Console.Error.WriteLine($"[CSVDBService ERROR] {line}");
-            }
-        });
-
-        // Define a timeout period to wait for the service to become responsive. 
-        var timeout = TimeSpan.FromSeconds(10);
-        var startTime = DateTime.Now;
-
-        // Continuously attempt to connect to the service until it responds or the timeout is reached.
-        while (DateTime.Now - startTime < timeout)
+        
+        using HttpClient client = new();
+        while (true)
         {
             try
             {
-                // Create an HTTP GET request to check if the service is up. 
-                var request = (HttpWebRequest)WebRequest.Create("http://localhost:5000/cheeps");
-                request.Method = "GET";
-
-                using var response = (HttpWebResponse)request.GetResponse();
-
-                // If the response status is OK, the service is up and running. 
-                if (response.StatusCode == HttpStatusCode.OK) return process;
+                var response = await client.GetAsync("http://localhost:5000/cheeps");
+                response.EnsureSuccessStatusCode();
+                _serviceProcess = process;
+                return;
             }
-            catch (WebException) { } // Service not up yet, continue waiting.
-
-            // Wait for half a second before retrying.   
-            await Task.Delay(500);
-            //Thread.Sleep(500);
+            catch (Exception) // The service isn't up yet. wait 0.5 seconds and try again.
+            {
+                await Task.Delay(500);
+            } 
         }
-
-        // If the service did not start within the timeout, kill the process and throw an exception. 
-        process.kill();
-        throw new Exception("Failed to start CSVDBService within the expected time.");
     }
 
-    /// <summary>
-    /// Tests the reading functionality of the Chirp CLI Client.
-    /// Ensures that the client can successfully retrieve cheeps from the service.
+    /// <summary    /// >
+    /// Tests the reading functionality of the Chirp    ///  Client.
+    /// Ensures that the client c    /// an successfully retrieve cheeps from the service.
     /// </summary>
     [Fact]
     public async Task TestReadCheepAsync()
     {
-        // Arrange: Set up the test environment. 
-        var csvPath = ArrangeDatabase();
-        Process serviceProcess = null;
+        // Act: Execute the 'read' command of the Chirp CLI Client. 
+        using var process = new Process();
+        process.StartInfo.FileName = "dotnet";
+        process.StartInfo.Arguments = $"run read --database {localDatabaseUrl}";
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.WorkingDirectory = "../../../../../src/Chirp.CLI.Client";
+        process.StartInfo.CreateNoWindow = true;
+        process.Start();
 
-        try
-        {
-            // Start the CSVDBService with the test CSV database. 
-            serviceProcess = ArrangeCSVDBService(csvPath);
-            var output = "";
+        // Capture the standard output from the client. 
+        var output = await process.StandardOutput.ReadToEndAsync();
 
-            // Define the local databse URL where the service is running. 
-            var localDatabaseUrl = "http://localhost:5000";
+        // wait for the client process to exit.
+        await process.WaitForExitAsync();
 
+        // Assert: verify that the output contains the expected cheeps.  
+        var cheeps = output.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        Assert.NotEmpty(cheeps); // Ensure that cheeps were retrieved.
 
-            // Act: Execute the 'read' command of the Chirp CLI Client. 
-            using (var clientProcess = new Process())
-            {
-                clientProcess.StartInfo.FileName = "dotnet";
-                clientProcess.StartInfo.Arguments = $"run read --database {localDatabaseUrl}";
-                clientProcess.StartInfo.UseShellExecute = false;
-                clientProcess.StartInfo.RedirectStandardOutput = true;
-                clientProcess.StartInfo.RedirectStandardError = true;
-                clientProcess.StartInfo.WorkingDirectory = "../../../../../src/Chirp.CLI.Client";
-                clientProcess.StartInfo.CreateNoWindow = true;
-                clientProcess.Start();
-
-
-                // Capture Client error output for debugging. 
-                string clientError = await clientProcess.StandardError.ReadToEndAsync();
-
-                // Capture the standard output from the client. 
-                output = await clientProcess.StandardOutput.ReadToEndAsync();
-
-                // wait for the client process to exit.
-                await clientProcess.WaitForExitAsync();
-
-                // If the client process exited with a non-zero code, throw an exception with the error details.
-                if (clientProcess.ExitCode != 0)
-                {
-                    throw new Exception($"Chirp CLI CLient exited with code {clientProcess.ExitCode}. Error: {clientError}");
-                }
-            }
-
-            // Assert: verify that the output contains the expected cheeps.  
-            var cheeps = output.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            Assert.NotEmpty(cheeps); // Ensure that cheeps were retrieved.
-
-            var firstCheep = cheeps[0];
-            Assert.StartsWith("ropf", firstCheep); // Verify the author of the first cheep. 
-            Assert.EndsWith("Hello, BDSA students!", firstCheep); // Verify the message of the first cheep. 
-        }
-        finally
-        {
-            // Clean up: Ensure that the CSVDBService process is terminated and the test CSV file is deleted.
-            if (serviceProcess != null && !serviceProcess.HasExited)
-            {
-                serviceProcess.Kill();
-                await serviceProcess.WaitForExitAsync();
-                serviceProcess.Dispose();
-            }
-
-            if (File.Exists(csvPath))
-            {
-                File.Delete(csvPath);
-            }
-        }
+        var firstCheep = cheeps[0];
+        Assert.StartsWith("ropf", firstCheep); // Verify the author of the first cheep. 
+        Assert.EndsWith("Hello, BDSA students!", firstCheep); // Verify the message of the first cheep. 
     }
 
 
@@ -193,78 +128,34 @@ adho,""Welcome to the course!"",1690978778";
     /// Ensures that the client can successfully send a cheep message and have it stored in the service's database.
     /// </summary>    
     [Fact]
-    public async Task TestCheepAsync()
+    public void TestCheepAsync()
     {
-        // Arrange: Set up the test environment. 
-        var csvPath = ArrangeDatabase();
-        Process serviceProcess = null;
+        // Define the cheep message to send
+        const string cheepMessage = "This is a test cheep!";
 
-        try
-        {
-            // Start the CSVDBService with the test CSV database. 
-            serviceProcess = await ArrangeCSVDBServiceAsync(csvPath);
-            var output = "";
+        // Act: Execute the 'cheep' command of the Chirp CLI Client. 
+        using Process process = new();
+        process.StartInfo.FileName = "dotnet";
+        // Corrected the command from 'read' to 'cheep' and included the cheep message.
+        process.StartInfo.Arguments = $"run cheep \"{cheepMessage}\" --database {localDatabaseUrl}";
+        process.StartInfo.WorkingDirectory = "../../../../../src/Chirp.CLI.Client";
+        process.StartInfo.CreateNoWindow = true;
+        process.Start();
 
-            // Define the local database URL
-            var localDatabaseUrl = "http://localhost:5000";
+        // Wait for the client process to exit.
+        process.WaitForExit();
+        Thread.Sleep(1000); // Wait for the service to store the cheep.
 
-            // Define the cheep message to send
-            var cheepMessage = "This is a test cheep!";
-
-            // Act: Execute the 'cheep' comand of the Chirp CLI Client. 
-            using (var clientProcess = new process())
-            {
-                clientProcess.StartInfo.FileName = "dotnet";
-                // Corrected the command from 'read' to 'cheep' and included the cheep message.
-                clientProcess.StartInfo.Arguments = $"run cheep \"{cheepMessage}\" --database {localDatabaseUrl}";
-                clientProcess.StartInfo.UseShellExecute = false; // Required to redirect output streams.
-                clientProcess.StartInfo.RedirectStandardOutput = true;
-                clientProcess.StartInfo.RedirectStandardError = true;
-                clientProcess.StartInfo.WorkingDirectory = "../../../../../src/Chirp.CLI.Client";
-                clientProcess.StartInfo.CreateNoWindow = true;
-                clientProcess.Start();
-
-                // Capture Client error output for debugging.
-                string clientError = await clientProcess.StandardError.ReadToEndAsync();
-
-                // Capture the standard output from the client.
-                output = await clientProcess.StandardOutput.ReadToEndAsync();
-
-                // Wait for the client process to exit.
-                await clientProcess.WaitForExitAsync();
-
-                // If the client process exited with a non-zero code, throw an exception with the error details.
-                if (clientProcess.ExitCode != 0)
-                {
-                    throw new Exception($"Chirp CLI Client exited with code {clientProcess.ExitCode}. Error: {clientError}");
-                }
-            }
-
-            // Assert 
-            // To verify that the cheep was stored. 
-            // Read all lines from the CSV file, skipping the header. 
-            var storedCheeps = File.ReadAllLines(csvPath)
-                .Skip(1) // skip header
-                .Select(line => line.Split(','))
-                .ToList();
-
-            // Check that at least one cheep matches the cheepMessage
-            Assert.Contains(storedCheeps, cheepMessage => cheepMessage[1].Trim('"') == cheepMessage);
-        }
-        finally
-        {
-            // clean up: Ensure that the CSVDBService process is terminated and the test CSV file is deleted.
-            if (serviceProcess != null && !serviceProcess.HasExited)
-            {
-                serviceProcess.Kill();
-                await serviceProcess.WaitForExitAsync();
-                serviceProcess.Dispose();
-            }
-
-            if (File.Exists(csvPath))
-            {
-                File.Delete(csvPath);
-            }
-        }
+        // Assert 
+        // To verify that the cheep was stored. 
+        // Read all lines from the CSV file, skipping the header. 
+        var storedCheeps = File.ReadAllLines(_csvPath)
+            .Skip(1) // skip header
+            .Select(line => line.Split(','))
+            .ToList();
+      
+        var lastCheep = storedCheeps.Last();
+        Assert.Equal(Environment.UserName, lastCheep[0]);
+        Assert.Equal(cheepMessage, lastCheep[1].Trim('"'));
     }
 }
