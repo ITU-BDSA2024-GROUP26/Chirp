@@ -3,51 +3,92 @@ using System.Diagnostics;
 using System.Globalization;
 using Xunit;
 using Chirp.CLI;
+using System.Net.Mime;
+using Xunit.Abstractions;
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Net;
 
 namespace Chirp.CLI.Client.Tests;
 
 
 public class EndToEndTests
 {
-    public static void ArrangeDatabase() 
+    public static string ArrangeDatabase() 
     {
-        FileInfo fInfo = new FileInfo("../../../../../scripts/makeDB.sh");
-        using (var process = new Process()) 
+        var csvPath = "testCSVDB.csv";
+        var content = @"Author,Message,Timestamp
+ropf,""Hello, BDSA students!"",1690891760
+adho,""Welcome to the course!"",1690978778";
+        File.WriteAllText(csvPath, content);
+        return csvPath;
+    }
+
+    public static Process ArrangeCSVDBService(string csvPath)
+    {
+        var startInfo = new ProcessStartInfo
         {
-            process.StartInfo.FileName = "/bin/bash";
-            process.StartInfo.Arguments = $"\"{fInfo.FullName}\"";
-            process.Start();
+            FileName = "dotnet",
+            Arguments = $"run -- -p {csvPath}",
+            UseShellExecute = false,
+            WorkingDirectory = "../../../../../src/Chirp.CSVDBService"
+        };
+
+        var process = new Process { StartInfo = startInfo };
+        process.Start();
+
+        // Repeatedly try to send a request to the service until it responds (meaning the service is up and running)
+        while (true)
+        {
+             try
+            {
+                var request = (HttpWebRequest)WebRequest.Create("http://localhost:5000/cheeps");
+                request.Method = "GET";
+    
+                using var response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK) return process;
+            }
+            catch (Exception) {}
+            Thread.Sleep(500);
         }
     }
 
     [Fact]
-    public static void TestReadCheep()
+    public void TestReadCheep()
     {
         // Arrange
-        ArrangeDatabase();
-        const string csvPath = "../chirp_cli_db3.csv";
+        var csvPath = ArrangeDatabase();
+        Process serviceProcess = null;
 
-        // Act
-        string output = "";
-        using (var process = new Process())
+        try
         {
-            process.StartInfo.FileName = "/usr/bin/dotnet";
-            process.StartInfo.Arguments = "run read";
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.WorkingDirectory = "../../..";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.Start();
+            serviceProcess = ArrangeCSVDBService(csvPath);
+            var output = "";
+            using (var clientProcess = new Process())
+            {
+                clientProcess.StartInfo.FileName = "dotnet";
+                clientProcess.StartInfo.Arguments = "run read";
+                clientProcess.StartInfo.UseShellExecute = false;
+                clientProcess.StartInfo.WorkingDirectory = "../../../../../src/Chirp.CLI.Client";
+                clientProcess.StartInfo.RedirectStandardOutput = true;
+                clientProcess.Start();
 
-            // Synchronously read the standard ouput of he spawned process.
-            StreamReader reader = process.StandardOutput;
-            output = reader.ReadToEnd();
-            process.WaitForExit();
+                // Synchronously read the standard ouput of he spawned process.
+                using var reader = clientProcess.StandardOutput;
+                output = reader.ReadToEnd();
+                clientProcess.WaitForExit();
+            }
+
+            var firstCheep = output.Split('\n')[0];
+            Assert.StartsWith("ropf", firstCheep);
+            Assert.EndsWith("Hello, BDSA students!", firstCheep);
         }
-
-        string fstCheep = output.Split('\n')[0];
-
-        // Assert
-        Assert.StartsWith("ropf", fstCheep);
-        Assert.EndsWith("Hello, BDSA students!", fstCheep);
+        finally
+        {
+            serviceProcess?.Kill();
+            serviceProcess?.WaitForExit();
+            serviceProcess?.Dispose();
+            File.Delete(csvPath);
+        }
     }
 }
