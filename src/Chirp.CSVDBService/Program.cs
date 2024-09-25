@@ -16,6 +16,7 @@ rootCommand.SetHandler(async (string path) =>
     var app = builder.Build();
 
     app.MapGet("/cheeps", () => CSVDatabase<Cheep>.getInstance().Read());
+    app.MapGet("/cheeps/{num}", (int num) => {  CSVDatabase<Cheep>.getInstance().Read(num); });
     app.MapPost("/cheep", (Cheep cheep) => CSVDatabase<Cheep>.getInstance().Store(cheep));
     await app.RunAsync();
 },

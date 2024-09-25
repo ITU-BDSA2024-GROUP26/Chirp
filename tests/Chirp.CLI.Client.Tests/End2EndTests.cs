@@ -17,8 +17,10 @@ public class EndToEndTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         // Arrange: Set up the test environment. 
+        Console.WriteLine("Started setup");
         ArrangeDatabase();
         await ArrangeCSVDBServiceAsync();
+        Console.WriteLine("Ended setup");
     }
 
     public async Task DisposeAsync()
@@ -62,7 +64,7 @@ public class EndToEndTests : IAsyncLifetime
             UseShellExecute = false, // Required to redirect output streams.
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-            WorkingDirectory = "../../../../../src/Chirp.CSVDBService/",
+            WorkingDirectory = "../../../../../src/Chirp.CSVDBService",
             CreateNoWindow = true // Runs the process without creating a window.
         };
 
@@ -72,6 +74,7 @@ public class EndToEndTests : IAsyncLifetime
         // Start the CSVDBService process. 
         process.Start();
         
+        int counter = 0;
         using HttpClient client = new();
         while (true)
         {
@@ -85,7 +88,12 @@ public class EndToEndTests : IAsyncLifetime
             catch (Exception) // The service isn't up yet. wait 0.5 seconds and try again.
             {
                 await Task.Delay(500);
-            } 
+                counter++;
+            }
+            
+            if(counter > 100) {
+                throw new Exception("Tried to start service process too many times");
+            }
         }
     }
 
