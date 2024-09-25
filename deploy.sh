@@ -17,7 +17,7 @@ rm src.sln
 zip -r testzip.zip .
 
 # and deploy
-az webapp deploy --resource-group toej_rg_4712 --name bdsagroup26chirpremotedb --src-path testzip.zip
+az webapp deploy --resource-group toej_rg_4712 --name bdsagroup26chirpremotedb --src-path testzip.zip --clean true
 
 # add some temp data
 python3 ../post_initial_data.py
