@@ -74,6 +74,7 @@ public class EndToEndTests : IAsyncLifetime
         // Start the CSVDBService process. 
         process.Start();
         
+        int counter = 0;
         using HttpClient client = new();
         while (true)
         {
@@ -87,7 +88,12 @@ public class EndToEndTests : IAsyncLifetime
             catch (Exception) // The service isn't up yet. wait 0.5 seconds and try again.
             {
                 await Task.Delay(500);
-            } 
+                counter++;
+            }
+            
+            if(counter > 10) {
+                throw new Exception("Tried to start service process too many times");
+            }
         }
     }
 
