@@ -1,12 +1,6 @@
 import requests
 import time
 # 
-
-### Author,Message,Timestamp
-# ,,
-# ,,
-# ,,
-# ,,
 names = ['ropf', 'adho', 'adho', 'ropf']
 messages = ['\"Hello, BDSA students!\"', '\"Welcome to the course!\"', '\"I hope you had a good summer.\"', '\"Cheeping cheeps on Chirp :)\"']
 times = [1690891760, 1690978778, 1690979858, 1690981487]
