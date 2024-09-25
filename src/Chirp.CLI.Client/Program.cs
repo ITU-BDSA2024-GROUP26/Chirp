@@ -7,6 +7,9 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using SimpleDB;
 using Chirp.CLI.Client;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 const string csvPath = "chirp_cli_db.csv";
 // recognises anything inbetween two quotation marks and arbitrary spaces, with a capture group excluding quotation marks 
@@ -25,27 +28,44 @@ rootCommand.Add(readCommand);
 var cheepCommand = new Command("cheep", "First-level subcommand");
 rootCommand.Add(cheepCommand);
 
-var cheepArgument = new Argument<string>("Cheep Message", description: "message"); 
+var cheepArgument = new Argument<string>("Cheep Message", description: "message");
 cheepCommand.Add(cheepArgument);
+
+var databaseOption = new Option<string>(
+    aliases: ["-d", "--database"],
+    description: "Database url",
+    getDefaultValue: () => "https://bdsagroup26chirpremotedb.azurewebsites.net"
+);
+
+rootCommand.AddGlobalOption(databaseOption);
+
+
 CSVDatabase<Cheep>.SetPath(csvPath);
 
 
 
-readCommand.SetHandler(() =>
+readCommand.SetHandler(async (databaseUrl) =>
 {
-    var records = CSVDatabase<Cheep>.getInstance().Read();
-    UserInterface.PrintCheeps(records);
-});
+    // Cheeps record uses PascalCase, but the JSON response is lowercase, so this is needed
+    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-cheepCommand.SetHandler((cheepMessage) =>
+    using HttpClient client = new HttpClient();
+    string response = await client.GetStringAsync(databaseUrl + "/cheeps"); // Send the get request
+    List<Cheep> cheeps = JsonSerializer.Deserialize<List<Cheep>>(response, options); // convert into Cheep objects
+    UserInterface.PrintCheeps(cheeps);
+},
+databaseOption);
+
+cheepCommand.SetHandler(async (string cheepMessage, string databaseUrl) =>
 {
     var user = Environment.UserName;
-    var message = args[1];
     var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-    // test case for individual cheep
-    Cheep output = new(user, $"\"{message}\"", unixTime);
-    CSVDatabase<Cheep>.getInstance().Store(output);
-}, cheepArgument);
+    Cheep cheep = new(user, $"\"{cheepMessage}\"", unixTime);
+    using HttpClient client = new HttpClient();
+    await client.PostAsJsonAsync(databaseUrl + "/cheep", cheep);
+},
+cheepArgument,
+databaseOption);
 
 await rootCommand.InvokeAsync(args);
 
