@@ -4,17 +4,12 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 List<Cheep> cheepList = new List<Cheep>(100);
+CSVDatabase<Cheep>.SetPath("csvdb.csv");
+IDatabaseRepository<Cheep> db = CSVDatabase<Cheep>.getInstance();
 
-app.MapGet("/cheeps/{num}", (int num) => {
-    if(num >= cheepList.Count) {
-        return cheepList;
-    }
-    return cheepList.GetRange(0, num);
-    });
-app.MapGet("/cheeps", () => cheepList);
-app.MapPost("/cheep", (Cheep cheep) => {
-    cheepList.Add(cheep);
-    });
+app.MapGet("/cheeps/{num}", (int num) => { return db.Read(num); });
+app.MapGet("/cheeps", () => db.Read());
+app.MapPost("/cheep", (Cheep cheep) => db.Store(cheep));
 app.Run();
 
 
