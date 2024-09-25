@@ -4,7 +4,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using System.Collections;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 
 // sealed ensures you cannot create further subclasses of CSVDatabase
 public sealed class CSVDatabase<T> : IDatabaseRepository<T>
@@ -88,13 +87,20 @@ public sealed class CSVDatabase<T> : IDatabaseRepository<T>
         {
             if(limit == null) { return csv.GetRecords<T>().ToList<T>(); }
 
-            List<T> retArr = new List<T>(); 
+            // if we have a certain amount we want to return
+            List<T> retList = new List<T>(limit.Value);
 
-            for(int i = 0; i < limit; i++) {
-                retArr.Add(csv.GetRecord<T>());
+            // skip the header without doing anything
+            csv.Read();
+            csv.ReadHeader();
+
+            int counter = 0;
+            while(csv.Read() && counter < limit) { // loop through the file, without possibility of overflow
+                retList.Add(csv.GetRecord<T>());
+                counter++;
             }
+            return retList;
 
-            return retArr.ToList<T>();
         }
     }
 
