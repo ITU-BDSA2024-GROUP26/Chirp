@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 List<Cheep> cheepList = new List<Cheep>(100);
-CSVDatabase<Cheep>.SetPath("csvdb.csv");
+CSVDatabase<Cheep>.SetPath("csv_db.csv");
 IDatabaseRepository<Cheep> db = CSVDatabase<Cheep>.getInstance();
 
 app.MapGet("/cheeps/{num}", (int num) => { return db.Read(num); });
