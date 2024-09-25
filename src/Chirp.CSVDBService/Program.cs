@@ -12,13 +12,12 @@ rootCommand.AddGlobalOption(csvPathOption);
 rootCommand.SetHandler(async (string path) =>
 {
     CSVDatabase<Cheep>.SetPath(path);
-    IDataBaseRepository<Cheep> db = CSVDatabase<Cheep>.getInstance();
     var builder = WebApplication.CreateBuilder(args);
     var app = builder.Build();
 
-    app.MapGet("/cheeps", () => db.Read());
-    app.MapGet("/cheeps/{num}", (int num) => {  db.Read(num); });
-    app.MapPost("/cheep", (Cheep cheep) => db.Store(cheep));
+    app.MapGet("/cheeps", () => CSVDatabase<Cheep>.getInstance().Read());
+    app.MapGet("/cheeps/{num}", (int num) => {  CSVDatabase<Cheep>.getInstance().Read(num); });
+    app.MapPost("/cheep", (Cheep cheep) => CSVDatabase<Cheep>.getInstance().Store(cheep));
     await app.RunAsync();
 },
 csvPathOption);

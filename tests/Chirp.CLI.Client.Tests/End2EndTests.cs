@@ -17,8 +17,10 @@ public class EndToEndTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         // Arrange: Set up the test environment. 
+        Console.WriteLine("Started setup");
         ArrangeDatabase();
         await ArrangeCSVDBServiceAsync();
+        Console.WriteLine("Ended setup");
     }
 
     public async Task DisposeAsync()
