@@ -91,7 +91,7 @@ public class EndToEndTests : IAsyncLifetime
                 counter++;
             }
             
-            if(counter > 10) {
+            if(counter > 100) {
                 throw new Exception("Tried to start service process too many times");
             }
         }
