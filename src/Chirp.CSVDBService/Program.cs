@@ -14,10 +14,11 @@ rootCommand.SetHandler(async (string path) =>
     CSVDatabase<Cheep>.SetPath(path);
     var builder = WebApplication.CreateBuilder(args);
     var app = builder.Build();
+    IDatabaseRepository<Cheep> database = CSVDatabase<Cheep>.getInstance();
 
-    app.MapGet("/cheeps", () => CSVDatabase<Cheep>.getInstance().Read());
-    app.MapGet("/cheeps/{num}", (int num) => CSVDatabase<Cheep>.getInstance().Read(num));
-    app.MapPost("/cheep", (Cheep cheep) => CSVDatabase<Cheep>.getInstance().Store(cheep));
+    app.MapGet("/cheeps", () => database.Read());
+    app.MapGet("/cheeps/{num}", (int num) => database.Read(num));
+    app.MapPost("/cheep", (Cheep cheep) => database.Store(cheep));
     await app.RunAsync();
 },
 csvPathOption);
