@@ -22,4 +22,4 @@ jobs:
         with:
           project: Chirp Project Board
           column: In Progress
-          repo-token: ${{ secrets.Personal_Access_Token1 }}
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN2 }}
