@@ -48,7 +48,7 @@ jobs:
           release_name="Chirp-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish src/Chirp.CLI/Chirp.CLI.csproj -c Release -o "$release_name"
+          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.Client.csproj -c Release -o "$release_name"
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
@@ -66,4 +66,4 @@ jobs:
         with:
           files: "Chirp*"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN2 }}
