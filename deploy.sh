@@ -14,7 +14,7 @@ rm testzip.zip
 rm src.sln
 
 # create the source deployment zip
-zip -r testzip.zip .
+zip -r testzip.zip Chirp.CSVDBService SimpleDB
 
 # and deploy
 az webapp deploy --resource-group toej_rg_4712 --name bdsagroup26chirpremotedb --src-path testzip.zip --clean true
