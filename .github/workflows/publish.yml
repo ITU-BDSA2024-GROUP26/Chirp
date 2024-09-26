@@ -10,7 +10,12 @@ on:
       - 'v*.*.*'
 
 jobs:
+  test:
+    name: Test
+    uses: ./.github/workflows/dotnetTest.yml
+  
   release:
+    needs: test
     name: Release
     strategy:
       matrix:
@@ -31,15 +36,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x.x
-
-      - name: Test # ensures that the code passes all tests before we release it 
-        shell: bash
-        run: |
-          for dir in tests/*; do
-              if [ -d "$dir" ]; then
-                  dotnet test "$dir"
-              fi
-          done
       
       - name: Build
         shell: bash
