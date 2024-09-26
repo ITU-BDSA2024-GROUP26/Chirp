@@ -5,8 +5,8 @@ name: .Net Test
 on: [ push, workflow_call, workflow_dispatch ]
 
 jobs:
-  build:
-
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
