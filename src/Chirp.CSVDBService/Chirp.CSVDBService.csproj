@@ -11,6 +11,7 @@
     </ItemGroup>
 
   <ItemGroup>
+      <ProjectReference Include="..\Chirp.SQLite\Chirp.SQLite.csproj" />
       <ProjectReference Include="..\SimpleDB\SimpleDB.csproj" />
     </ItemGroup>
 
