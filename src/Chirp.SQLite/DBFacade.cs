@@ -9,7 +9,10 @@ public sealed class DBFacade : ISQLDatabase
     private static DBFacade? _instance;
     private static string? _dataSourcePath;
 
-    private DBFacade() { }
+    private DBFacade()
+    {
+        SQLitePCL.Batteries.Init();
+    }
 
     public static DBFacade Instance
     {
