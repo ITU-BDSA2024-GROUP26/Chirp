@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{84BAC6CB-68CB-4877-B5B3-E8261E27C4C4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.Client", "src\Chirp.CLI.Client\Chirp.CLI.Client.csproj", "{55E9F4C7-FEE9-4CF4-9C56-064898433FE3}"
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.CSVDBService.Tests", "tests\Chirp.CLI.CSVDBService.Tests\Chirp.CLI.CSVDBService.Tests.csproj", "{DD13DE71-5EE7-46B6-A834-73AE3D3F736A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Razor", "src\Chirp.Razor\Chirp.Razor.csproj", "{BA40640B-00D4-4A4A-9FDF-6D9208C9C7A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.SQLite", "src\Chirp.SQLite\Chirp.SQLite.csproj", "{80CDE16F-4013-4ED2-8186-C398B1D2EEAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurdationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{BA40640B-00D4-4A4A-9FDF-6D9208C9C7A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA40640B-00D4-4A4A-9FDF-6D9208C9C7A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA40640B-00D4-4A4A-9FDF-6D9208C9C7A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80CDE16F-4013-4ED2-8186-C398B1D2EEAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80CDE16F-4013-4ED2-8186-C398B1D2EEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80CDE16F-4013-4ED2-8186-C398B1D2EEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80CDE16F-4013-4ED2-8186-C398B1D2EEAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,5 +105,6 @@ Global
 		{0A2B324A-9254-40D4-8803-02990CEC6EE7} = {289689C7-AF80-443D-BA49-411450DF4F83}
 		{DD13DE71-5EE7-46B6-A834-73AE3D3F736A} = {289689C7-AF80-443D-BA49-411450DF4F83}
 		{BA40640B-00D4-4A4A-9FDF-6D9208C9C7A4} = {84BAC6CB-68CB-4877-B5B3-E8261E27C4C4}
+		{80CDE16F-4013-4ED2-8186-C398B1D2EEAD} = {84BAC6CB-68CB-4877-B5B3-E8261E27C4C4}
 	EndGlobalSection
 EndGlobal
