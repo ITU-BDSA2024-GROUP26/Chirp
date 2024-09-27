@@ -11,14 +11,7 @@ var rootCommand = new RootCommand();
 rootCommand.AddGlobalOption(csvPathOption);
 
 rootCommand.SetHandler(async (string path) =>
-{
-    DBFacade.SetDBPath("db.db");
-    ISQLDatabase database2 = DBFacade.Instance;
-    foreach (var user in database2.ObjectQuery<User> ("SELECT * FROM user"))
-    {
-        Console.WriteLine(user);
-    }
-    
+{   
     CSVDatabase<Cheep>.SetPath(path);
     var builder = WebApplication.CreateBuilder(args);
     var app = builder.Build();
