@@ -1,7 +1,11 @@
+using Chirp.SQLite;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+var dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? Path.GetTempPath() + "chirp.db";
+DBFacade.SetDBPath(dbPath);
 builder.Services.AddSingleton<ICheepService, CheepService>();
 
 

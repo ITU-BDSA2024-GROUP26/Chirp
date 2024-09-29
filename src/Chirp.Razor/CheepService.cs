@@ -1,8 +1,8 @@
 using Chirp.SQLite;
 
-public record CheepViewModel(string username, string text, string pub_date)
+public record CheepViewModel(string username, string text, Int64 pub_date)
 {
-    public CheepViewModel() : this("defaultUsername", "defaultText", "defaultPubDate") { }
+    public CheepViewModel() : this("defaultUsername", "defaultText", -1) { }
 }
 
 public interface ICheepService
@@ -16,7 +16,7 @@ public class CheepService : ICheepService
     private readonly ISQLDatabase _database;
     private readonly int _maxCheeps = 32;
     
-    private CheepService()
+    public CheepService()
     {
         _database = DBFacade.Instance;
     }
