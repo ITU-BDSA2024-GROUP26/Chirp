@@ -2,7 +2,12 @@ using Chirp.SQLite;
 
 public record CheepViewModel(string username, string text, Int64 pub_date)
 {
-    public CheepViewModel() : this("defaultUsername", "defaultText", -1) { }
+    public CheepViewModel() : this("", "", -1) { }
+}
+
+public record UserViewModel(long user_id, string username, string email)
+{
+    public UserViewModel() : this(-1, "", "") { }
 }
 
 public interface ICheepService
