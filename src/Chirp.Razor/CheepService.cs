@@ -1,29 +1,70 @@
-public record CheepViewModel(string Author, string Message, string Timestamp);
+using Chirp.SQLite;
+
+public record CheepViewModel(string username, string text, Int64 pub_date)
+{
+    public CheepViewModel() : this("", "", -1) { }
+}
+
+public record UserViewModel(long user_id, string username, string email)
+{
+    public UserViewModel() : this(-1, "", "") { }
+}
 
 public interface ICheepService
 {
-    public List<CheepViewModel> GetCheeps();
-    public List<CheepViewModel> GetCheepsFromAuthor(string author);
+    public IEnumerable<CheepViewModel> GetCheeps(int page);
+    public IEnumerable<CheepViewModel> GetCheepsFromAuthor(string author, int page);
 }
 
 public class CheepService : ICheepService
 {
-    // These would normally be loaded from a database for example
-    private static readonly List<CheepViewModel> _cheeps = new()
-        {
-            new CheepViewModel("Helge", "Hello, BDSA students!", UnixTimeStampToDateTimeString(1690892208)),
-            new CheepViewModel("Adrian", "Hej, velkommen til kurset.", UnixTimeStampToDateTimeString(1690895308)),
-        };
-
-    public List<CheepViewModel> GetCheeps()
+    private readonly ISQLDatabase _database;
+    private readonly int _maxCheeps = 32;
+    
+    public CheepService()
     {
-        return _cheeps;
+        _database = DBFacade.Instance;
+    }
+    
+    public void SetDBPath(string path)
+    {
+        DBFacade.SetDBPath(path);
+    }
+    
+    public IEnumerable<CheepViewModel> GetCheeps(int page)
+    {
+        var indices = getIndices(page);
+        
+        var query = $"""
+                        SELECT user.username, message.text, message.pub_date 
+                        FROM user
+                        JOIN message ON user.user_id = message.author_id
+                        WHERE message.message_id BETWEEN {indices[0]} AND {indices[1]}
+                    """;
+
+        return _database.ObjectQuery<CheepViewModel>(query);
     }
 
-    public List<CheepViewModel> GetCheepsFromAuthor(string author)
+    public IEnumerable<CheepViewModel> GetCheepsFromAuthor(string author, int page)
     {
-        // filter by the provided author name
-        return _cheeps.Where(x => x.Author == author).ToList();
+        var indices = getIndices(page);
+        
+        var query = $"""
+                         SELECT user.username, message.text, message.pub_date 
+                         FROM user
+                         JOIN message ON user.user_id = message.author_id
+                         WHERE user.username = '{author}'
+                         LIMIT {_maxCheeps} OFFSET {indices[0]}
+                     """;
+        
+        return _database.ObjectQuery<CheepViewModel>(query);
+    }
+    
+    private int[] getIndices(int page)
+    {
+        var startIndex = (page - 1) * _maxCheeps;
+        var endIndex = startIndex + _maxCheeps;
+        return new int[] { startIndex, endIndex };
     }
 
     private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
