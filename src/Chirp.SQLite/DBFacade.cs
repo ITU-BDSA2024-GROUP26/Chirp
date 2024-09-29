@@ -30,7 +30,8 @@ public sealed class DBFacade : ISQLDatabase
     public static void SetDBPath(string path)
     {
         // Taken from Helge's example
-        DBFacade._dataSourcePath = $"Data Source={path}";
+        // Added Pooling=False because if not, something isn't closed properly and temp databases can't be deleted when unit testing.
+        DBFacade._dataSourcePath = $"Data Source={path};Pooling=False";
     }
     
     // where T: new() ensures that T has a constructor and the constructor is parameterless.
@@ -39,7 +40,7 @@ public sealed class DBFacade : ISQLDatabase
     {
         using SqliteConnection connection = new(_dataSourcePath);
         connection.Open();
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = query;
         var results = new List<T>();
         using var reader = command.ExecuteReader();
@@ -73,7 +74,7 @@ public sealed class DBFacade : ISQLDatabase
     {
         using SqliteConnection connection = new(_dataSourcePath);
         connection.Open();
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = query;
         var results = new List<T>();
         using var reader = command.ExecuteReader();
@@ -95,7 +96,7 @@ public sealed class DBFacade : ISQLDatabase
     {
         using SqliteConnection connection = new(_dataSourcePath);
         connection.Open();
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = commandText;
         command.ExecuteNonQuery(); // ExecuteNonQuery is used for commands that do not return data. (insertion, deletion, etc...)
     }
