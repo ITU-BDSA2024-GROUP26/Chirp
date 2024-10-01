@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chirp.SQLite\Chirp.SQLite.csproj" />
+    <EmbeddedResource Include="schema.sql" />
+    <EmbeddedResource Include="chirp.db" />
   </ItemGroup>
 
 </Project>

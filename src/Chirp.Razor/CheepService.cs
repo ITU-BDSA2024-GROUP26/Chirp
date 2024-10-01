@@ -1,4 +1,6 @@
+using System.Reflection;
 using Chirp.SQLite;
+using Microsoft.Extensions.FileProviders;
 
 public record CheepViewModel(string username, string text, Int64 pub_date)
 {
@@ -23,8 +25,11 @@ public class CheepService : ICheepService
     
     public CheepService()
     {
+        var embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
+        using var reader = embeddedProvider.GetFileInfo("schema.sql").CreateReadStream();
+        using var sr = new StreamReader(reader);
+        var schema = sr.ReadToEnd();
         _database = DBFacade.Instance;
-        var schema = File.ReadAllText("schema.sql");
         _database.Execute(schema);
     }
     
