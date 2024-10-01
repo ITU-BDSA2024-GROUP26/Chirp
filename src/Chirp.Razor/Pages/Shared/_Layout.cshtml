@@ -4,21 +4,6 @@
     <title>@ViewData["Title"]</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="/favicon/favicon.ico">
-
-    <style>
-
-        button {
-            /* inspired by https://www.geeksforgeeks.org/how-to-fix-button-position-in-css */
-            position: relative;
-            top: 0px;
-            left: 225px;
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
 <div class=page>
@@ -28,10 +13,9 @@
             @RenderBody()
     </div>
     <div class=footer>
-        <div class = change_page_btns>
-
-            <button type="submit" class="btn btn-primary">Previous page</button>
-            <button type="submit" class="btn btn-primary">Next page</button>
+        <div>
+            <button type="submit" class="change-page-btns">Previous page</button>
+            <button type="submit" class="change-page-btns">Next page</button>
         </div>
         Chirp &mdash; An ASP.NET Application
     </div>
