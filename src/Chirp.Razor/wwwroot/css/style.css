@@ -287,3 +287,15 @@ ul.nav li a {
 ul.nav li a:hover {
     background-color: #8b4949;
 }
+
+.change-page-btns {
+     /* inspired by https://www.geeksforgeeks.org/how-to-fix-button-position-in-css */
+     position: relative;
+     top: 0px;
+     left: 225px;
+     background-color: #4caf50;
+     color: white;
+     padding: 10px 20px;
+     border: none;
+     cursor: pointer;
+}
