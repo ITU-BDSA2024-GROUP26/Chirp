@@ -25,10 +25,12 @@ public class CheepService : ICheepService
     
     public CheepService()
     {
+        // Taken from Helge's slides
         var embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
         using var reader = embeddedProvider.GetFileInfo("schema.sql").CreateReadStream();
         using var sr = new StreamReader(reader);
         var schema = sr.ReadToEnd();
+        
         _database = DBFacade.Instance;
         _database.Execute(schema);
     }
