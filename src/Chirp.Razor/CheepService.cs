@@ -1,4 +1,6 @@
+using System.Reflection;
 using Chirp.SQLite;
+using Microsoft.Extensions.FileProviders;
 
 public record CheepViewModel(string username, string text, Int64 pub_date)
 {
@@ -23,7 +25,14 @@ public class CheepService : ICheepService
     
     public CheepService()
     {
+        // Taken from Helge's slides
+        var embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
+        using var reader = embeddedProvider.GetFileInfo("schema.sql").CreateReadStream();
+        using var sr = new StreamReader(reader);
+        var schema = sr.ReadToEnd();
+        
         _database = DBFacade.Instance;
+        _database.Execute(schema);
     }
     
     public void SetDBPath(string path)
@@ -53,7 +62,7 @@ public class CheepService : ICheepService
                          SELECT user.username, message.text, message.pub_date 
                          FROM user
                          JOIN message ON user.user_id = message.author_id
-                         WHERE user.username = '{author}'
+                         WHERE user.username = '{author}' COLLATE NOCASE
                          LIMIT {_maxCheeps} OFFSET {indices[0]}
                      """;
         
