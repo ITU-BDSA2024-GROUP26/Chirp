@@ -24,6 +24,8 @@ public class CheepService : ICheepService
     public CheepService()
     {
         _database = DBFacade.Instance;
+        var schema = File.ReadAllText("schema.sql");
+        _database.Execute(schema);
     }
     
     public void SetDBPath(string path)
@@ -53,7 +55,7 @@ public class CheepService : ICheepService
                          SELECT user.username, message.text, message.pub_date 
                          FROM user
                          JOIN message ON user.user_id = message.author_id
-                         WHERE user.username = '{author}'
+                         WHERE user.username = '{author}' COLLATE NOCASE
                          LIMIT {_maxCheeps} OFFSET {indices[0]}
                      """;
         
