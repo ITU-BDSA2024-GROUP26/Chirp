@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Chirp.Razor;
 
 using Chirp.SQLite;
@@ -8,6 +10,10 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        // Load database connection via configuration
+        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
 // Add services to the container.
         builder.Services.AddRazorPages();
