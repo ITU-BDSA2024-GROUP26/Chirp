@@ -5,7 +5,7 @@ using Chirp.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
-public interface IMessageRepository 
+public interface IChirpRepository 
 {
     public Task CreateCheep(CheepDTO newCheep); 
     public Task<ICollection<CheepDTO>> ReadCheeps(string? authorNameRegex, int limit, int offset); 
@@ -14,10 +14,10 @@ public interface IMessageRepository
     public Task UpdateCheep(int id, string newMessage); 
 }
 
-public class MessageRepository : IMessageRepository
+public class ChirpRepository : IChirpRepository
 {
     private readonly CheepDBContext _context; 
-    public MessageRepository(CheepDBContext context) 
+    public ChirpRepository(CheepDBContext context) 
     {
         _context = context;
     }
@@ -27,7 +27,7 @@ public class MessageRepository : IMessageRepository
     {
         // since we can expect that there will only be a few milliseconds between the time when the user clicks submit and this method is called
         // we just set the timestamp to now
-        var result = await _context.AddAsync(new Cheep(newCheep.AuthorName, newCheep.MessageContent, DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
+        await _context.AddAsync(new Cheep(newCheep.AuthorName, newCheep.MessageContent, DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
 
         await _context.SaveChangesAsync(); 
 
