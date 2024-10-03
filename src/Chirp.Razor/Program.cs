@@ -10,6 +10,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddRazorPages();
         
         // Load database connection via configuration
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -17,6 +18,8 @@ public class Program
 
         // add services via DI  
         builder.Services.AddScoped<IChirpRepository, ChirpRepository>(); 
+
+
 
         var app = builder.Build();
 
