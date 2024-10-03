@@ -1,4 +1,5 @@
 
+using System.Collections;
 using System.Data;
 using System.Text.RegularExpressions;
 using Chirp.Razor;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 public interface IChirpRepository 
 {
     public Task CreateCheep(CheepDTO newCheep); 
-    public Task<IEnumerable<CheepDTO>> ReadCheeps(int limit, int offset, string? authorNameRegex); 
+    public Task<ICollection<CheepDTO>> ReadCheeps(int limit, int offset, string? authorNameRegex); 
 
     // given a cheep ID this method updates the 
     public Task UpdateCheep(int id, string newMessage); 
@@ -34,19 +35,21 @@ public class ChirpRepository : IChirpRepository
 
     }
 
-    public async Task<IEnumerable<CheepDTO>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
+    public async Task<ICollection<CheepDTO>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
     {
-        authorNameRegex ??= ".*"; 
+        authorNameRegex ??= "a"; 
         // readCheeps(A*) readCheeps(*+ B*+)
         IQueryable<CheepDTO>? query = 
-                    (from cheep in _context.Cheeps 
+                    (from cheep in _context.Cheeps
+                    .Include(c => c.Author) // from chatgpt 
                     where Regex.IsMatch(cheep.Author.Name, authorNameRegex)
                     select new CheepDTO(cheep)).Skip(offset);
+        
         if(limit > 0) {
-            query.Take(limit);
+            query = query.Take(limit);
         }
         
-
+        
         await _context.SaveChangesAsync();
 
         return await query.ToListAsync();
