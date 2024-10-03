@@ -14,12 +14,10 @@ public class Program
         
         // Load database connection via configuration
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
+        builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
 
         // add services via DI  
         builder.Services.AddScoped<IChirpRepository, ChirpRepository>(); 
-
-
 
         var app = builder.Build();
 

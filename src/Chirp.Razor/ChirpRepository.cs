@@ -16,10 +16,11 @@ public interface IChirpRepository
 
 public class ChirpRepository : IChirpRepository
 {
-    private readonly CheepDBContext _context; 
-    public ChirpRepository(CheepDBContext context) 
+    private readonly ChirpDBContext _context; 
+    public ChirpRepository(ChirpDBContext context) 
     {
         _context = context;
+        DbInitializer.SeedDatabase(context);
     }
 
     // The timestamp of newCheep is ignored, it can be null or empty just fine
