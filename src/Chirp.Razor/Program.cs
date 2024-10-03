@@ -15,12 +15,8 @@ public class Program
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
-        // Add services to the container.
-        builder.Services.AddRazorPages();
-        var dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? Path.GetTempPath() + "chirp.db";
-        DBFacade.SetDBPath(dbPath);
-        builder.Services.AddSingleton<ICheepService, CheepService>();
-
+        // add services via DI  
+        builder.Services.AddScoped<IChirpRepository, ChirpRepository>(); 
 
         var app = builder.Build();
 
