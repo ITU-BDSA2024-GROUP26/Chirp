@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 public interface IChirpRepository 
 {
     public Task CreateCheep(CheepDTO newCheep); 
-    public Task<ICollection<CheepDTO>> ReadCheeps(string? authorNameRegex, int limit, int offset); 
+    public Task<IEnumerable<CheepDTO>> ReadCheeps(int limit, int offset, string? authorNameRegex); 
 
     // given a cheep ID this method updates the 
     public Task UpdateCheep(int id, string newMessage); 
@@ -33,7 +33,7 @@ public class ChirpRepository : IChirpRepository
 
     }
 
-    public async Task<ICollection<CheepDTO>> ReadCheeps(string? authorNameRegex, int limit = -1, int offset = 0)
+    public async Task<IEnumerable<CheepDTO>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
     {
         authorNameRegex ??= ".*"; 
         // readCheeps(A*) readCheeps(*+ B*+)
