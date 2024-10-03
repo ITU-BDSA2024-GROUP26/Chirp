@@ -15,7 +15,7 @@ public class Program
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
-// Add services to the container.
+        // Add services to the container.
         builder.Services.AddRazorPages();
         var dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? Path.GetTempPath() + "chirp.db";
         DBFacade.SetDBPath(dbPath);
@@ -24,7 +24,7 @@ public class Program
 
         var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+        // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Error");
