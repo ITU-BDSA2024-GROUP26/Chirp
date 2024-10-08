@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Chirp.Core\Chirp.Core.csproj" />
+    <ProjectReference Include="..\Chirp.DTOs\Chirp.DTOs.csproj" />
+    <ProjectReference Include="..\Chirp.Repositories\Chirp.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>
