@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chirp.Infrastructure\Chirp.DTOs\Chirp.DTOs.csproj" />
-    <ProjectReference Include="..\Chirp.Infrastructure\Chirp.Services\Chirp.Services.csproj" />
+    <ProjectReference Include="..\Chirp.Core\Chirp.Core.DTOs\Chirp.Core.DTOs.csproj" />
+    <ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.Services\Chirp.Infrastructure.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

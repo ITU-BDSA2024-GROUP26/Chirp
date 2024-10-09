@@ -1,7 +1,7 @@
-using Chirp.DTOs;
-using Chirp.Repositories;
+using Chirp.Core.DTOs;
+using Chirp.Infrastructure.Repositories;
 
-namespace Chirp.Services;
+namespace Chirp.Infrastructure.Services;
 
 using System.Reflection;
 

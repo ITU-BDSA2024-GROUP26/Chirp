@@ -1,4 +1,6 @@
-﻿namespace Chirp.Repositories;
+﻿using Chirp.Core.Entities;
+
+namespace Chirp.Infrastructure.Repositories;
 
 using Chirp.Core;
 
