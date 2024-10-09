@@ -1,7 +1,7 @@
 using System.Globalization;
-using Chirp.Core;
+using Chirp.Core.Entities;
 
-namespace Chirp.DTOs;
+namespace Chirp.Core.DTOs;
 
 public class CheepDTO 
 {

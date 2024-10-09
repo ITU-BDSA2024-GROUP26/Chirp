@@ -1,4 +1,4 @@
-namespace Chirp.Core;
+namespace Chirp.Core.Entities;
 
 public class Author
 {

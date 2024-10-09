@@ -1,5 +1,5 @@
-using Chirp.Repositories;
-using Chirp.Services;
+using Chirp.Infrastructure.Repositories;
+using Chirp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor;

@@ -1,6 +1,6 @@
-﻿using Chirp.DTOs;
+﻿using Chirp.Core.DTOs;
 
-namespace Chirp.Services;
+namespace Chirp.Infrastructure.Services;
 
 using Core;
 

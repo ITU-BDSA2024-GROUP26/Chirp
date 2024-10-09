@@ -1,6 +1,5 @@
-﻿using Chirp.DTOs;
-using Chirp.Repositories;
-using Chirp.Services;
+﻿using Chirp.Core.DTOs;
+using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

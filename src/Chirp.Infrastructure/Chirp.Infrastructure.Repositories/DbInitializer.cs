@@ -1,7 +1,7 @@
 using System;
-using Chirp.Core;
+using Chirp.Core.Entities;
 
-namespace Chirp.Repositories;
+namespace Chirp.Infrastructure.Repositories;
 
 public static class DbInitializer
 {
