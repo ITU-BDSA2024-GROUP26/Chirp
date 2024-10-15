@@ -30,14 +30,14 @@ public class CheepRepository : ICheepRepository
     public async Task<Author?> FindAuthorbyName(string name)
     {
 
-        var author = await _context.Authors.FirstOrDefaulAsync(a=> a.Name == name);
+        var author = await _context.Authors.FirstOrDefaultAsync(a=> a.Name == name);
         return await author;  
 
     } 
     public async Task<Author?> FindAuthorbyEmail(string email)
     {
 
-        var author = await _context.Authors.FirstOrDefaulAsync(a=> a.Email == email);
+        var author = await _context.Authors.FirstOrDefaultAsync(a=> a.Email == email);
         return await author;  
 
     } 
