@@ -19,14 +19,22 @@ public class CheepRepository : ICheepRepository
     
     public async Task CreateCheep(Cheep newCheep)
     {
+        //  check for author exists with FindAuthorbyName
+        // if author doesn't exists, call CreateAuthor. 
 
         await _context.AddAsync(newCheep);
         await _context.SaveChangesAsync(); 
 
     }
 
-  
+    public async Task CreateAuthor(Author newAuthor)
+    {
 
+        await _context.AddAsync(newAuthor);
+        await _context.SaveChangesAsync(); 
+
+    }
+  
     public async Task<Author?> FindAuthorbyName(string name)
     {
 
@@ -41,6 +49,7 @@ public class CheepRepository : ICheepRepository
         return author;  
 
     } 
+
 
     public async Task<ICollection<Cheep>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
     {
