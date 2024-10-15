@@ -21,6 +21,16 @@ public class CheepRepository : ICheepRepository
     {
         //  check for author exists with FindAuthorbyName
         // if author doesn't exists, call CreateAuthor. 
+        // else assign the author that exists to author of the new cheep
+        var authorExists = await FindAuthorbyName(newCheep.Author.Name);
+        if (authorExists == null) 
+        {
+                await CreateAuthor(newCheep.Author); 
+        }
+        else 
+        {
+            newCheep.Author = authorExists; 
+        }
 
         await _context.AddAsync(newCheep);
         await _context.SaveChangesAsync(); 
