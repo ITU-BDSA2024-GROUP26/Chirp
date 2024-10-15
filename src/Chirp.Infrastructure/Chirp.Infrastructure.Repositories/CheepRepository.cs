@@ -5,6 +5,8 @@ namespace Chirp.Infrastructure.Repositories;
 using Core;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
+using System.Runtime.CompilerServices;
 
 public class CheepRepository : ICheepRepository
 {
@@ -17,9 +19,22 @@ public class CheepRepository : ICheepRepository
     
     public async Task CreateCheep(Cheep newCheep)
     {
+
         await _context.AddAsync(newCheep);
         await _context.SaveChangesAsync(); 
+
     }
+
+  
+
+    public async Task<Author?> FindAuthorbyName(string name)
+    {
+
+
+        var author = await _context.Authors.FirstOrDefaulAsync(a=> a.Name == name);
+        return await author;  
+
+    } 
 
     public async Task<ICollection<Cheep>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
     {
@@ -52,4 +67,5 @@ public class CheepRepository : ICheepRepository
 
         await _context.SaveChangesAsync();
     }
+
 }
