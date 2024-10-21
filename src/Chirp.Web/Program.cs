@@ -13,9 +13,9 @@ public class Program
         builder.Services.AddRazorPages();
 
         // Load database connection via configuration
-        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        string? connectionString = builder.Configuration.GetConnectionString("MyTestDb") ?? "DefaultConnection";
         builder.Services.AddDbContext<CheepDBContext>(options =>
-        options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("MyTestDb"))
+        options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("MyTestDb")!)
         );
         //options.UseSqlite(connectionString));
 
