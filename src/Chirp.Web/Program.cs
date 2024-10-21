@@ -11,13 +11,16 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddRazorPages();
-        
+
         // Load database connection via configuration
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
+        builder.Services.AddDbContext<CheepDBContext>(options =>
+        options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("MyTestDb"))
+        );
+        //options.UseSqlite(connectionString));
 
         // add services via DI  
-        builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
+        builder.Services.AddScoped<ICheepRepository, CheepRepository>();
         builder.Services.AddScoped<ICheepService, CheepService>();
 
         var app = builder.Build();
