@@ -141,7 +141,7 @@ public class CheepRepositoryTests : IDisposable
         var cheeps = await _repository.ReadCheeps(-1, 0, regex);
 
         // Assert
-        Assert.All(cheeps, c => Assert.Matches(regex, c.Author.Name));
+        Assert.All(cheeps, c => Assert.Matches(regex, c.Author!.Name!));
     }
 
 
@@ -157,7 +157,7 @@ public class CheepRepositoryTests : IDisposable
 
         // Assert
         var updatedCheep = await _context.Cheeps.FindAsync(cheep.CheepId);
-        Assert.Equal(newText, updatedCheep.Text);
+        Assert.Equal(newText, updatedCheep!.Text!);
     }
 
     [Fact]
