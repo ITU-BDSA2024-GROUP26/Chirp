@@ -16,7 +16,6 @@ public class TestAPI : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
-    private readonly CheepDBContext _context;
 
     public TestAPI(WebApplicationFactory<Program> factory)
     {
@@ -37,18 +36,17 @@ public class TestAPI : IClassFixture<WebApplicationFactory<Program>>
                 // Ensure ChirpRepository is using the in-memory databse
                 var serviceProvider = services.BuildServiceProvider();
 
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<CheepDBContext>();
+                using var scope = serviceProvider.CreateScope();
+                var scopedServices = scope.ServiceProvider;
+                var db = scopedServices.GetRequiredService<CheepDBContext>();
 
-                    db.Database.EnsureCreated();
+                db.Database.EnsureCreated();
 
-                    // Seed the in-memory database with test data
-                    DbInitializer.SeedDatabase(db);
-                }
+                // Seed the in-memory database with test data
+                DbInitializer.SeedDatabase(db);
             });
         });
+
 
         _factory = factory;
         _client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = true, HandleCookies = true });
