@@ -3,20 +3,17 @@ using Chirp.Core.Entities;
 
 namespace Chirp.Core.DTOs;
 
-public class CheepDTO 
+public class CheepDTO(string author, string message, DateTime timeStamp, int id)
 {
-    public int ID {get; set;}
-    public string AuthorName { get; set; }
-    public string MessageContent { get; set; }
-    public string TimeStampStr { get; set; }
+    public int ID { get; set; } = id;
+    public string AuthorName { get; set; } = author;
+    public string MessageContent { get; set; } = message;
+    public string TimeStampStr { get; set; } = timeStamp.ToString("MM/dd/yy H:mm:ss", CultureInfo.InvariantCulture);
 
-    public CheepDTO(string author, string message, DateTime timeStamp, int id)
-    {
-        TimeStampStr = timeStamp.ToString("MM/dd/yy H:mm:ss", CultureInfo.InvariantCulture);
-        AuthorName = author; 
-        MessageContent = message;
-        ID = id;
-    }
-
-    public CheepDTO(Cheep cheep) : this(cheep.Author.Name, cheep.Text, cheep.TimeStamp, cheep.CheepId) { }
+    public CheepDTO(Cheep cheep) : this(
+        cheep.Author?.Name ?? throw new ArgumentNullException(nameof(cheep.Author), "Author cannot be null."),
+        cheep.Text ?? throw new ArgumentNullException(nameof(cheep.Text), "Cheep text cannot be null."),
+        cheep.TimeStamp,
+        cheep.CheepId)
+    { }
 }
