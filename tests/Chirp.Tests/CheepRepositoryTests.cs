@@ -40,9 +40,10 @@ public class CheepRepositoryTests : IDisposable
     public async Task CreateCheep_AddsCheepToDatabase()
     {
         // Arrange
+        const string text = "Hello world";
         var newCheep = new Cheep
         {
-            Text = "Hello, world!",
+            Text = text,
             Author = _context.Authors.First() // Assuming Authors are seeded
         };
 
@@ -51,7 +52,7 @@ public class CheepRepositoryTests : IDisposable
 
         // Assert
         var cheeps = await _context.Cheeps.ToListAsync();
-        Assert.Contains(cheeps, c => c.Text == "Hello, world!");
+        Assert.Equal(text, cheeps.Last().Text);
     }
 
     [Fact]
