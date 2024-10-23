@@ -8,6 +8,6 @@ times = [1690891760, 1690978778, 1690979858, 1690981487]
 # https://bdsagroup26chirpremotedb.azurewebsites.net
 # http://localhost:5000
 
-for i in range(4):
-    resp = requests.post('https://bdsagroup26chirpremotedb.azurewebsites.net/cheep', json={"Author": names[i], "Message": messages[i], "Timestamp": times[i]})
-    print(resp.status_code)
+
+resp = requests.post('https://bdsagroup26chirpremotedb.azurewebsites.net/cheep', json={"Author": "testauthor", "Message": "Azure persistent database test message 123", "Timestamp": 1690982000})
+print(resp.status_code)
