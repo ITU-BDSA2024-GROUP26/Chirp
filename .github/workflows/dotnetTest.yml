@@ -26,7 +26,7 @@ jobs:
       id: dirs
       shell: bash
       run: |
-        dirs=($(ls tests -d)) 
+        dirs=($(ls -d)) 
 
         out="["
         for dir in "${dirs[@]}";
