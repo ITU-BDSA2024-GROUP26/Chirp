@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6E321730
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Web.Tests", "tests\Chirp.Web.Tests\Chirp.Web.Tests.csproj", "{6C1ED13B-1831-40D8-B2AD-CE658463113A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CheepRepository.Tests", "tests\Chirp.Tests\Chirp.CheepRepository.Tests.csproj", "{776755CA-CAB9-476E-A68C-6DACAF03784E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CheepRepository.Tests", "tests\Chirp.CheepRepository.Tests\Chirp.CheepRepository.Tests.csproj", "{776755CA-CAB9-476E-A68C-6DACAF03784E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
