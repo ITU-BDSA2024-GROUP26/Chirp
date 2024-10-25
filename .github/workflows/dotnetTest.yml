@@ -25,7 +25,7 @@ jobs:
     - name: List Dirs
       id: dirs
       run: |
-        ls 
+        echo ls 
         dirs=($(ls ./tests/* -d)) 
 
         out="["
