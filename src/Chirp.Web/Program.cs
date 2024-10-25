@@ -46,6 +46,9 @@ public class Program
 
         app.UseRouting();
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.MapRazorPages();
 
         app.Run();
