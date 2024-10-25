@@ -5,21 +5,60 @@ name: .Net Test
 on: [ push, workflow_call, workflow_dispatch ]
 
 jobs:
-  test:
-    name: Test
+  setup-dotnet: 
+    name: Setup dotnet
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.x.x
+  
+  define-matrix: 
+    name: Define Matrix
+    runs-on: ubuntu-latest 
+    outputs: 
+      dirs: ${{ steps.dirs.outputs.dirs }}
+
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v4
+    
+    - name: List Dirs
+      id: dirs
+      shell: bash
+      run: |
+        dirs=($(ls tests/* -d)) 
+
+        out="["
+        for dir in "${dirs[@]}";
+        do
+          out+=\"$dir\",
+        done;
+
+        # replace final , with ]
+        out="dirs=${out%?}]" #prints out without the last character, then appends ]
+
+        echo $out >> "$GITHUB_OUTPUT"
+
+  test:
+    name: Test
+    needs: [setup-dotnet, define-matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dirs: ${{ fromJSON(needs.define-matrix.outputs.dirs) }}
+    steps: 
+    - name: Checkout 
+      uses: actions/checkout@v4
+  
     - name: Test
       shell: bash
       run: |
-        for dir in tests/*; do
-            if [ -d "$dir" ]; then
-                dotnet test "$dir"
-            fi
-        done
+        dotnet test ${{ matrix.dirs }}
+
+
+
+
+
