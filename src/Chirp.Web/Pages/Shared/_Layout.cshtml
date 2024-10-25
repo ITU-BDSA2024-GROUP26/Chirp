@@ -8,9 +8,8 @@
 <body>
 <div class=page>
     <h1><img src="/images/icon1.png" alt="Icon1"/>Chirp!</h1>
-
     <div class=body>
-            @RenderBody()
+        @RenderBody()
     </div>
     <div class=footer>
         <div>
@@ -20,7 +19,9 @@
         Chirp &mdash; An ASP.NET Application
     </div>
 </div>
-
+<header>
+    <partial name="_LoginPartial"/>
+</header>
 </body>
 @await RenderSectionAsync("Scripts", required: false)
 </html>
