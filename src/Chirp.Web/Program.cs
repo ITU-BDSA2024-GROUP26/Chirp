@@ -1,3 +1,4 @@
+using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ public class Program
             connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         }
         builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
+        builder.Services.AddDefaultIdentity<ChirpUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<CheepDBContext>().AddEntityFrameworkStores<CheepDBContext>();
 
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
