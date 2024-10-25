@@ -5,15 +5,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
 
-public class UserTimelineModel : PageModel
+public class UserTimelineModel(ICheepService service) : PageModel
 {
-    private readonly ICheepService _service;
-    public IEnumerable<CheepDTO> Cheeps { get; set; }
-
-    public UserTimelineModel(ICheepService service)
-    {
-        _service = service;
-    }
+    private readonly ICheepService _service = service;
+    public required IEnumerable<CheepDTO> Cheeps { get; set; }
 
     public async Task<ActionResult> OnGetAsync(string author, [FromQuery] int page = 1)
     {
