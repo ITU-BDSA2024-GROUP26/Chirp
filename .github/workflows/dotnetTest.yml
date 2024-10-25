@@ -24,9 +24,9 @@ jobs:
     steps:
     - name: List Dirs
       id: dirs
+      shell: bash
       run: |
-        echo $(ls) 
-        dirs=($(ls ./tests/* -d)) 
+        dirs=($(ls tests/* -d)) 
 
         out="["
         for dir in "${dirs[@]}";
@@ -38,7 +38,6 @@ jobs:
         out="dirs=${out%?}]" #prints out without the last character, then appends ]
 
         echo $out >> "$GITHUB_OUTPUT"
-        echo ouput: $out
 
   test:
     name: Test
