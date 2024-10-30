@@ -199,4 +199,33 @@ var createdAuthor = await _context.Authors.FindAsync(newAuthor.AuthorId);
 
 }
 
+ [Fact]
+public async Task CanFindAuthorbyName() 
+{
+
+    //Arrange 
+
+Author newAuthor = new Author()
+        {
+            AuthorId = 14,
+            Name = "boomboom",
+            Email = "bombodo_daBomb.com",
+            Cheeps = new List<Cheep>()
+        };
+
+        _context.Authors.Add(newAuthor);
+        await _context.SaveChangesAsync();
+
+//Act
+
+var foundAuthor = await _repository.FindAuthorbyName("boomboom"); 
+
+//Assert
+//var FoundAuthor = await _context.Authors.FindAsync(newAuthor.Name);
+        Assert.Equal(newAuthor.Name, foundAuthor.Name);
+         Assert.Equal(newAuthor.Email, foundAuthor.Email);
+
+}
+
+
 }
