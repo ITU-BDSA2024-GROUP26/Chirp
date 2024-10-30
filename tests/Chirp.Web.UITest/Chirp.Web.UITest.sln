@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chirp.Web.UITest", "Chirp.Web.UITest.csproj", "{AE6679C7-E34A-45A6-8221-2E3F9EFECA4A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE6679C7-E34A-45A6-8221-2E3F9EFECA4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE6679C7-E34A-45A6-8221-2E3F9EFECA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE6679C7-E34A-45A6-8221-2E3F9EFECA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE6679C7-E34A-45A6-8221-2E3F9EFECA4A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF3E81B2-9475-4EAF-B0A5-D68D6494BA13}
+	EndGlobalSection
+EndGlobal

@@ -1,2 +1,2 @@
 global using Xunit;
-global using Chirp.Razor;
+global using Chirp.Web;
