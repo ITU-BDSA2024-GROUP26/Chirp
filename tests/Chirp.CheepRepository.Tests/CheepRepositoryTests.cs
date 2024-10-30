@@ -11,7 +11,6 @@ namespace Chirp.CheepRepository.Tests;
 
 public class CheepRepositoryTests : IDisposable
 {
-
     private readonly ICheepRepository _repository;
     private readonly CheepDBContext _context;
 
@@ -169,8 +168,48 @@ public class CheepRepositoryTests : IDisposable
         var newText = "Should not work";
 
         // Act & Assert
-        var exception = await Record.ExceptionAsync(() => _repository.UpdateCheep(nonExistentId, newText));
+        var exception = await Record.ExceptionAsync(() => _repository.UpdateCheep(nonExistentId, newText)); 
         Assert.Null(exception);
     }
 
+    [Fact]
+    public async Task IsAuthorCreated() 
+    {
+        //Arrange 
+        Author newAuthor = new Author()
+        {
+            AuthorId = 13,
+            Name = "JoJo",
+            Email = "jojo_daBeast.com",
+            Cheeps = new List<Cheep>()
+        };
+
+        //Act
+        await _repository.CreateAuthor(newAuthor); 
+
+        //Assert
+        var createdAuthor = await _context.Authors.FindAsync(newAuthor.AuthorId);
+        Assert.Equal(newAuthor.Name, createdAuthor.Name);
+        Assert.Equal(newAuthor.Email, createdAuthor.Email);
+    }
+
+    [Fact]
+    public async Task CanFindAuthorbyName() 
+    {
+        //Act
+        var foundAuthor = await _repository.FindAuthorbyName("Roger Histand"); 
+
+        //Assert
+        Assert.Equal("Roger+Histand@hotmail.com", foundAuthor?.Email);
+    }
+
+    [Fact]
+    public async Task CanFindAuthorbyEmail() 
+    {
+        //Act
+        var foundAuthor = await _repository.FindAuthorbyEmail("Roger+Histand@hotmail.com"); 
+
+        //Assert
+        Assert.Equal("Roger Histand", foundAuthor?.Name);  
+    }
 }
