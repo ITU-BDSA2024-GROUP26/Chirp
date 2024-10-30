@@ -19,22 +19,19 @@ public class Tests : PageTest
     {
         Assert.Pass();
     }
-
+    
     [Test]
-    public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingtoTheIntroPage()
+    public async Task TestAuthorTimeline()
     {
-        await Page.GotoAsync("https://playwright.dev");
-        // Expect a title "to contain" a substring.
-        await Expect(Page).ToHaveTitleAsync(new Regex("Playwright"));
+        // arrange
+        await Page.GotoAsync("http://localhost:5273/");
 
-        // create a locator
-        var getStarted = Page.GetByRole(AriaRole.Link, new() { Name = "Get started" });
-        // Expect an attribute "to be strictly equal" to the value.
-        await Expect(getStarted).ToHaveAttributeAsync("href", "/docs/intro");
+        // act
+        await Page.Locator("p").Filter(new() { HasText = "Jacqualine Gilcoine They were" }).GetByRole(AriaRole.Link).ClickAsync();
 
-        // Click the get started link.
-        await getStarted.ClickAsync();
-        // Expects the URL to contain intro.
-        await Expect(Page).ToHaveURLAsync(new Regex(".*intro"));
+        // assert 
+        await Expect(Page.Locator("h2")).ToContainTextAsync("Jacqualine Gilcoine's Timeline");
+        await Expect(Page.Locator("#messagelist")).ToContainTextAsync("Jacqualine Gilcoine His initials were L. L. How do you think this steak is rather reserved, and your Krusenstern. — 08/01/23 13:15:54");
     }
+
 }
