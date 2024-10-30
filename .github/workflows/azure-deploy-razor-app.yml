@@ -54,7 +54,8 @@ jobs:
       - name: Copy startup script
         shell: bash
         run: |
-          cp startup.sh ${{env.DOTNET_ROOT}}/migrate/
+          mkdir -p ${{env.DOTNET_ROOT}}/migrate
+          cp startup.sh ${{env.DOTNET_ROOT}}/migrate
 
       - name: Create Migration Bundle
         shell: bash 
