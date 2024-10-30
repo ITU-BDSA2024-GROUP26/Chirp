@@ -175,7 +175,6 @@ public class CheepRepositoryTests : IDisposable
     [Fact]
     public async Task IsAuthorCreated() 
     {
-
         //Arrange 
         Author newAuthor = new Author()
         {
@@ -197,7 +196,6 @@ public class CheepRepositoryTests : IDisposable
     [Fact]
     public async Task CanFindAuthorbyName() 
     {
-        
         //Act
         var foundAuthor = await _repository.FindAuthorbyName("Roger Histand"); 
 
@@ -214,5 +212,4 @@ public class CheepRepositoryTests : IDisposable
         //Assert
         Assert.Equal("Roger Histand", foundAuthor?.Name);  
     }
-
 }
