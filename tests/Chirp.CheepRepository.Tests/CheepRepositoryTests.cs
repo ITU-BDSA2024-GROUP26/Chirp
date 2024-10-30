@@ -169,17 +169,16 @@ public class CheepRepositoryTests : IDisposable
         var newText = "Should not work";
 
         // Act & Assert
-        var exception = await Record.ExceptionAsync(() => _repository.UpdateCheep(nonExistentId, newText));
+        var exception = await Record.ExceptionAsync(() => _repository.UpdateCheep(nonExistentId, newText)); 
         Assert.Null(exception);
     }
 
     [Fact]
-public async Task IsAuthorCreated() 
-{
+    public async Task IsAuthorCreated() 
+    {
 
-    //Arrange 
-
-Author newAuthor = new Author()
+        //Arrange 
+        Author newAuthor = new Author()
         {
             AuthorId = 13,
             Name = "JoJo",
@@ -187,72 +186,34 @@ Author newAuthor = new Author()
             Cheeps = new List<Cheep>()
         };
 
+        //Act
+        await _repository.CreateAuthor(newAuthor); 
 
-//Act
-
-await _repository.CreateAuthor(newAuthor); 
-
-//Assert
-var createdAuthor = await _context.Authors.FindAsync(newAuthor.AuthorId);
+        //Assert
+        var createdAuthor = await _context.Authors.FindAsync(newAuthor.AuthorId);
         Assert.Equal(newAuthor.Name, createdAuthor.Name);
-         Assert.Equal(newAuthor.Email, createdAuthor.Email);
+        Assert.Equal(newAuthor.Email, createdAuthor.Email);
+    }
 
-}
+    [Fact]
+    public async Task CanFindAuthorbyName() 
+    {
+        
+        //Act
+        var foundAuthor = await _repository.FindAuthorbyName("Roger Histand"); 
 
- [Fact]
-public async Task CanFindAuthorbyName() 
-{
+        //Assert
+        Assert.Equal("Roger+Histand@hotmail.com", foundAuthor?.Email);
+    }
 
-    //Arrange 
+    [Fact]
+    public async Task CanFindAuthorbyEmail() 
+    {
+        //Act
+        var foundAuthor = await _repository.FindAuthorbyEmail("Roger+Histand@hotmail.com"); 
 
-Author newAuthor = new Author()
-        {
-            AuthorId = 14,
-            Name = "boomboom",
-            Email = "bombodo_daBomb.com",
-            Cheeps = new List<Cheep>()
-        };
-
-        _context.Authors.Add(newAuthor);
-        await _context.SaveChangesAsync();
-
-//Act
-
-var foundAuthor = await _repository.FindAuthorbyName(newAuthor.Name); 
-
-//Assert
-
-        Assert.Equal(newAuthor.Name, foundAuthor.Name);
-         Assert.Equal(newAuthor.Email, foundAuthor.Email);
-
-}
-
-[Fact]
-public async Task CanFindAuthorbyEmail() 
-{
-
-    //Arrange 
-
-Author newAuthor = new Author()
-        {
-            AuthorId = 15,
-            Name = "chikachika",
-            Email = "chikachika_ohyeaaaaaah.com",
-            Cheeps = new List<Cheep>()
-        };
-
-        _context.Authors.Add(newAuthor);
-        await _context.SaveChangesAsync();
-
-//Act
-
-var foundAuthor = await _repository.FindAuthorbyEmail(newAuthor.Email); 
-
-//Assert
-
-        Assert.Equal(newAuthor.Name, foundAuthor.Name);
-         Assert.Equal(newAuthor.Email, foundAuthor.Email);
-
-}
+        //Assert
+        Assert.Equal("Roger Histand", foundAuthor?.Name);  
+    }
 
 }
