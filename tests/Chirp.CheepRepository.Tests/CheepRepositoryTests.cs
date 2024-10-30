@@ -11,7 +11,6 @@ namespace Chirp.CheepRepository.Tests;
 
 public class CheepRepositoryTests : IDisposable
 {
-
     private readonly ICheepRepository _repository;
     private readonly CheepDBContext _context;
 
