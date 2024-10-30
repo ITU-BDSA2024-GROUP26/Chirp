@@ -25,7 +25,7 @@ public class Program
         }
         builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
         builder.Services.AddDefaultIdentity<ChirpUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<CheepDBContext>().AddEntityFrameworkStores<CheepDBContext>();
+            .AddEntityFrameworkStores<CheepDBContext>();
 
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
