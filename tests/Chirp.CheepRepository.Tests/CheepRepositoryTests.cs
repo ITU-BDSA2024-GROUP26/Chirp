@@ -173,4 +173,30 @@ public class CheepRepositoryTests : IDisposable
         Assert.Null(exception);
     }
 
+    [Fact]
+public async Task IsAuthorCreated() 
+{
+
+    //Arrange 
+
+Author newAuthor = new Author()
+        {
+            AuthorId = 13,
+            Name = "JoJo",
+            Email = "jojo_daBeast.com",
+            Cheeps = new List<Cheep>()
+        };
+
+
+//Act
+
+await _repository.CreateAuthor(newAuthor); 
+
+//Assert
+var createdAuthor = await _context.Authors.FindAsync(newAuthor.AuthorId);
+        Assert.Equal(newAuthor.Name, createdAuthor.Name);
+         Assert.Equal(newAuthor.Email, createdAuthor.Email);
+
+}
+
 }
