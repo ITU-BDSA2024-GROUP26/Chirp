@@ -41,7 +41,7 @@ jobs:
     uses: ./.github/workflows/dotnetTest.yml
   
   setup-migration: 
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps: 
       - uses: actions/checkout@v4
@@ -52,17 +52,15 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Copy startup script
-       shell: bash
-       run: |
-         cp startup.sh ${{env.DOTNET_ROOT}}/migrate/
+        shell: bash
+        run: |
+          cp startup.sh ${{env.DOTNET_ROOT}}/migrate/
 
       - name: Create Migration Bundle
         shell: bash 
         run: |
           cd src/Chirp.Infrastructure/Chirp.Infrastructure.Repositories
           dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.DOTNET_ROOT}}/migrate/bundle
-
-     
           
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
