@@ -218,14 +218,41 @@ Author newAuthor = new Author()
 
 //Act
 
-var foundAuthor = await _repository.FindAuthorbyName("boomboom"); 
+var foundAuthor = await _repository.FindAuthorbyName(newAuthor.Name); 
 
 //Assert
-//var FoundAuthor = await _context.Authors.FindAsync(newAuthor.Name);
+
         Assert.Equal(newAuthor.Name, foundAuthor.Name);
          Assert.Equal(newAuthor.Email, foundAuthor.Email);
 
 }
 
+[Fact]
+public async Task CanFindAuthorbyEmail() 
+{
+
+    //Arrange 
+
+Author newAuthor = new Author()
+        {
+            AuthorId = 15,
+            Name = "chikachika",
+            Email = "chikachika_ohyeaaaaaah.com",
+            Cheeps = new List<Cheep>()
+        };
+
+        _context.Authors.Add(newAuthor);
+        await _context.SaveChangesAsync();
+
+//Act
+
+var foundAuthor = await _repository.FindAuthorbyEmail(newAuthor.Email); 
+
+//Assert
+
+        Assert.Equal(newAuthor.Name, foundAuthor.Name);
+         Assert.Equal(newAuthor.Email, foundAuthor.Email);
+
+}
 
 }
