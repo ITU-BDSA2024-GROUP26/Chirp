@@ -11,7 +11,6 @@ namespace Chirp.CheepRepository.Tests;
 
 public class CheepRepositoryTests : IDisposable
 {
-
     private readonly ICheepRepository _repository;
     private readonly CheepDBContext _context;
 
@@ -176,7 +175,6 @@ public class CheepRepositoryTests : IDisposable
     [Fact]
 public async Task IsAuthorCreated() 
 {
-
     //Arrange 
 
 Author newAuthor = new Author()
@@ -196,13 +194,11 @@ await _repository.CreateAuthor(newAuthor);
 var createdAuthor = await _context.Authors.FindAsync(newAuthor.AuthorId);
         Assert.Equal(newAuthor.Name, createdAuthor.Name);
          Assert.Equal(newAuthor.Email, createdAuthor.Email);
-
 }
 
  [Fact]
 public async Task CanFindAuthorbyName() 
 {
-
     //Arrange 
 
 Author newAuthor = new Author()
@@ -224,13 +220,11 @@ var foundAuthor = await _repository.FindAuthorbyName(newAuthor.Name);
 
         Assert.Equal(newAuthor.Name, foundAuthor.Name);
          Assert.Equal(newAuthor.Email, foundAuthor.Email);
-
 }
 
 [Fact]
 public async Task CanFindAuthorbyEmail() 
 {
-
     //Arrange 
 
 Author newAuthor = new Author()
@@ -252,7 +246,5 @@ var foundAuthor = await _repository.FindAuthorbyEmail(newAuthor.Email);
 
         Assert.Equal(newAuthor.Name, foundAuthor.Name);
          Assert.Equal(newAuthor.Email, foundAuthor.Email);
-
 }
-
 }
