@@ -1,6 +1,7 @@
 using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor;
@@ -30,7 +31,21 @@ public class Program
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<ICheepService, CheepService>();
+           // Taken from Helge
+        builder.Services.AddAuthentication(options =>
+        {
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = "GitHub";
         
+        })
+        .AddCookie()
+        .AddGitHub(o =>
+        {
+        o.ClientId = builder.Configuration["authentication:github:clientId"];
+        o.ClientSecret = builder.Configuration["authentication:github:clientSecret"];
+        o.CallbackPath = "/signin-github";
+        });
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
