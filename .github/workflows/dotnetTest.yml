@@ -58,6 +58,12 @@ jobs:
       run: |
         dotnet test ${{ matrix.dirs }}
 
+    - name: Test
+      run: |
+        export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
+        export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
+        dotnet test --no-build --verbosity normal
+
 
 
 
