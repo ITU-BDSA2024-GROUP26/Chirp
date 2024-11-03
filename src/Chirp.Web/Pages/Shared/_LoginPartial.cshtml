@@ -22,20 +22,6 @@
             <a class="nav-link text-dark" href="Identity/Account/Logout">Logout</a>
         </li>
         
-        // inspired by lecture notes
-        <h3>What's on your mind, @User.Identity.Name </h3>
-        
-        <form method="post" action="/SubmitMessage">
-            <input type="text" data-val="true" data-val-required="The Message field is required."
-                   id="Message" name="Message" value="">
-            <input type="submit" value="Share">
-            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8i3PMq1Vw...">
-        </form>
-        
-        //<form method="post" action="/submit">
-        //    <input type="text" name="Message" value="">
-        //    <input type="submit" value="Share">
-        //</form>
       
     }
     else
