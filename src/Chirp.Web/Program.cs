@@ -7,7 +7,6 @@ namespace Chirp.Razor;
 
 public class Program
 {
-    public static string? environmentOverride { get; set; }
 
     public static async Task Main()
     {
@@ -19,15 +18,16 @@ public class Program
         // Note that enviroment like this is set via the ASPNETCORE_ENVIRONMENT enviroment variable 
         // this is set globally to Production on our Azure server, so we don't need to worry about anything
         string? connectionString; 
-        if(environmentOverride != null) {
+        if(builder.Environment.IsDevelopment()) { // always use in memory for development now
             Console.WriteLine("Using in memory database");
+
             builder.Services.AddDbContext<CheepDBContext>(options => 
-                    new DbContextOptionsBuilder<CheepDBContext>()
-                    .UseInMemoryDatabase(Guid.NewGuid().ToString()));
+                    options.UseInMemoryDatabase(Guid.NewGuid().ToString())
+                    );
             
         } else {
 
-            if(builder.Environment.IsEnvironment("Production") && environmentOverride == null) {
+            if(builder.Environment.IsEnvironment("Production")) {
                 connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
             } else {
                 connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
