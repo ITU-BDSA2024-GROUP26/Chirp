@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>@ViewData["Title"]</title>
@@ -12,7 +14,7 @@
 
     <header>
         <a href="/">Public Timeline</a>
-        @await Html.PartialAsync("_LoginPartial")
+        <partial name="_LoginPartial"/>
      </header>
     
     <div class=body>
