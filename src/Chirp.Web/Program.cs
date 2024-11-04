@@ -7,10 +7,11 @@ namespace Chirp.Razor;
 
 public class Program
 {
+    public static string? environmentOverride { get; set; }
 
-    public static void Main(string[] args)
+    public static async Task Main()
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages();
 
         // Load database connection via configuration
@@ -18,12 +19,23 @@ public class Program
         // Note that enviroment like this is set via the ASPNETCORE_ENVIRONMENT enviroment variable 
         // this is set globally to Production on our Azure server, so we don't need to worry about anything
         string? connectionString; 
-        if(builder.Environment.IsProduction()) {
-            connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+        if(environmentOverride != null) {
+            Console.WriteLine("Using in memory database");
+            builder.Services.AddDbContext<CheepDBContext>(options => 
+                    new DbContextOptionsBuilder<CheepDBContext>()
+                    .UseInMemoryDatabase(Guid.NewGuid().ToString()));
+            
         } else {
-            connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            if(builder.Environment.IsEnvironment("Production") && environmentOverride == null) {
+                connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+            } else {
+                connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            }
+            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
+        
         }
-        builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
+
         builder.Services.AddDefaultIdentity<ChirpUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<CheepDBContext>();
 
@@ -51,7 +63,7 @@ public class Program
 
         app.MapRazorPages();
 
-        app.Run();
+        await app.RunAsync();
     }
 }
 
