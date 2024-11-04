@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.RazorPages
 @inject SignInManager<Chirp.Core.Entities.ChirpUser> SignInManager 
 @inject UserManager<Chirp.Core.Entities.ChirpUser> UserManager
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <ul class="navbar-nav">
 
@@ -9,16 +11,13 @@
         <li class="nav-item">
             <a class="nav-link text-dark" title="Manage"
                href="/Identity/Account/Manage/Index">
-                Hello @User.Identity.Name!</a>
+                Hello @User.Identity?.Name!</a>
         </li>
         <li class="nav-item">
-            @* <form class="form-inline" asp-page="/Account/Logout" href="Identity/Account/Logout"
-                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
-                  asp-area="Identity" method="post" >
-                <button class="nav-link btn btn-link text-dark"
-                        type="submit">Logout</button>
-            </form> *@
-            <a class="nav-link text-dark" href="Identity/Account/Logout">Logout</a>
+            <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" 
+                  asp-route-returnUrl=@Url.Page("") method="post">
+                <button type="submit">Logout</button>
+            </form>
         </li>
     }
     else
