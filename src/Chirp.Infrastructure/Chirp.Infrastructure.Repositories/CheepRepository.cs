@@ -19,41 +19,17 @@ public class CheepRepository : ICheepRepository
     
     public async Task CreateCheep(Cheep newCheep)
     {
-        //  check for author exists with FindAuthorbyName
-        // if author doesn't exists, call CreateAuthor. 
-        // else assign the author that exists to author of the new cheep
-        var authorExists = await FindAuthorbyName(newCheep.Author.Name);
-        if (authorExists == null) 
-        {
-                await CreateAuthor(newCheep.Author); 
-        }
-
         await _context.AddAsync(newCheep);
         await _context.SaveChangesAsync(); 
-
-    }
-
-    public async Task CreateAuthor(Author newAuthor)
-    {
-
-        await _context.AddAsync(newAuthor);
-        await _context.SaveChangesAsync(); 
-
     }
   
-    public async Task<Author?> FindAuthorbyName(string name)
+    public async Task<Author?> FindAuthorByName(string name)
     {
-    
-        var author = await _context.Users.FirstOrDefaultAsync(a=> a.Name == name);
-        return author;  
-    
+        return await _context.Users.FirstOrDefaultAsync(a=> a.Name == name);
     } 
-    public async Task<Author?> FindAuthorbyEmail(string email)
+    public async Task<Author?> FindAuthorByEmail(string email)
     {
-    
-        var author = await _context.Users.FirstOrDefaultAsync(a=> a.Email == email);
-        return author;  
-    
+        return await _context.Users.FirstOrDefaultAsync(a=> a.Email == email);
     } 
 
 
