@@ -15,6 +15,27 @@ jobs:
       with:
         dotnet-version: 8.x.x
   
+  setup-playwright: 
+    name: Setup Playwright 
+    needs: setup-dotnet
+    runs-on: ubuntu-latest 
+    steps: 
+    - uses: actions/checkout@v4
+    - name: Install powershell
+      uses: cakhanif/action-install-powershell@v1
+    
+    - name: Build UItest project 
+      run: dotnet build tests/Chirp.Web.UITest 
+    
+    - name: Install Playwright with dependencies
+      run: pwsh tests/Chirp.Web.UITest/bin/Debug/net8.0/playwright.ps1 install --with-deps
+
+    - name: Build Chirp.Web binaries 
+      run: dotnet build src/Chirp.Web/ -c Debug 
+    
+    - name: Export Chirp.Web binaries 
+      run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
+      
   define-matrix: 
     name: Define Matrix
     runs-on: ubuntu-latest 
@@ -44,7 +65,7 @@ jobs:
 
   test:
     name: Test
-    needs: [setup-dotnet, define-matrix]
+    needs: [setup-dotnet, define-matrix, setup-playwright]
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -29,6 +29,7 @@ public class Program
                     options.UseSqlite(_connection)
                     );
             CheepDBContext.testingSetup = true; 
+            
         } else {
 
             if(builder.Environment.IsEnvironment("Production")) {
