@@ -16,7 +16,7 @@ public class Program
 
         // Load database connection via configuration
         // where we differentiate between production and development/staging/anything else 
-        // Note that enviroment like this is set via the ASPNETCORE_ENVIRONMENT enviroment variable 
+        // Note that environment like this is set via the ASPNETCORE_ENVIRONMENT environment variable 
         // this is set globally to Production on our Azure server, so we don't need to worry about anything
         string? connectionString; 
         if(builder.Environment.IsProduction()) {
@@ -31,21 +31,22 @@ public class Program
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<ICheepService, CheepService>();
-           // Taken from Helge
+        // Taken from Helge
         builder.Services.AddAuthentication(options =>
         {
-        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        /*options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = "GitHub";
-        
+        */
         })
-        .AddCookie()
+        //.AddCookie()
         .AddGitHub(o =>
         {
         o.ClientId = builder.Configuration["authentication:github:clientId"];
         o.ClientSecret = builder.Configuration["authentication:github:clientSecret"];
         o.CallbackPath = "/signin-github";
         });
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -55,7 +56,7 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
