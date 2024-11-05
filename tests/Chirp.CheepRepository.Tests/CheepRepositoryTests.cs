@@ -197,7 +197,7 @@ public class CheepRepositoryTests : IDisposable
     public async Task CanFindAuthorbyName() 
     {
         //Act
-        var foundAuthor = await _repository.FindAuthorbyName("Roger Histand"); 
+        var foundAuthor = await _repository.FindAuthorByName("Roger Histand"); 
 
         //Assert
         Assert.Equal("Roger+Histand@hotmail.com", foundAuthor?.Email);
@@ -207,7 +207,7 @@ public class CheepRepositoryTests : IDisposable
     public async Task CanFindAuthorbyEmail() 
     {
         //Act
-        var foundAuthor = await _repository.FindAuthorbyEmail("Roger+Histand@hotmail.com"); 
+        var foundAuthor = await _repository.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
 
         //Assert
         Assert.Equal("Roger Histand", foundAuthor?.Name);  
