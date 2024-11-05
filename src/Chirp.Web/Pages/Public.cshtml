@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using Chirp.Core.Entities
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Chirp.Razor.Pages.PublicModel
 @inject SignInManager<Chirp.Core.Entities.Author> SignInManager
@@ -15,9 +14,9 @@
     {
         
         
-        <h3>What's on your mind, @Model.Author?.Name</h3>
+        <h3>What's on your mind, @Model.Author?.Name?</h3>
         <form method="post">
-            <input type="text" asp-for="Message">
+            <input type="text" asp-for="Message" required>
             <input type="submit" value="Share">
         </form>
     }

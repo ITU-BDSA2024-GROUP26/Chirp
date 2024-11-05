@@ -15,7 +15,6 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
     public Author? Author { get; set; }
     
     [BindProperty]
-    [Required]
     [StringLength(160, ErrorMessage = "Maximum length is 160")]
     public required string Message { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
