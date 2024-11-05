@@ -14,6 +14,11 @@ public class CheepRepository : ICheepRepository
     public CheepRepository(CheepDBContext context) 
     {
         _context = context;
+        
+        if(CheepDBContext.testingSetup) {
+            _context.Database.Migrate();
+        }
+
         DbInitializer.SeedDatabase(_context);
     }
     

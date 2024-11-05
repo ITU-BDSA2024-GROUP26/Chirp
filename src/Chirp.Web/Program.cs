@@ -1,6 +1,7 @@
 using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor;
@@ -21,10 +22,13 @@ public class Program
         if(builder.Environment.IsDevelopment()) { // always use in memory for development now
             Console.WriteLine("Using in memory database");
 
+            var _connection = new SqliteConnection("DataSource=:memory:");
+            _connection.Open();
+
             builder.Services.AddDbContext<CheepDBContext>(options => 
-                    options.UseInMemoryDatabase(Guid.NewGuid().ToString())
+                    options.UseSqlite(_connection)
                     );
-            
+            CheepDBContext.testingSetup = true; 
         } else {
 
             if(builder.Environment.IsEnvironment("Production")) {
