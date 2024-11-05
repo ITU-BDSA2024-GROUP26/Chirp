@@ -72,12 +72,15 @@ public class Tests : PageTest
     public async Task TestLogin() 
     {
         await Page.GotoAsync("http://localhost:5000"); 
+        
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByPlaceholder("name@example.com").ClickAsync();
         await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Hello qwe@example.com!" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Logout" })).ToBeVisibleAsync();
 
 
     }
@@ -85,9 +88,8 @@ public class Tests : PageTest
     [Test, Order(4)]
     public async Task TestLogout() 
     {
+        // Arrange part, logging in is already expected to work due to previous test passing
         await Page.GotoAsync("http://localhost:5000"); 
-        
-        // LOGIN, know this will work cause of previous test
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByPlaceholder("name@example.com").ClickAsync();
         await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
@@ -95,11 +97,12 @@ public class Tests : PageTest
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
-        // OUR LOGOUT TEST
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Logout" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
+        // act 
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
+
+        // Assert
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
-        await Expect(Page.GetByText("You have successfully logged")).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
+
     }
 }
