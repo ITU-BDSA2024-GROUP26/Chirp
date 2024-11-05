@@ -2,104 +2,71 @@ using Chirp.Core;
 using Chirp.Core.Entities;
 using Chirp.Infrastructure;
 using Chirp.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Xunit;
 
 
 namespace Chirp.CheepRepository.Tests;
 
-public class CheepRepositoryTests : IDisposable
+public class CheepRepositoryTests : IAsyncLifetime
 {
-    private readonly ICheepRepository _repository;
-    private readonly CheepDbContext _context;
+    private ICheepRepository _repository;
+    private CheepDbContext _context;
+    
+    private readonly DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
+        .UseInMemoryDatabase(Guid.NewGuid().ToString())
+        .Options;
 
-
-    // public CheepRepositoryTests()
-    // {
-    //     // Set up In-Memory Database
-    //     var options = new DbContextOptionsBuilder<CheepDbContext>()
-    //                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
-    //                 .Options;
-    //
-    //     _context = new CheepDbContext(options);
-    //     DbInitializer.SeedDatabase(_context);
-    //
-    //     _repository = new Chirp.Infrastructure.Repositories.CheepRepository(_context);
-    // }
-
-
-    public void Dispose()
+    public async Task InitializeAsync()
     {
-        _context.Dispose();
+        _context = new CheepDbContext(_options);
+        var store = new UserStore<Author>(_context);
+        var userManager = new UserManager<Author>(store, null, new PasswordHasher<Author>(),
+            null, null, null, null, null, null);
+        await DbInitializer.SeedDatabase(_context, userManager);
+        
+        _repository = new Chirp.Infrastructure.Repositories.CheepRepository(_context);
+    }
+    
+    public async Task DisposeAsync()
+    {
+        await _context.DisposeAsync();
     }
 
 
-    // [Fact]
-    // public async Task CreateCheep_AddsCheepToDatabase()
-    // {
-    //     // Arrange
-    //     const string text = "Hello world";
-    //     var newCheep = new Cheep
-    //     {
-    //         Text = text,
-    //         Author = _context.Authors.First() // Assuming Authors are seeded
-    //     };
-    //
-    //     // Act
-    //     await _repository.CreateCheep(newCheep);
-    //
-    //     // Assert
-    //     var cheeps = await _context.Cheeps.ToListAsync();
-    //     Assert.Equal(text, cheeps.Last().Text);
-    // }
+    [Fact]
+    public async Task CreateCheep_AddsCheepToDatabase()
+    {
+        // Arrange
+        const string text = "Hello world";
+        var newCheep = new Cheep
+        {
+            Text = text,
+            Author = _context.Users.First() // Assuming Authors are seeded
+        };
+    
+        // Act
+        await _repository.CreateCheep(newCheep);
+    
+        // Assert
+        var cheeps = await _context.Cheeps.ToListAsync();
+        Assert.Equal(text, cheeps.Last().Text);
+    }
 
-    // [Fact]
-    // public async Task ReadCheeps_ReturnsAllCheeps()
-    // {
-    //     // Arrange: Clear existing data to ensure a clean test environment
-    //     _context.Cheeps.RemoveRange(_context.Cheeps);
-    //     _context.Authors.RemoveRange(_context.Authors);
-    //     await _context.SaveChangesAsync();
-    //
-    //     // Create a new author
-    //     Author author1 = new Author()
-    //     {
-    //         Id = 2,
-    //         Name = "John Doe",
-    //         Email = "john.doe@example.com",
-    //         Cheeps = new List<Cheep>()
-    //     };
-    //     _context.Authors.Add(author1);
-    //     await _context.SaveChangesAsync();
-
-        // Create cheeps associated with the author
-        // Cheep c1 = new Cheep()
-        // {
-        //     Id = 1,
-        //     AuthorId = author1.Id,
-        //     Author = author1,
-        //     Text = "First cheep",
-        //     TimeStamp = DateTime.UtcNow
-        // };
-        // Cheep c2 = new Cheep()
-        // {
-        //     Id = 2,
-        //     AuthorId = author1.Id,
-        //     Author = author1,
-        //     Text = "Second cheep",
-        //     TimeStamp = DateTime.UtcNow
-        // };
-        // _context.Cheeps.AddRange(c1, c2);
-        // await _context.SaveChangesAsync();
-
-    //     // Act
-    //     var cheepList = await _repository.ReadCheeps(-1, 0, "");
-    //     var cheepAmount = cheepList.Count;
-    //
-    //     // Assert
-    //     Assert.Equal(2, cheepAmount);
-    // }
+    [Fact]
+    public async Task ReadCheeps_ReturnsAllCheeps()
+    {
+        var expectedNumCheeps = _context.Cheeps.Count();
+        var cheeps = await _repository.ReadCheeps(-1, 0, "");
+        var actualNumCheeps = cheeps.Count;
+    
+        // Assert
+        Assert.Equal(expectedNumCheeps, actualNumCheeps);
+    }
 
 
     [Fact]
@@ -126,6 +93,7 @@ public class CheepRepositoryTests : IDisposable
 
         // Assert
         var allCheeps = await _context.Cheeps.ToListAsync();
+        allCheeps.Reverse();
         var expectedCheeps = allCheeps.Skip(offset).ToList();
         Assert.Equal(expectedCheeps.Count, cheeps.Count);
         Assert.Equal(expectedCheeps.Select(c => c.Id), cheeps.Select(c => c.Id));

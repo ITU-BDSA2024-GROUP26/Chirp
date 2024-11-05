@@ -1,5 +1,5 @@
-// // Taken from Helge's slides:
-//
+// Taken from Helge's slides:
+
 // using Microsoft.AspNetCore.Mvc.Testing;
 // using Chirp.Razor;
 // using System.Linq;
@@ -49,74 +49,74 @@
 //         _client = _fixture.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = true, HandleCookies = true });
 //
 //     }
+
+//     [Fact]
+//     public async void CanSeePublicTimeline()
+//     {
+//         var response = await _client.GetAsync("/");
+//         response.EnsureSuccessStatusCode();
+//         var content = await response.Content.ReadAsStringAsync();
 //
-// //     [Fact]
-// //     public async void CanSeePublicTimeline()
-// //     {
-// //         var response = await _client.GetAsync("/");
-// //         response.EnsureSuccessStatusCode();
-// //         var content = await response.Content.ReadAsStringAsync();
-// //
-// //         Assert.Contains("Chirp!", content);
-// //         Assert.Contains("Public Timeline", content);
-// //     }
-// //
-// //     [Theory]
-// //     [InlineData("Helge")]
-// //     [InlineData("Adrian")]
-// //     public async void CanSeePrivateTimeline(string author)
-// //     {
-// //         var response = await _client.GetAsync($"/{author}");
-// //         response.EnsureSuccessStatusCode();
-// //         var content = await response.Content.ReadAsStringAsync();
-// //
-// //         Assert.Contains("Chirp!", content);
-// //         Assert.Contains($"{author}'s Timeline", content);
-// //     }
-// //
-// //     [Theory]
-// //     [InlineData("Random user")]
-// //     public async Task NoCheepsAvailable(string author)
-// //     {
-// //         var response = await _client.GetAsync($"/{author}");
-// //         response.EnsureSuccessStatusCode();
-// //         var content = await response.Content.ReadAsStringAsync();
-// //
-// //         Assert.Contains("There are no cheeps so far.", content);
-// //     }
-// //
-// //     /*
-// //     // This test does not work. 
-// //     [Fact]
-// //     public async Task DifferentPages()
-// //     {
-// //         var response = await _client.GetAsync("/?page=0");
-// //         response.EnsureSuccessStatusCode();
-// //         var content1 = await response.Content.ReadAsStringAsync();
-// //
-// //         response = await _client.GetAsync("/?page=1");
-// //         response.EnsureSuccessStatusCode();
-// //         var content2 = await response.Content.ReadAsStringAsync();
-// //
-// //         Assert.NotEqual(content1, content2);
-// //     }*/
-// //
-// //     [Fact]
-// //     public async void IsPage1SameAsDefaultTimeline()
-// //     {
-// //         var responseHomePage = await _client.GetAsync("/");
-// //         var content1 = await responseHomePage.Content.ReadAsStringAsync();
-// //         responseHomePage.EnsureSuccessStatusCode();
-// //
-// //         var responseFirstPage = await _client.GetAsync("/?page=1");
-// //         var content2 = await responseFirstPage.Content.ReadAsStringAsync();
-// //         responseFirstPage.EnsureSuccessStatusCode();
-// //
-// //         Assert.Contains("Chirp!", content1);
-// //         Assert.Contains("Public Timeline", content1);
-// //         Assert.Contains("Chirp!", content2);
-// //         Assert.Contains("Public Timeline", content2);
-// //         Assert.Equal(content1, content2);
-// //     }
+//         Assert.Contains("Chirp!", content);
+//         Assert.Contains("Public Timeline", content);
+//     }
+//
+//     [Theory]
+//     [InlineData("Helge")]
+//     [InlineData("Adrian")]
+//     public async void CanSeePrivateTimeline(string author)
+//     {
+//         var response = await _client.GetAsync($"/{author}");
+//         response.EnsureSuccessStatusCode();
+//         var content = await response.Content.ReadAsStringAsync();
+//
+//         Assert.Contains("Chirp!", content);
+//         Assert.Contains($"{author}'s Timeline", content);
+//     }
+//
+//     [Theory]
+//     [InlineData("Random user")]
+//     public async Task NoCheepsAvailable(string author)
+//     {
+//         var response = await _client.GetAsync($"/{author}");
+//         response.EnsureSuccessStatusCode();
+//         var content = await response.Content.ReadAsStringAsync();
+//
+//         Assert.Contains("There are no cheeps so far.", content);
+//     }
+//
+//     /*
+//     // This test does not work. 
+//     [Fact]
+//     public async Task DifferentPages()
+//     {
+//         var response = await _client.GetAsync("/?page=0");
+//         response.EnsureSuccessStatusCode();
+//         var content1 = await response.Content.ReadAsStringAsync();
+//
+//         response = await _client.GetAsync("/?page=1");
+//         response.EnsureSuccessStatusCode();
+//         var content2 = await response.Content.ReadAsStringAsync();
+//
+//         Assert.NotEqual(content1, content2);
+//     }*/
+//
+//     [Fact]
+//     public async void IsPage1SameAsDefaultTimeline()
+//     {
+//         var responseHomePage = await _client.GetAsync("/");
+//         var content1 = await responseHomePage.Content.ReadAsStringAsync();
+//         responseHomePage.EnsureSuccessStatusCode();
+//
+//         var responseFirstPage = await _client.GetAsync("/?page=1");
+//         var content2 = await responseFirstPage.Content.ReadAsStringAsync();
+//         responseFirstPage.EnsureSuccessStatusCode();
+//
+//         Assert.Contains("Chirp!", content1);
+//         Assert.Contains("Public Timeline", content1);
+//         Assert.Contains("Chirp!", content2);
+//         Assert.Contains("Public Timeline", content2);
+//         Assert.Equal(content1, content2);
+//     }
 // }
-//
+
