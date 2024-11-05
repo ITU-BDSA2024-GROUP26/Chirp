@@ -68,7 +68,7 @@ jobs:
     steps: 
     - uses: actions/checkout@v4
     
-    - name: Cache Primes
+    - name: Cache Playwright binaries 
       id: playwright-bins
       uses: actions/cache@v4
       with:
