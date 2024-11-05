@@ -10,11 +10,11 @@ using System.Runtime.CompilerServices;
 
 public class CheepRepository : ICheepRepository
 {
-    private readonly CheepDBContext _context; 
-    public CheepRepository(CheepDBContext context) 
+    private readonly CheepDbContext _context; 
+    public CheepRepository(CheepDbContext context) 
     {
         _context = context;
-        DbInitializer.SeedDatabase(_context);
+        // DbInitializer.SeedDatabase(_context);
     }
     
     public async Task CreateCheep(Cheep newCheep)
@@ -26,10 +26,6 @@ public class CheepRepository : ICheepRepository
         if (authorExists == null) 
         {
                 await CreateAuthor(newCheep.Author); 
-        }
-        else 
-        {
-            newCheep.Author = authorExists; 
         }
 
         await _context.AddAsync(newCheep);
@@ -47,17 +43,17 @@ public class CheepRepository : ICheepRepository
   
     public async Task<Author?> FindAuthorbyName(string name)
     {
-
-        var author = await _context.Authors.FirstOrDefaultAsync(a=> a.Name == name);
+    
+        var author = await _context.Users.FirstOrDefaultAsync(a=> a.Name == name);
         return author;  
-
+    
     } 
     public async Task<Author?> FindAuthorbyEmail(string email)
     {
-
-        var author = await _context.Authors.FirstOrDefaultAsync(a=> a.Email == email);
+    
+        var author = await _context.Users.FirstOrDefaultAsync(a=> a.Email == email);
         return author;  
-
+    
     } 
 
 
@@ -83,7 +79,7 @@ public class CheepRepository : ICheepRepository
     {
         var query =
                     from cheep in _context.Cheeps
-                    where cheep.CheepId == id
+                    where cheep.Id == id
                     select cheep;
 
         // Possible todo: record the update timestamp
