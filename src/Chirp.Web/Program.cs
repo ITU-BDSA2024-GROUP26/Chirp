@@ -3,13 +3,14 @@ using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Chirp.Razor;
 
 public class Program
 {
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddRazorPages();
@@ -33,6 +34,14 @@ public class Program
         builder.Services.AddScoped<ICheepService, CheepService>();
         
         var app = builder.Build();
+        
+        using (var scope = app.Services.CreateScope())
+        {
+            
+            var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
+            await DbInitializer.SeedDatabase(context, userManager);
+        }
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -52,7 +61,7 @@ public class Program
 
         app.MapRazorPages();
 
-        app.Run();
+        await app.RunAsync();
     }
 }
 
