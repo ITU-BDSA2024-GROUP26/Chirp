@@ -39,7 +39,9 @@ public class CheepRepository : ICheepRepository
                     (from cheep in _context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
                      where Regex.IsMatch(cheep.Author!.Name!, authorNameRegex!)
-                     select cheep).Skip(offset);
+                     orderby cheep.Id descending
+                     select cheep)
+                    .Skip(offset);
 
         if (limit > 0)
         {

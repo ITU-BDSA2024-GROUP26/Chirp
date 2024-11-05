@@ -10,8 +10,8 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div>
-            <a asp-page="/@(author?.Name)">my timeline</a> |
-            <a asp-page="/">public timeline</a> |
+            <a href="/@(author?.Name)">my timeline</a> |
+            <a href="/">public timeline</a> |
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl=@Url.Page("") method="post">
                 <button type="submit">logout [@author?.Name]</button>
             </form>
@@ -20,9 +20,9 @@
     else
     {
         <div>
-            <a asp-page="/">public timeline</a> |
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="Account/Register">register</a> |
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="Account/Login">login</a>
+            <a href="/">public timeline</a> |
+            <a asp-area="Identity" asp-page="/Account/Register">register</a> |
+            <a asp-area="Identity" asp-page="/Account/Login">login</a>
         </div>
     }
 </div>
