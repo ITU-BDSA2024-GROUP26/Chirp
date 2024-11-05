@@ -15,33 +15,6 @@ jobs:
       with:
         dotnet-version: 8.x.x
   
-  setup-playwright: 
-    name: Setup Playwright 
-    needs: setup-dotnet
-    runs-on: ubuntu-latest 
-    steps: 
-    - uses: actions/checkout@v4
-    - name: Install powershell
-      uses: cakhanif/action-install-powershell@v1
-    
-    - name: Build UItest project 
-      run: dotnet build tests/Chirp.Web.UITest 
-    
-    - name: Install Playwright with dependencies
-      run: pwsh tests/Chirp.Web.UITest/bin/Debug/net8.0/playwright.ps1 install --with-deps
-
-    - name: Build Chirp.Web binaries 
-      run: dotnet build src/Chirp.Web/ -c Debug 
-    
-    - name: Export Chirp.Web binaries 
-      run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
-          
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright_binaries
-        path:  /home/runner/.cache/ms-playwright
-
   define-matrix: 
     name: Define Matrix
     runs-on: ubuntu-latest 
@@ -61,7 +34,9 @@ jobs:
         out="["
         for dir in "${dirs[@]}";
         do
-          out+=\"$dir\",
+          if [[ "$dir" != *UI* ]]; then 
+            out+=\"$dir\",
+          fi 
         done;
 
         # replace final , with ]
@@ -71,7 +46,7 @@ jobs:
 
   test:
     name: Test
-    needs: [setup-dotnet, define-matrix, setup-playwright]
+    needs: [setup-dotnet, define-matrix]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -79,18 +54,38 @@ jobs:
     steps: 
     - name: Checkout 
       uses: actions/checkout@v4
-    
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v4
-      with:
-        name: playwright_binaries
-        path:  /home/runner/.cache/ms-playwright
 
     - name: Test
       shell: bash
       run: |
-        dotnet build 
+        dotnet build ${{ matrix.dirs }}
         dotnet test ${{ matrix.dirs }} --no-build
+
+  UI-test: 
+    name: UI Test 
+    needs: setup-dotnet
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v4
+    - name: Install powershell
+      uses: cakhanif/action-install-powershell@v1
+    
+    - name: Build UItest project 
+      run: dotnet build tests/Chirp.Web.UITest 
+    
+    - name: Install Playwright with dependencies
+      run: pwsh tests/Chirp.Web.UITest/bin/Debug/net8.0/playwright.ps1 install --with-deps
+
+    - name: Build Chirp.Web binaries 
+      run: dotnet build src/Chirp.Web/ -c Debug 
+    
+    - name: Export Chirp.Web binaries 
+      run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
+    
+    - name: Run UI tests
+      run: dotnet test tests/Chirp.Web.UITest
+
+
 
 
 
