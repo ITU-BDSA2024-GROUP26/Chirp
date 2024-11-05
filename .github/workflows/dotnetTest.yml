@@ -35,7 +35,13 @@ jobs:
     
     - name: Export Chirp.Web binaries 
       run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
-      
+          
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright_binaries
+        path:  /home/runner/.cache/ms-playwright
+
   define-matrix: 
     name: Define Matrix
     runs-on: ubuntu-latest 
@@ -73,7 +79,13 @@ jobs:
     steps: 
     - name: Checkout 
       uses: actions/checkout@v4
-  
+    
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v4
+      with:
+        name: playwright_binaries
+        path:  /home/runner/.cache/ms-playwright
+
     - name: Test
       shell: bash
       run: |
