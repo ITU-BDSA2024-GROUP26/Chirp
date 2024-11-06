@@ -2,13 +2,15 @@ using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Chirp.Razor;
 
 public class Program
 {
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddRazorPages();
@@ -23,15 +25,22 @@ public class Program
         } else {
             connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         }
-        builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
-        builder.Services.AddDefaultIdentity<ChirpUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<CheepDBContext>().AddEntityFrameworkStores<CheepDBContext>();
+        builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
+        builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<CheepDbContext>().AddEntityFrameworkStores<CheepDbContext>();
 
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<ICheepService, CheepService>();
         
         var app = builder.Build();
+        
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
+            await DbInitializer.SeedDatabase(context, userManager);
+        }
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -51,7 +60,7 @@ public class Program
 
         app.MapRazorPages();
 
-        app.Run();
+        await app.RunAsync();
     }
 }
 
