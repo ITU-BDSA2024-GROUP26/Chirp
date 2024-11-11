@@ -33,6 +33,10 @@ public class Program
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<ICheepService, CheepService>();
         
+        // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
+        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(1));
+
+        
         var app = builder.Build();
         
         using (var scope = app.Services.CreateScope())
