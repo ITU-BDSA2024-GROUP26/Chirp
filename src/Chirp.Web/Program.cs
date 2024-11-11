@@ -1,6 +1,7 @@
 using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -61,7 +62,13 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.Lax,     // Enforces "Lax" as the minimum SameSite policy
+            HttpOnly = HttpOnlyPolicy.Always,             // Ensures cookies are only accessible over HTTP, not JavaScript
+            Secure = CookieSecurePolicy.Always            // Forces cookies to be sent only over HTTPS
+        });
         app.MapRazorPages();
 
         await app.RunAsync();
