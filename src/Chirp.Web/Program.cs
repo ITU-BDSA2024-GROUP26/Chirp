@@ -35,7 +35,7 @@ public class Program
         builder.Services.AddScoped<ICheepService, CheepService>();
         
         // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
-        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(1));
+        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(10));
 
         
         var app = builder.Build();
@@ -59,16 +59,17 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
         
         app.UseCookiePolicy(new CookiePolicyOptions
         {
             MinimumSameSitePolicy = SameSiteMode.Lax,     // Enforces "Lax" as the minimum SameSite policy
             HttpOnly = HttpOnlyPolicy.Always,             // Ensures cookies are only accessible over HTTP, not JavaScript
-            Secure = CookieSecurePolicy.Always            // Forces cookies to be sent only over HTTPS
+            //Secure = CookieSecurePolicy.Always            // Forces cookies to be sent only over HTTPS
         });
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
         app.MapRazorPages();
 
         await app.RunAsync();
