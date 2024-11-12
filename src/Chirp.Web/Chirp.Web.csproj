@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Chirp.Razor</RootNamespace>
     <UserSecretsId>9d30d5fa-9704-4981-a657-2b06523d938f</UserSecretsId>
-    <UserSecretsId>9d30d5fa-9704-4981-a657-2b06523d938f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,20 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
-    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0" />
-=======
-     <InternalsVisibleTo Include="Chirp.Web.UITest" />
+    <InternalsVisibleTo Include="Chirp.Web.UITest" />
   </ItemGroup>
 
 
   <ItemGroup>
->>>>>>> refs/remotes/origin/main
-  <ItemGroup>
-     <InternalsVisibleTo Include="Chirp.Web.UITest" />
-  </ItemGroup>
-
-
     <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.10" />
