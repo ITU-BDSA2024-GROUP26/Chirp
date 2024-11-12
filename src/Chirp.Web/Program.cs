@@ -1,18 +1,18 @@
 using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor;
 
 public class Program
 {
 
-    public static async Task Main(string[] args)
+    public static async Task Main()
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages();
 
         // Load database connection via configuration
@@ -20,14 +20,29 @@ public class Program
         // Note that enviroment like this is set via the ASPNETCORE_ENVIRONMENT enviroment variable 
         // this is set globally to Production on our Azure server, so we don't need to worry about anything
         string? connectionString; 
-        if(builder.Environment.IsProduction()) {
-            connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+        if(builder.Environment.IsDevelopment()) { // always use in memory for development now
+            Console.WriteLine("Using in memory database");
+            
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+            
+            builder.Services.AddDbContext<CheepDbContext>(options => 
+                    options.UseSqlite(connection)
+                    );
+            CheepDbContext.TestingSetup = true;
         } else {
-            connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            if(builder.Environment.IsEnvironment("Production")) {
+                connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+            } else {
+                connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            }
+            builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
+        
         }
-        builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
+
         builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<CheepDbContext>().AddEntityFrameworkStores<CheepDbContext>();
+            .AddEntityFrameworkStores<CheepDbContext>();
 
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
@@ -38,6 +53,7 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
+            if (app.Environment.IsDevelopment()) await context.Database.MigrateAsync();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
             await DbInitializer.SeedDatabase(context, userManager);
         }
