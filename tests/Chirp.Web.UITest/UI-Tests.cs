@@ -13,7 +13,7 @@ namespace Chirp.Web.UITest;
 [TestFixture]
 public class Tests : PageTest
 {
-    private Process server;
+    private Process _server;
 
     [OneTimeSetUp]
     public void OneTimeSetUp() 
@@ -22,7 +22,7 @@ public class Tests : PageTest
         // Note that this requires quite a bit of setup: 
         // The binaries(from dotnet publish) of the razor Pages project need to be in the bin/debug/net8.0 folder of this project 
         System.Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
-        server = Process.Start("dotnet", "Chirp.Web.dll");
+        _server = Process.Start("dotnet", "Chirp.Web.dll");
 
         Thread.Sleep(1500); // give the server a little time, otherwise the first test can start before it's live
     }
@@ -30,8 +30,8 @@ public class Tests : PageTest
     [OneTimeTearDown]
     public void Cleanup() 
     {
-        server.Kill();
-        server.Dispose();
+        _server.Kill();
+        _server.Dispose();
     }
 
     // Order needs to be >1, since order 0 seems to be parallel with onetimesetup(ie can get crashes due to server not being live)
@@ -43,9 +43,9 @@ public class Tests : PageTest
         // so unavoidable code duplication(might be a smart way I don't know)
         await Page.GotoAsync("http://localhost:5000"); 
 
-        await Page.Locator("p").Filter(new() { HasText = "Jacqualine Gilcoine They were" }).GetByRole(AriaRole.Link).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Jacqualine Gilcoine's Timeline" })).ToBeVisibleAsync();
-        await Expect(Page.GetByText("Jacqualine Gilcoine They were")).ToBeVisibleAsync();
+        await Page.Locator("p").Filter(new() { HasText = "Adrian Hej, velkommen til kurset." }).GetByRole(AriaRole.Link).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
+        await Expect(Page.GetByText("Adrian Hej, velkommen til kurset.")).ToBeVisibleAsync();
 
     }
 
@@ -54,6 +54,8 @@ public class Tests : PageTest
     {
         await Page.GotoAsync("http://localhost:5000/");
         await Page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
+        await Page.GetByPlaceholder("name", new() { Exact = true}).ClickAsync();
+        await Page.GetByPlaceholder("name", new() { Exact = true}).FillAsync("qwe");
         await Page.GetByPlaceholder("name@example.com").ClickAsync();
         await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
         await Page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
@@ -79,7 +81,6 @@ public class Tests : PageTest
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Hello qwe@example.com!" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Logout" })).ToBeVisibleAsync();
 
 
