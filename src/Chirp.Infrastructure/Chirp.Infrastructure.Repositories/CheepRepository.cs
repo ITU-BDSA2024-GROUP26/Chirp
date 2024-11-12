@@ -10,59 +10,29 @@ using System.Runtime.CompilerServices;
 
 public class CheepRepository : ICheepRepository
 {
-    private readonly CheepDBContext _context; 
-    public CheepRepository(CheepDBContext context) 
+    private readonly CheepDbContext _context; 
+    public CheepRepository(CheepDbContext context) 
     {
         _context = context;
         
         if(CheepDBContext.testingSetup) {
             _context.Database.Migrate();
         }
-
-        DbInitializer.SeedDatabase(_context);
     }
     
     public async Task CreateCheep(Cheep newCheep)
     {
-        //  check for author exists with FindAuthorbyName
-        // if author doesn't exists, call CreateAuthor. 
-        // else assign the author that exists to author of the new cheep
-        var authorExists = await FindAuthorbyName(newCheep.Author.Name);
-        if (authorExists == null) 
-        {
-                await CreateAuthor(newCheep.Author); 
-        }
-        else 
-        {
-            newCheep.Author = authorExists; 
-        }
-
         await _context.AddAsync(newCheep);
         await _context.SaveChangesAsync(); 
-
-    }
-
-    public async Task CreateAuthor(Author newAuthor)
-    {
-
-        await _context.AddAsync(newAuthor);
-        await _context.SaveChangesAsync(); 
-
     }
   
-    public async Task<Author?> FindAuthorbyName(string name)
+    public async Task<Author?> FindAuthorByName(string name)
     {
-
-        var author = await _context.Authors.FirstOrDefaultAsync(a=> a.Name == name);
-        return author;  
-
+        return await _context.Users.FirstOrDefaultAsync(a=> a.Name == name);
     } 
-    public async Task<Author?> FindAuthorbyEmail(string email)
+    public async Task<Author?> FindAuthorByEmail(string email)
     {
-
-        var author = await _context.Authors.FirstOrDefaultAsync(a=> a.Email == email);
-        return author;  
-
+        return await _context.Users.FirstOrDefaultAsync(a=> a.Email == email);
     } 
 
 
@@ -72,7 +42,9 @@ public class CheepRepository : ICheepRepository
                     (from cheep in _context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
                      where Regex.IsMatch(cheep.Author!.Name!, authorNameRegex!)
-                     select cheep).Skip(offset);
+                     orderby cheep.Id descending
+                     select cheep)
+                    .Skip(offset);
 
         if (limit > 0)
         {
@@ -88,7 +60,7 @@ public class CheepRepository : ICheepRepository
     {
         var query =
                     from cheep in _context.Cheeps
-                    where cheep.CheepId == id
+                    where cheep.Id == id
                     select cheep;
 
         // Possible todo: record the update timestamp
