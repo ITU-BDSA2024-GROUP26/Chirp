@@ -44,6 +44,7 @@ public class Program
         //.AddCookie()
         .AddGitHub(o =>
         {
+        
         o.ClientId = builder.Configuration["authentication:github:clientId"] 
                      ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID")
                      ?? throw new InvalidDataException("Github client id not found");;
@@ -51,6 +52,11 @@ public class Program
                          ?? Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")
                          ?? throw new InvalidDataException("Github client secret not found");
         o.CallbackPath = "/signin-github";
+        
+        o.Scope.Add("read:user");//access to the github-user's public profile information
+        
+        o.Scope.Add("user:email");//access to the github-user's primary email address
+
         });
         
         var app = builder.Build();
