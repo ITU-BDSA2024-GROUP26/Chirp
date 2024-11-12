@@ -1,54 +1,54 @@
 // Taken from Helge's slides:
 
-using Microsoft.AspNetCore.Mvc.Testing;
-using Chirp.Razor;
-using System.Linq;
-using Xunit;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Data.Sqlite;
-using Chirp.Infrastructure.Repositories;
-using Chirp.Core.Entities;
-
-namespace Chirp.Infrastructure.Tests;
-
-public class TestAPI : IClassFixture<WebApplicationFactory<Program>>
-{
-    private readonly WebApplicationFactory<Program> _fixture;
-    private readonly HttpClient _client;
-
-    public TestAPI(WebApplicationFactory<Program> fixture)
-    {
-        _fixture = fixture.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureServices(services =>
-            {
-
-                // ADD in-memory database for testing
-                services.AddDbContext<CheepDBContext>(options =>
-                        options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()));
-
-                services.AddScoped<ICheepRepository, CheepRepository>();
-
-                // Ensure ChirpRepository is using the in-memory databse
-                var serviceProvider = services.BuildServiceProvider();
-
-                using var scope = serviceProvider.CreateScope();
-                var scopedServices = scope.ServiceProvider;
-                var db = scopedServices.GetRequiredService<CheepDBContext>();
-
-                db.Database.EnsureCreated();
-
-                // Seed the in-memory database with test data
-                DbInitializer.SeedDatabase(db);
-            });
-        });
-
-
-        _fixture = fixture;
-        _client = _fixture.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = true, HandleCookies = true });
-
-    }
+// using Microsoft.AspNetCore.Mvc.Testing;
+// using Chirp.Razor;
+// using System.Linq;
+// using Xunit;
+// using Microsoft.EntityFrameworkCore;
+// using Microsoft.Extensions.DependencyInjection;
+// using Microsoft.Data.Sqlite;
+// using Chirp.Infrastructure.Repositories;
+// using Chirp.Core.Entities;
+//
+// namespace Chirp.Infrastructure.Tests;
+//
+// public class TestAPI : IClassFixture<WebApplicationFactory<Program>>
+// {
+//     private readonly WebApplicationFactory<Program> _fixture;
+//     private readonly HttpClient _client;
+//
+//     public TestAPI(WebApplicationFactory<Program> fixture)
+//     {
+//         _fixture = fixture.WithWebHostBuilder(builder =>
+//         {
+//             builder.ConfigureServices(services =>
+//             {
+//
+//                 // ADD in-memory database for testing
+//                 services.AddDbContext<CheepDbContext>(options =>
+//                         options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()));
+//
+//                 services.AddScoped<ICheepRepository, CheepRepository>();
+//
+//                 // Ensure ChirpRepository is using the in-memory databse
+//                 var serviceProvider = services.BuildServiceProvider();
+//
+//                 using var scope = serviceProvider.CreateScope();
+//                 var scopedServices = scope.ServiceProvider;
+//                 var db = scopedServices.GetRequiredService<CheepDbContext>();
+//
+//                 db.Database.EnsureCreated();
+//
+//                 // Seed the in-memory database with test data
+//                 DbInitializer.SeedDatabase(db);
+//             });
+//         });
+//
+//
+//         _fixture = fixture;
+//         _client = _fixture.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = true, HandleCookies = true });
+//
+//     }
 
 //     [Fact]
 //     public async void CanSeePublicTimeline()
@@ -118,5 +118,5 @@ public class TestAPI : IClassFixture<WebApplicationFactory<Program>>
 //         Assert.Contains("Public Timeline", content2);
 //         Assert.Equal(content1, content2);
 //     }
-}
+// }
 

@@ -4,11 +4,12 @@ namespace Chirp.Core.Entities;
 
 public class Cheep
 {
-    public int CheepId { get; set; }
+    public int Id { get; set; }
     
     [Required]
-    public required Author Author { get; set; }
-    public int AuthorId { get; set; }
+    public required Author? Author { get; set; }
+    
+    public string? AuthorId { get; set; }
     
     [Required]
     public required string Text { get; set; }
