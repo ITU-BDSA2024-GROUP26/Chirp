@@ -24,7 +24,7 @@ public class Tests : PageTest
         System.Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
         _server = Process.Start("dotnet", "Chirp.Web.dll");
 
-        Thread.Sleep(1500); // give the server a little time, otherwise the first test can start before it's live
+        Thread.Sleep(4000); // give the server a little time, otherwise the first test can start before it's live
     }
 
     [OneTimeTearDown]
