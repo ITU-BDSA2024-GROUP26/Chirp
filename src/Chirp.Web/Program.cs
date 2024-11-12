@@ -1,10 +1,9 @@
 using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Chirp.Razor;
 
@@ -23,15 +22,14 @@ public class Program
         string? connectionString; 
         if(builder.Environment.IsDevelopment()) { // always use in memory for development now
             Console.WriteLine("Using in memory database");
-
-            var _connection = new SqliteConnection("DataSource=:memory:");
-            _connection.Open();
-
-            builder.Services.AddDbContext<CheepDBContext>(options => 
-                    options.UseSqlite(_connection)
-                    );
-            CheepDBContext.testingSetup = true; 
             
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+            
+            builder.Services.AddDbContext<CheepDbContext>(options => 
+                    options.UseSqlite(connection)
+                    );
+            CheepDbContext.TestingSetup = true;
         } else {
 
             if(builder.Environment.IsEnvironment("Production")) {
@@ -55,6 +53,7 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
+            if (app.Environment.IsDevelopment()) await context.Database.EnsureCreatedAsync();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
             await DbInitializer.SeedDatabase(context, userManager);
         }
