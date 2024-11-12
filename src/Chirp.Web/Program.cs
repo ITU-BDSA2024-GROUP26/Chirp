@@ -53,7 +53,7 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
-            if (app.Environment.IsDevelopment()) await context.Database.EnsureCreatedAsync();
+            if (app.Environment.IsDevelopment()) await context.Database.MigrateAsync();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
             await DbInitializer.SeedDatabase(context, userManager);
         }
