@@ -3,6 +3,8 @@ using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Chirp.Razor;
 
@@ -37,18 +39,25 @@ public class Program
             } else {
                 connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
-            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
+            builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
         
         }
 
-        builder.Services.AddDefaultIdentity<ChirpUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<CheepDBContext>();
+        builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<CheepDbContext>();
 
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<ICheepService, CheepService>();
         
         var app = builder.Build();
+        
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
+            await DbInitializer.SeedDatabase(context, userManager);
+        }
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
