@@ -35,8 +35,9 @@ public class Program
         builder.Services.AddScoped<ICheepService, CheepService>();
         
         // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
-        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(10));
+        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(365));
         
+        // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-8.0
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowChirp", policy =>
@@ -70,11 +71,13 @@ public class Program
         // Enable CORS policy
         app.UseCors("AllowChirp");
         
+        
+        // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-9.0
         app.UseCookiePolicy(new CookiePolicyOptions
         {
             MinimumSameSitePolicy = SameSiteMode.Lax,     // Enforces "Lax" as the minimum SameSite policy
             HttpOnly = HttpOnlyPolicy.Always,             // Ensures cookies are only accessible over HTTP, not JavaScript
-            //Secure = CookieSecurePolicy.Always            // Forces cookies to be sent only over HTTPS
+            //Secure = CookieSecurePolicy.Always          // Forces cookies to be sent only over HTTPS
         });
 
         app.UseAuthentication();
