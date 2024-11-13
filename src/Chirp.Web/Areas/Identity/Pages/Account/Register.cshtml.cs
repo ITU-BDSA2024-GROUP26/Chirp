@@ -116,7 +116,6 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
-            {
                 
                 var info = await _signInManager.GetExternalLoginInfoAsync(); //get information about the external login(github)
                  
