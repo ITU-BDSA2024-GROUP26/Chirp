@@ -116,13 +116,13 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid){
-                
+            if (ModelState.IsValid)
+            {
                 var info = await _signInManager.GetExternalLoginInfoAsync(); //get information about the external login(github)
             
                  
-            if (info != null) {//check if any external login info is retrieved
-            
+            if (info != null) //check if any external login info is retrieved
+            {
             // Check for email claim in external login
             var emailClaim = info.Principal.FindFirst(claim => claim.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
             if (emailClaim != null)
