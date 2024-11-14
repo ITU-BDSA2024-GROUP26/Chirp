@@ -90,6 +90,11 @@ jobs:
     
     - name: Export Chirp.Web binaries 
       run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
+
+    - name: GitHub secrets
+      env: 
+       GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
+       GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
+      run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
+
     
-    - name: Run UI tests
-      run: dotnet test tests/Chirp.Web.UITest
