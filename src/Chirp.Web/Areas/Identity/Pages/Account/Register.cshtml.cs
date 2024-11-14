@@ -112,11 +112,24 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                var info = await _signInManager.GetExternalLoginInfoAsync(); //get information about the external login(github)
+            
+                 
+            if (info != null) //check if any external login info is retrieved
+            {
+            // Check for email claim in external login
+            var emailClaim = info.Principal.FindFirst(claim => claim.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
+            if (emailClaim != null)
+            {
+                Input.Email = emailClaim; // Automatically set the email if found
+            }
+        }
                 var user = CreateUser();
 
                 user.Name = Input.Name; // Added
@@ -156,10 +169,10 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
             // If we got this far, something failed, redisplay form
             return Page();
-        }
+    }
+        
 
         private Author CreateUser()
         {
