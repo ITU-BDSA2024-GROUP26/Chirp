@@ -93,8 +93,8 @@ jobs:
 
     - name: GitHub secrets
       env: 
-        GitHub__ClientId: ${{ secrets.GITHUBCLIENTID }}
-        GitHub__ClientSecret: ${{ secrets.GITHUBCLIENTSECRET }}
+       GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
+       GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
       run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
 
     
