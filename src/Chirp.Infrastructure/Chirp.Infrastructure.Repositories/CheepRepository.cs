@@ -28,14 +28,25 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
     public async Task<ICollection<Cheep>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
     {
-        IQueryable<Cheep>? query =
-                    (from cheep in context.Cheeps
+        IQueryable<Cheep>? query;
+            
+        if(authorNameRegex == null) 
+        {
+            query=  (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where Regex.IsMatch(cheep.Author!.Name!, authorNameRegex!)
                      orderby cheep.Id descending
                      select cheep)
                     .Skip(offset);
-        
+        } else {
+            Console.WriteLine("qwe: ", authorNameRegex);
+            query =  (from cheep in context.Cheeps
+                    .Include(c => c.Author) // from chatgpt 
+                     where cheep.Author!.Name! == authorNameRegex!
+                     orderby cheep.Id descending
+                     select cheep)
+                    .Skip(offset);
+        } 
+
         if (limit > 0)
         {
             query = query.Take(limit);
