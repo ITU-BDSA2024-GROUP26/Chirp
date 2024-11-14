@@ -55,12 +55,6 @@ jobs:
     - name: Checkout 
       uses: actions/checkout@v4
 
-    - name: GitHub secrets
-      run: |
-        export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
-        export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
-
-
     - name: Test
       shell: bash
       run: |
@@ -98,11 +92,9 @@ jobs:
       run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
 
     - name: GitHub secrets
-      run: |
-        export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
-        export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
-        
-    - name: Run UI tests
-      run: dotnet test tests/Chirp.Web.UITest
+      env: 
+        GitHub__ClientId: ${{ secrets.GITHUBCLIENTID }}
+        GitHub__ClientSecret: ${{ secrets.GITHUBCLIENTSECRET }}
+      run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
 
     
