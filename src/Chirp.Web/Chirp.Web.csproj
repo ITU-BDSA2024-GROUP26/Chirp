@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Chirp.Razor</RootNamespace>
+    <UserSecretsId>9d30d5fa-9704-4981-a657-2b06523d938f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,11 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-     <InternalsVisibleTo Include="Chirp.Web.UITest" />
+    <InternalsVisibleTo Include="Chirp.Web.UITest" />
   </ItemGroup>
 
 
   <ItemGroup>
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-rc.1.24451.1">

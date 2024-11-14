@@ -61,7 +61,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task ReadCheeps_ReturnsAllCheeps()
     {
         var expectedNumCheeps = _context.Cheeps.Count();
-        var cheeps = await _repository.ReadCheeps(-1, 0, "");
+        var cheeps = await _repository.ReadCheeps(-1, 0);
         var actualNumCheeps = cheeps.Count;
     
         // Assert
@@ -76,7 +76,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         int limit = 2;
 
         // Act
-        var cheeps = await _repository.ReadCheeps(limit, 0, "");
+        var cheeps = await _repository.ReadCheeps(limit, 0);
 
         // Assert
         Assert.Equal(limit, cheeps.Count);
@@ -89,7 +89,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         int offset = 1;
 
         // Act
-        var cheeps = await _repository.ReadCheeps(-1, offset, "");
+        var cheeps = await _repository.ReadCheeps(-1, offset);
 
         // Assert
         var allCheeps = await _context.Cheeps.ToListAsync();
@@ -103,13 +103,13 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task ReadCheeps_FiltersByAuthorNameRegex()
     {
         // Arrange:
-        string regex = "^Helge"; // Assuming there are authors with names starting with 'Helge'
+        string name = "Helge"; // Assuming there are authors with names starting with 'Helge'
 
         // Act
-        var cheeps = await _repository.ReadCheeps(-1, 0, regex);
+        var cheeps = await _repository.ReadCheeps(-1, 0, name);
 
         // Assert
-        Assert.All(cheeps, c => Assert.Matches(regex, c.Author!.Name!));
+        Assert.All(cheeps, c => Assert.Equal(name, c.Author!.Name!));
     }
 
 
