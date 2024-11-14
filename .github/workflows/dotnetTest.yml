@@ -55,6 +55,12 @@ jobs:
     - name: Checkout 
       uses: actions/checkout@v4
 
+    - name: GitHub secrets
+      run: |
+        export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
+        export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
+
+
     - name: Test
       shell: bash
       run: |
@@ -85,17 +91,17 @@ jobs:
       if: steps.playwright-bins.outputs.cache-hit != 'true'
       run: pwsh tests/Chirp.Web.UITest/bin/Debug/net8.0/playwright.ps1 install --with-deps
 
-    - name: Test
-      run: |
-        export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
-        export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
-
     - name: Build Chirp.Web binaries 
       run: dotnet build src/Chirp.Web/ -c Debug 
     
     - name: Export Chirp.Web binaries 
       run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
-    
+
+    - name: GitHub secrets
+      run: |
+        export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
+        export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
+        
     - name: Run UI tests
       run: dotnet test tests/Chirp.Web.UITest
 
