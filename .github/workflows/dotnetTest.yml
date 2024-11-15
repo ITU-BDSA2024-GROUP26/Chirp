@@ -93,8 +93,8 @@ jobs:
 
     - name: GitHub secrets
       run: |
-       GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
-       GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
+       export GITHUBCLIENTID="${{ secrets.GITHUBCLIENTID }}"
+       export GITHUBCLIENTSECRET="${{ secrets.GITHUBCLIENTSECRET }}"
        dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
 
     
