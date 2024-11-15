@@ -124,3 +124,6 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_RAZOR_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        env: 
+          GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
+          GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
