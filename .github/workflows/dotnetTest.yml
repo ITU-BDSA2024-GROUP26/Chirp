@@ -93,6 +93,7 @@ jobs:
 
     - name: GitHub secrets
       run: |
+       ASPNETCORE_ENVIRONMENT: Development
        export GITHUBCLIENTID="${{ secrets.GITHUBCLIENTID }}"
        export GITHUBCLIENTSECRET="${{ secrets.GITHUBCLIENTSECRET }}"
        dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
