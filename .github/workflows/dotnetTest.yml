@@ -92,9 +92,11 @@ jobs:
       run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
 
     - name: GitHub secrets
-      run: |
-       export GITHUBCLIENTID="${{ secrets.GITHUBCLIENTID }}"
-       export GITHUBCLIENTSECRET="${{ secrets.GITHUBCLIENTSECRET }}"
-       dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
+      env:  
+        GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
+        GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
+      run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
+      
+       
 
     
