@@ -10,10 +10,10 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div>
-            <a href="/@(author?.Name)">my timeline</a> |
+            <a href="/@(author?.UserName)">my timeline</a> |
             <a href="/">public timeline</a> |
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl=@Url.Page("") method="post">
-                <button type="submit">logout [@author?.Name]</button>
+                <button type="submit">logout [@author?.UserName]</button>
             </form>
         </div>
     }

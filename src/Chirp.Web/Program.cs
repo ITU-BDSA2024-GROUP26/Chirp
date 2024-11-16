@@ -45,7 +45,10 @@ public class Program
         
         }
 
-        builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+        builder.Services.AddDefaultIdentity<Author>(options =>
+            {
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
+            })
             .AddEntityFrameworkStores<CheepDbContext>();
 
         // add services via DI  
@@ -75,10 +78,8 @@ public class Program
         
         o.Scope.Add("user:email");//access to the github-user's primary email address
         o.Scope.Add("user:");
-        o.ClaimActions.Clear();
-        o.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+        
         o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-        o.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
         });
         
         var app = builder.Build();
