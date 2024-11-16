@@ -18,7 +18,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
   
     public async Task<Author?> FindAuthorByName(string name)
     {
-        return await context.Users.FirstOrDefaultAsync(a=> a.Name == name);
+        return await context.Users.FirstOrDefaultAsync(a=> a.UserName == name);
     } 
     public async Task<Author?> FindAuthorByEmail(string email)
     {
@@ -41,7 +41,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
             Console.WriteLine("qwe: ", authorNameRegex);
             query =  (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where cheep.Author!.Name! == authorNameRegex!
+                     where cheep.Author!.UserName! == authorNameRegex!
                      orderby cheep.Id descending
                      select cheep)
                     .Skip(offset);
