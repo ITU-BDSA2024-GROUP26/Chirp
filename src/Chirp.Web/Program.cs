@@ -37,14 +37,12 @@ public class Program
                     );
             CheepDbContext.TestingSetup = true;
         } else {
-
             if(builder.Environment.IsEnvironment("Production")) {
                 connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
             } else {
                 connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
             builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
-        
         }
 
         builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -64,7 +62,6 @@ public class Program
         //.AddCookie()
         .AddGitHub(o =>
         {
-        
         o.ClientId = builder.Configuration["authentication:github:clientId"] 
                      ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID")
                      ?? throw new InvalidDataException("Github client id not found");;
