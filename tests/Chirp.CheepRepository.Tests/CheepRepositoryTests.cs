@@ -109,7 +109,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         var cheeps = await _repository.ReadCheeps(-1, 0, name);
 
         // Assert
-        Assert.All(cheeps, c => Assert.Equal(name, c.Author!.Name!));
+        Assert.All(cheeps, c => Assert.Equal(name, c.Author!.UserName!));
     }
 
 
@@ -178,6 +178,6 @@ public class CheepRepositoryTests : IAsyncLifetime
         var foundAuthor = await _repository.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
 
         //Assert
-        Assert.Equal("Roger Histand", foundAuthor?.Name);  
+        Assert.Equal("Roger Histand", foundAuthor?.UserName);  
     }
 }
