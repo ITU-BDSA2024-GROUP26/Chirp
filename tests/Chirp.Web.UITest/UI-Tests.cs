@@ -54,8 +54,8 @@ public class Tests : PageTest
     {
         await Page.GotoAsync("http://localhost:5000/");
         await Page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
-        await Page.GetByPlaceholder("name", new() { Exact = true}).ClickAsync();
-        await Page.GetByPlaceholder("name", new() { Exact = true}).FillAsync("qwe");
+        await Page.GetByPlaceholder("username", new() { Exact = true}).ClickAsync();
+        await Page.GetByPlaceholder("username", new() { Exact = true}).FillAsync("qwe");
         await Page.GetByPlaceholder("name@example.com").ClickAsync();
         await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
         await Page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
@@ -66,7 +66,6 @@ public class Tests : PageTest
         });
         await Page.GetByLabel("Confirm Password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
         await Page.GetByRole(AriaRole.Link, new() { Name = "Public Timeline" }).ClickAsync();
     }
 
@@ -76,8 +75,8 @@ public class Tests : PageTest
         await Page.GotoAsync("http://localhost:5000"); 
         
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
-        await Page.GetByPlaceholder("name@example.com").ClickAsync();
-        await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("qwe");
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
@@ -92,8 +91,8 @@ public class Tests : PageTest
         // Arrange part, logging in is already expected to work due to previous test passing
         await Page.GotoAsync("http://localhost:5000"); 
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
-        await Page.GetByPlaceholder("name@example.com").ClickAsync();
-        await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("qwe");
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
