@@ -44,7 +44,10 @@ public class Program
             builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
         }
 
-        builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+        builder.Services.AddDefaultIdentity<Author>(options =>
+            {
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
+            })
             .AddEntityFrameworkStores<CheepDbContext>();
 
         // add services via DI  
@@ -73,10 +76,8 @@ public class Program
         
         o.Scope.Add("user:email");//access to the github-user's primary email address
         o.Scope.Add("user:");
-        o.ClaimActions.Clear();
-        o.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+        
         o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-        o.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
         });
         
         // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years

@@ -84,7 +84,7 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
             /// </summary>
             
             [Required]
-            public string Name { get; set; }
+            public string UserName { get; set; }
             
             [Required]
             [EmailAddress]
@@ -132,11 +132,11 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                 // If the user does not have an account, then ask the user to create an account.
                 ReturnUrl = returnUrl;
                 ProviderDisplayName = info.ProviderDisplayName;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Name))
                 {
                     Input = new InputModel
                     {
-                        Name = info.Principal.FindFirstValue(ClaimTypes.Name),
+                        UserName = info.Principal.FindFirstValue(ClaimTypes.Name),
                         Email = info.Principal.FindFirstValue(ClaimTypes.Email)
                     };
                 }
@@ -158,9 +158,7 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
-                user.Name = Input.Name;
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 var result = await _userManager.CreateAsync(user);
