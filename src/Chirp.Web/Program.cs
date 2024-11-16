@@ -15,7 +15,6 @@ namespace Chirp.Razor;
 
 public class Program
 {
-
     public static async Task Main()
     {
         var builder = WebApplication.CreateBuilder();
@@ -64,7 +63,7 @@ public class Program
         {
         o.ClientId = builder.Configuration["authentication:github:clientId"] 
                      ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID")
-                     ?? throw new InvalidDataException("Github client id not found");;
+                     ?? throw new InvalidDataException("Github client id not found");
         o.ClientSecret = builder.Configuration["authentication:github:clientSecret"]
                          ?? Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")
                          ?? throw new InvalidDataException("Github client secret not found");
