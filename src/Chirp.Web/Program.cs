@@ -2,6 +2,8 @@ using System.Security.Claims;
 using Chirp.Core.Entities;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,6 @@ namespace Chirp.Razor;
 
 public class Program
 {
-
     public static async Task Main()
     {
         var builder = WebApplication.CreateBuilder();
@@ -35,14 +36,12 @@ public class Program
                     );
             CheepDbContext.TestingSetup = true;
         } else {
-
             if(builder.Environment.IsEnvironment("Production")) {
                 connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
             } else {
                 connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
             builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
-        
         }
 
         builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -62,10 +61,9 @@ public class Program
         //.AddCookie()
         .AddGitHub(o =>
         {
-        
         o.ClientId = builder.Configuration["authentication:github:clientId"] 
                      ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID")
-                     ?? throw new InvalidDataException("Github client id not found");;
+                     ?? throw new InvalidDataException("Github client id not found");
         o.ClientSecret = builder.Configuration["authentication:github:clientSecret"]
                          ?? Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")
                          ?? throw new InvalidDataException("Github client secret not found");
@@ -79,6 +77,18 @@ public class Program
         o.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
         o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
         o.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+        });
+        
+        // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
+        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(365));
+        
+        // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-8.0
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowChirp", policy =>
+            {
+                policy.WithOrigins("https://bdsagroup26chirprazor.azurewebsites.net"); //Only allow chirp
+            });
         });
         
         var app = builder.Build();
@@ -103,10 +113,22 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
+        
+        // Enable CORS policy
+        app.UseCors("AllowChirp");
+        
+        
+        // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-9.0
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.Lax,     // Enforces "Lax" as the minimum SameSite policy
+            HttpOnly = HttpOnlyPolicy.Always,             // Ensures cookies are only accessible over HTTP, not JavaScript
+            //Secure = CookieSecurePolicy.Always          // Forces cookies to be sent only over HTTPS
+        });
 
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
         app.MapRazorPages();
 
         await app.RunAsync();
