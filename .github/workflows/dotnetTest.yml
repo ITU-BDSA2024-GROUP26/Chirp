@@ -96,7 +96,7 @@ jobs:
       run: |
         dotnet user-secrets set "authentication:github:clientId" "${{ secrets.GITHUBCLIENTID }}"
         dotnet user-secrets set "authentication:github:clientSecret" "${{ secrets.GITHUBCLIENTSECRET }}"
-        dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
+        dotnet test ../../tests/Chirp.Web.UITest --no-build --verbosity normal
   
     
         
