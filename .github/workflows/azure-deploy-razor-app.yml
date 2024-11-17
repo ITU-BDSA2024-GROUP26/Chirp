@@ -38,6 +38,7 @@ jobs:
   test: 
     name: Test
     uses: ./.github/workflows/dotnetTest.yml
+    secrets: inherit
   
   setup-migration: 
     runs-on: ubuntu-latest
