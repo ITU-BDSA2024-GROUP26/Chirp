@@ -8,4 +8,4 @@ Co-authored-by: Torbjørn <toej@itu.dk>
 
 Co-authored-by: Vicki <vbjo@itu.dk>
 
-[https://bdsagroup26chirprazor.scm.azurewebsites.net](https://bdsagroup26chirprazor.azurewebsites.net/)
+[https://bdsagroup26chirprazor.azurewebsites.net](https://bdsagroup26chirprazor.azurewebsites.net)
