@@ -61,7 +61,11 @@ jobs:
         dotnet build ${{ matrix.dirs }}
         dotnet test ${{ matrix.dirs }} --no-build
 
-  UI-test: 
+  UI-test:
+    permissions:
+      contents: read
+      actions: read
+    
     name: UI Test 
     needs: setup-dotnet
     runs-on: ubuntu-latest
