@@ -15,7 +15,7 @@ public interface ICheepRepository
     public Task UpdateCheep(int id, string newMessage); 
 
     
-    public Task<ICollection<Author>> GetAuthorsFollowing(string name) ; 
+    public Task<ICollection<Author>> GetAuthorsFollowing(string name); 
 
     public Task AddOrRemoveFollower(string userName, string usernmToFollow);
 

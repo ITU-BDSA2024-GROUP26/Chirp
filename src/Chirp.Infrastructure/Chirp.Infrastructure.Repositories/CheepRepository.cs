@@ -98,6 +98,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
             select a; 
         
         await query.ForEachAsync(user => {
+            if(user.FollowingList == null) { user.FollowingList = new List<Author>(); }
 
             if(user.FollowingList.Contains(userTofollow)) {
                 user.FollowingList.Remove(userTofollow);
