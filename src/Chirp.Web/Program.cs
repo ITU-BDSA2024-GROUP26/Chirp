@@ -61,7 +61,6 @@ public class Program
         options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = "GitHub";
         */
-        
         })
         //.AddCookie()
         .AddGitHub(o =>
