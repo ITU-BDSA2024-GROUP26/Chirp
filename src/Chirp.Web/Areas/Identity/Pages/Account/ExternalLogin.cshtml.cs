@@ -143,7 +143,6 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                 {
                     UserName = userName, 
                     Email = email,
-
                 }; 
 
                 user.Cheeps = new List<Cheep>();
