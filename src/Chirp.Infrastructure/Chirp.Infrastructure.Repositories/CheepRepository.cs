@@ -98,7 +98,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
             select a; 
         
         await query.ForEachAsync(user => {
-            if(user.FollowingList == null) { user.FollowingList = new List<Author>(); }
+            user.FollowingList ??= new List<Author>();
 
             if(user.FollowingList.Contains(userTofollow)) {
                 user.FollowingList.Remove(userTofollow);
@@ -110,5 +110,28 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
     
         await context.SaveChangesAsync(); 
     }
+
+    public async Task<ICollection<Cheep>> GetFollowingCheeps(string userName, int limit = -1, int offset = 0)
+    {   
+        var user = await context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
+
+        if(user.FollowingList == null) {throw new Exception("Trying to get following cheeps for user with empty followinglist");}
+
+        var query = (from cheep in context.Cheeps
+                    .Include(c => c.Author) // from chatgpt 
+                     where user.FollowingList.Contains(cheep.Author)
+                     orderby cheep.Id descending
+                     select cheep)
+                    .Skip(offset);
+
+        if (limit > 0)
+        {
+            query = query.Take(limit);
+        }
+
+        await context.SaveChangesAsync();
+
+        return await query.ToListAsync();
+    } 
 
 }
