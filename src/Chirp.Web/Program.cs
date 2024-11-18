@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Chirp.Razor;
 
@@ -31,8 +32,10 @@ public class Program
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
             
-            builder.Services.AddDbContext<CheepDbContext>(options => 
-                    options.UseSqlite(connection)
+            builder.Services.AddDbContext<CheepDbContext>(options => {
+                    options.ConfigureWarnings(warnings => 
+                    warnings.Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning));
+                    options.UseSqlite(connection);}
                     );
             CheepDbContext.TestingSetup = true;
         } else {
