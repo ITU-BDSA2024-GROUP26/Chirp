@@ -215,13 +215,13 @@ public class CheepRepositoryTests : IAsyncLifetime
         await MakeAdrianFollowHelge();
 
         // act 
-        await _repository.AddOrRemoveFollower("Adrian", "Helge");
+        await _repository.AddOrRemoveFollower("Helge", "Adrian");
 
         // assert 
         var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
         var helge = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
 
-        Assert.DoesNotContain(helge, adrian.FollowingList);
+        Assert.DoesNotContain(adrian, helge.FollowingList);
     }
 
     private async Task MakeAdrianFollowHelge() 
