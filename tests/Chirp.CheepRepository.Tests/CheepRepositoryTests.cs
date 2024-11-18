@@ -180,4 +180,29 @@ public class CheepRepositoryTests : IAsyncLifetime
         //Assert
         Assert.Equal("Roger Histand", foundAuthor?.UserName);  
     }
+
+    [Fact]
+    public async Task CanGetFollower() 
+    {
+        //Arrange
+        var query = 
+            from a in _context.Users 
+            where a.UserName == "Helge" 
+            select a; 
+
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+
+        await query.ForEachAsync(user => {
+
+            if(user.FollowingList == null) { user.FollowingList = new List<Author>(); }
+            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(adrian);
+            });
+        await _context.SaveChangesAsync();
+
+        //Act 
+        ICollection<Author> HelgeFollowers = await _repository.GetAuthorsFollowing("Helge"); 
+
+        //Assert
+        Assert.Contains(adrian, HelgeFollowers);
+    }
 }
