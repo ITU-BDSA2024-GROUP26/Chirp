@@ -34,7 +34,7 @@ public class Program
             
             builder.Services.AddDbContext<CheepDbContext>(options => {
                     options.ConfigureWarnings(warnings => 
-                    warnings.Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning));
+                    warnings.Log(RelationalEventId.NonTransactionalMigrationOperationWarning));
                     options.UseSqlite(connection);}
                     );
             CheepDbContext.TestingSetup = true;
