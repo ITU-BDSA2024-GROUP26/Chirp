@@ -131,7 +131,7 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
             }
             else
             {     
-            //If user doesn't alreadu have an account
+            //If user doesn't already have an account
             //Automatically log the user in, after authentication by GIthub 
             //and show the homepage as the first thing 
                 var userName = info.Principal.FindFirstValue(ClaimTypes.Name);
@@ -160,21 +160,10 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                     await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                     return LocalRedirect(returnUrl);
                 }
-
-                // If the user does not have an account, then ask the user to create an account.
-                // ReturnUrl = returnUrl;
-                // ProviderDisplayName = info.ProviderDisplayName;
-                // if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Name))
-                // {
-                //     Input = new InputModel
-                //     {
-                //         UserName = info.Principal.FindFirstValue(ClaimTypes.Name),
-                //         Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-                //     };
                 }
                 return Page();
             }
-        //}
+       
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
@@ -201,24 +190,6 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                     {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
-                    //    var userId = await _userManager.GetUserIdAsync(user);
-                    //     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    //     var callbackUrl = Url.Page(
-                    //         "/Account/ConfirmEmail",
-                    //         pageHandler: null,
-                    //         values: new { area = "Identity", userId = userId, code = code },
-                    //         protocol: Request.Scheme);
-
-                    //     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    //         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    //     // If account confirmation is required, we need to show the link if we don't have a real email sender
-                    //     if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    //     {
-                    //      return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                    //    }
-
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                         return LocalRedirect(returnUrl);
                     }
@@ -229,8 +200,6 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                 }
             }
 
-            //ProviderDisplayName = info.ProviderDisplayName;
-            //ReturnUrl = returnUrl;
             return Page();
         }
 

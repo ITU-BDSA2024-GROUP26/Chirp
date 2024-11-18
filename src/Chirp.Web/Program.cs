@@ -47,7 +47,7 @@ public class Program
         builder.Services.AddDefaultIdentity<Author>(options =>
             {
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
-                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedAccount = false; //when signing in you are not required to confirm the account
             })
             .AddEntityFrameworkStores<CheepDbContext>();
 
