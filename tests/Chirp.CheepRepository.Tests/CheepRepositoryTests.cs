@@ -182,7 +182,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task CanGetFollower() 
+    public async Task Test_GetAuthorsFollowing() 
     {
         //Arrange
         var query = 
@@ -193,8 +193,8 @@ public class CheepRepositoryTests : IAsyncLifetime
         var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
 
         await query.ForEachAsync(user => {
-
             if(user.FollowingList == null) { user.FollowingList = new List<Author>(); }
+
             (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(adrian);
             });
         await _context.SaveChangesAsync();
@@ -204,5 +204,18 @@ public class CheepRepositoryTests : IAsyncLifetime
 
         //Assert
         Assert.Contains(adrian, HelgeFollowers);
+    }
+
+    [Fact]
+    public async Task Test_AddOrRemoveFollower() 
+    {
+        // act
+        await _repository.AddOrRemoveFollower("Adrian", "Helge");
+
+        // assert 
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        var helge = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
+
+        Assert.Contains(helge, adrian.FollowingList);
     }
 }
