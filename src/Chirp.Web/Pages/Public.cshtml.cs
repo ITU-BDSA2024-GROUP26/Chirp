@@ -12,11 +12,11 @@ namespace Chirp.Razor.Pages;
 public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : PageModel
 {
     public Author? Author { get; set; }
-    
+    public string? Message { get; set; }
     [BindProperty]
     [StringLength(160, ErrorMessage = "Maximum length is 160")]
-    public required string Message { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
+
     
 
     public async Task<ActionResult> OnGetAsync([FromQuery] int page = 1)
