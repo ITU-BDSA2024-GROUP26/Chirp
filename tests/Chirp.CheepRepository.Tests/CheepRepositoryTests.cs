@@ -185,29 +185,18 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_GetAuthorsFollowing() 
     {
         //Arrange
-        var query = 
-            from a in _context.Users 
-            where a.UserName == "Helge" 
-            select a; 
-
-        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
-
-        await query.ForEachAsync(user => {
-            if(user.FollowingList == null) { user.FollowingList = new List<Author>(); }
-
-            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(adrian);
-            });
-        await _context.SaveChangesAsync();
+        await MakeAdrianFollowHelge(); 
 
         //Act 
         ICollection<Author> HelgeFollowers = await _repository.GetAuthorsFollowing("Helge"); 
 
         //Assert
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
         Assert.Contains(adrian, HelgeFollowers);
     }
 
     [Fact]
-    public async Task Test_AddOrRemoveFollower() 
+    public async Task Test_AddingFollower() 
     {
         // act
         await _repository.AddOrRemoveFollower("Adrian", "Helge");
@@ -218,4 +207,37 @@ public class CheepRepositoryTests : IAsyncLifetime
 
         Assert.Contains(helge, adrian.FollowingList);
     }
+
+    [Fact]
+    public async Task Test_RemovingFollower() 
+    {
+        //arrange 
+        await MakeAdrianFollowHelge();
+
+        // act 
+        await _repository.AddOrRemoveFollower("Adrian", "Helge");
+
+        // assert 
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        var helge = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
+
+        Assert.DoesNotContain(helge, adrian.FollowingList);
+    }
+
+    private async Task MakeAdrianFollowHelge() 
+    {
+        var query = 
+            from a in _context.Users 
+            where a.UserName == "Helge" 
+            select a; 
+
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+
+        await query.ForEachAsync(user => {
+            user.FollowingList ??= new List<Author>(); // make sure it isn't null
+            if(user.FollowingList.Contains(adrian)) { return; }
+            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(adrian);
+            });
+        await _context.SaveChangesAsync();
+    } 
 }
