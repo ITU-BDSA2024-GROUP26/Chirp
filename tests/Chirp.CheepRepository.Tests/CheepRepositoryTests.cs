@@ -140,27 +140,6 @@ public class CheepRepositoryTests : IAsyncLifetime
         Assert.Null(exception);
     }
 
-    // [Fact]
-    // public async Task IsAuthorCreated() 
-    // {
-    //     //Arrange 
-    //     Author newAuthor = new Author()
-    //     {
-    //         Id = 13,
-    //         Name = "JoJo",
-    //         Email = "jojo_daBeast.com",
-    //         Cheeps = new List<Cheep>()
-    //     };
-    //
-    //     //Act
-    //     await _repository.CreateAuthor(newAuthor); 
-    //
-    //     //Assert
-    //     var createdAuthor = await _context.Authors.FindAsync(newAuthor.Id);
-    //     Assert.Equal(newAuthor.Name, createdAuthor.Name);
-    //     Assert.Equal(newAuthor.Email, createdAuthor.Email);
-    // }
-
     [Fact]
     public async Task CanFindAuthorbyName() 
     {
@@ -185,7 +164,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_GetAuthorsFollowing() 
     {
         //Arrange
-        await MakeAdrianFollowHelge(); 
+        await MakeHelgeFollowUser("Adrian"); 
 
         //Act 
         ICollection<Author> HelgeFollowers = await _repository.GetAuthorsFollowing("Helge"); 
@@ -212,7 +191,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_RemovingFollower() 
     {
         //arrange 
-        await MakeAdrianFollowHelge();
+        await MakeHelgeFollowUser("Adrian");
 
         // act 
         await _repository.AddOrRemoveFollower("Helge", "Adrian");
@@ -224,19 +203,19 @@ public class CheepRepositoryTests : IAsyncLifetime
         Assert.DoesNotContain(adrian, helge.FollowingList);
     }
 
-    private async Task MakeAdrianFollowHelge() 
+    private async Task MakeHelgeFollowUser(string userName) 
     {
         var query = 
             from a in _context.Users 
             where a.UserName == "Helge" 
             select a; 
 
-        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        var userToFollow = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
 
         await query.ForEachAsync(user => {
             user.FollowingList ??= new List<Author>(); // make sure it isn't null
-            if(user.FollowingList.Contains(adrian)) { return; }
-            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(adrian);
+            if(user.FollowingList.Contains(userToFollow)) { return; }
+            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(userToFollow);
             });
         await _context.SaveChangesAsync();
     } 

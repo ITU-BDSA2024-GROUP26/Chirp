@@ -19,5 +19,6 @@ public interface ICheepRepository
 
     public Task AddOrRemoveFollower(string userName, string usernmToFollow);
 
+    public Task<ICollection<Cheep>> GetFollowingCheeps(string userName, int limit, int offset);
 
 }
