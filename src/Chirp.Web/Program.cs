@@ -47,6 +47,7 @@ public class Program
         builder.Services.AddDefaultIdentity<Author>(options =>
             {
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
+                options.SignIn.RequireConfirmedAccount = false;
             })
             .AddEntityFrameworkStores<CheepDbContext>();
 
@@ -60,6 +61,7 @@ public class Program
         options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = "GitHub";
         */
+        
         })
         //.AddCookie()
         .AddGitHub(o =>
