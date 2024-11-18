@@ -203,6 +203,32 @@ public class CheepRepositoryTests : IAsyncLifetime
         Assert.DoesNotContain(adrian, helge.FollowingList);
     }
 
+    [Fact]
+    public async Task Test_GetFollowingCheeps() 
+    {
+        //arrange 
+        await MakeHelgeFollowUser("Quintin Sitts");
+        await MakeHelgeFollowUser("Jacqualine Gilcoine"); 
+
+        // act 
+        var followingCheeps = await _repository.GetFollowingCheeps("Helge", -1, 0); 
+
+        // assert 
+        var checkCheeps = from cheep in _context.Cheeps
+                    .Include(c => c.Author) // from chatgpt 
+                     where cheep.Author!.UserName! == "Quintin Sitts" || cheep.Author!.UserName! == "Jacqualine Gilcoine"
+                     orderby cheep.Id descending
+                     select cheep; 
+        
+        await _context.SaveChangesAsync(); 
+
+
+        foreach(var cheep in checkCheeps.ToList()) {
+            Assert.Contains(cheep, followingCheeps); 
+        }
+        
+    }
+
     private async Task MakeHelgeFollowUser(string userName) 
     {
         var query = 
