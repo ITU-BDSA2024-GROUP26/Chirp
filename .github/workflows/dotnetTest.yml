@@ -122,7 +122,7 @@ jobs:
         shell: bash 
         run: |
               cd src/Chirp.Infrastructure/Chirp.Infrastructure.Repositories
-              dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.ArtifactPath}}/migrate/bundle
+              ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.ArtifactPath}}/migrate/bundle
             
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
@@ -167,6 +167,7 @@ jobs:
       - name: Execute bundle 
         shell: bash
         run: |
+          chmod +x bundle
           ASPNETCORE_ENVIRONMENT=Production ./bundle --connection "Data Source=chirp.db"
       
       
