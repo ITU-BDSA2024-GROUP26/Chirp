@@ -10,16 +10,8 @@
 }
 
 <div>
-    @if (SignInManager.IsSignedIn(User))
-    {
-        
-        
-        <h3>What's on your mind, @Model.Author?.UserName?</h3>
-        <form method="post">
-            <input type="text" asp-for="Message" required>
-            <input type="submit" value="Share">
-        </form>
-    }
+
+    @await Html.PartialAsync("_CheepBox", Model)
     
     <h2> Public Timeline </h2>
 
