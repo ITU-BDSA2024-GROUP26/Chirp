@@ -11,4 +11,29 @@ public class Author : IdentityUser
     // Who this author follows
     [Required]
     public ICollection<Author>? FollowingList { get; set; }
-}
+
+    public bool FollowsAuthor(Author authorToCheck) 
+    {
+        if(FollowingList == null) { return false; }
+        return FollowingList.Contains(authorToCheck); 
+    }
+
+    public bool FollowsAuthor(string authorNameToCheck) 
+    {
+        if(FollowingList == null) { return false; }
+
+        try
+        {
+            // returns the first element that matches the condition. If no file matches it, throws an 
+            // InvalidOperationException if no such file exists. A little janky but should work
+            FollowingList.First(following => following.UserName == authorNameToCheck);
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+
+        // If we reach this code the user must be following a user wiht a matching author name
+        return true; 
+    }
+}   
