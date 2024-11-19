@@ -86,6 +86,26 @@ public class Tests : PageTest
     }
 
     [Test, Order(4)]
+    public async Task TestFollow() 
+    {
+        // arrange 
+        await TestLogin();
+        // act
+        await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
+
+        // assert
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" })).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" })).ToBeVisibleAsync();
+    }
+
+    [Test, Order(5)] 
+    public async Task TestUnfollow() 
+    {
+
+    }
+
+    [Test, Order(7)]
     public async Task TestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing
