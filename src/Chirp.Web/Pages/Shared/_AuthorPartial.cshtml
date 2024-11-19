@@ -15,8 +15,9 @@
     </strong>
     @if (SignInManager.IsSignedIn(User))
     {
-        <div>
-            [follow]
-        </div>
+        <form method="post" asp-page-handler="Follow">
+            <input type="hidden" name="UsrnmToFollow" value="@Model.AuthorName" />
+            <button type="submit" class="btn btn-primary">Follow</button>
+        </form>
     }
 </p>
