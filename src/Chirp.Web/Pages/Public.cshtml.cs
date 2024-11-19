@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Razor.Pages;
 
-public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : PageModel
+public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : FollowModel(cheepRepository, userManager)
 {
     public Author? Author { get; set; }
-    public string? Message { get; set; }
     [BindProperty]
     [StringLength(160, ErrorMessage = "Maximum length is 160")]
+    public required string? Message { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
 
     
@@ -26,7 +26,7 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
         return Page();
     }
     
-    public async Task<ActionResult> OnPostAsync() {
+    public async Task<ActionResult> OnPostShareAsync() {
         if (!ModelState.IsValid)
         {
             ModelState.AddModelError(string.Empty, "ops");
