@@ -2,13 +2,13 @@
 @inject UserManager<Chirp.Core.Entities.Author> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model Chirp.Razor.Pages.PublicModel
+@model string
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <h3>What's on your mind, @Model.Author?.UserName?</h3>
-    <form method="post">
-        <input type="text" asp-for="Message" required>
+    <h3>What's on your mind, @Model</h3>
+    <form method="post" asp-page-handler="Share">
+        <input type="text" name="Message" required>
         <input type="submit" value="Share">
     </form>
 }
