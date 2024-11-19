@@ -43,7 +43,9 @@ public class Tests : PageTest
         // so unavoidable code duplication(might be a smart way I don't know)
         await Page.GotoAsync("http://localhost:5000"); 
 
-        await Page.Locator("p").Filter(new() { HasText = "Adrian Hej, velkommen til kurset." }).GetByRole(AriaRole.Link).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
+
+        //await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
         await Expect(Page.GetByText("Adrian Hej, velkommen til kurset.")).ToBeVisibleAsync();
 
