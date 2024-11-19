@@ -147,7 +147,7 @@ jobs:
             --account-key ${{ secrets.STORAGE_ACCOUNT_KEY }} \
             --share-name databases-fileshare \
             --path chirp.db \
-            --dest ${{env.ArtifactPath}}/database
+            --dest ${{env.ArtifactPath}}/database/chirp.db
       
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
