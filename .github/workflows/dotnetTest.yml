@@ -5,7 +5,7 @@ name: .Net Test
 on: [ push, workflow_call, workflow_dispatch ]
 
 env: 
-  ArtifactPath: /usr/share/ 
+  ArtifactPath: /usr/share
 
 permissions:
   contents: read
