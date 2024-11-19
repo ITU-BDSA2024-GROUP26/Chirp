@@ -137,7 +137,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Make target directory 
-        run: mkdir -p  ${{env.ArtifactPath}}/database
+        run: mkdir -p  $GITHUB_WORKSPACE/database
 
       - name: Install azure CLI and download database
         uses: Azure/CLI@v2
@@ -147,15 +147,15 @@ jobs:
             --account-key ${{ secrets.STORAGE_ACCOUNT_KEY }} \
             --share-name databases-fileshare \
             --path chirp.db \
-            --dest ${{env.ArtifactPath}}/database/chirp.db
+            --dest $GITHUB_WORKSPACE/database/chirp.db
           
-            ls ${{env.ArtifactPath}}/database
+            ls $GITHUB_WORKSPACE/database
       
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
         with:
           name: database
-          path: ${{env.ArtifactPath}}/database
+          path: $GITHUB_WORKSPACE/database
   
   Migration-Test: 
     name: Test database migration 
