@@ -10,24 +10,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Razor.Pages;
 
-public class CheepBoxModel(ICheepRepository cheepRepository, UserManager<Author> userManager) : PageModel
+public class CheepBoxModel(ICheepRepository cheepRepository, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
 {
     public Author? Author { get; set; }
     
-    [BindProperty]
-    [StringLength(160, ErrorMessage = "Maximum length is 160")]
-    public required string Message { get; set; }
-    
-    public async Task<ActionResult> OnPostShareAsync() {
-        if (!ModelState.IsValid)
-        {
-            ModelState.AddModelError(string.Empty, "ops");
-            return Page(); 
-        }
-
+    public async Task OnPostShareAsync(string Message) {
         if (User.Identity != null && !User.Identity.IsAuthenticated)
         {
-            return RedirectToPage("");
+            return ;
         }
         
         // Create the new Cheep
@@ -40,6 +30,6 @@ public class CheepBoxModel(ICheepRepository cheepRepository, UserManager<Author>
 
         // Save the new Cheep (assuming a SaveCheepAsync method exists in your service or repository)
         await cheepRepository.CreateCheep(newCheep);
-        return RedirectToPage("");
+        return;
     }
 }
