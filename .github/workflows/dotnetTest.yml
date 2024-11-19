@@ -136,6 +136,9 @@ jobs:
     steps: 
       - uses: actions/checkout@v4
 
+      - name: Make target directory 
+        run: mkdir -p  ${{env.ArtifactPath}}/database
+
       - name: Install azure CLI and download database
         uses: Azure/CLI@v2
         with: 
