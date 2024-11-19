@@ -98,7 +98,7 @@ jobs:
       run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
 
   Setup-Migration: 
-    name: Database Migration Test
+    name: Setup migration bundle
     needs: setup-dotnet
     runs-on: ubuntu-latest
     steps: 
@@ -130,19 +130,16 @@ jobs:
     steps: 
       - uses: actions/checkout@v4
 
-      - name: Install azure CLI 
+      - name: Install azure CLI and download database
         uses: Azure/CLI@v2
-      
-      - name: Download database from Azure Storage
-        shell: bash
-        run: |
-          # Login to Azure Storage
-          az storage file download --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }} \
+        with: 
+          inlinescript: |
+            az storage file download --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }} \
             --account-key ${{ secrets.STORAGE_ACCOUNT_KEY }} \
             --share-name database-fileshare \
             --path chirp.db \
             --dest ${{env.DOTNET_ROOT}}/database
-
+      
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
         with:
