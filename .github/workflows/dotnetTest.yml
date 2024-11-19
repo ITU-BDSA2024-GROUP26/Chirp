@@ -4,6 +4,9 @@
 name: .Net Test
 on: [ push, workflow_call, workflow_dispatch ]
 
+env: 
+  ArtifactPath: /usr/share/ 
+
 permissions:
   contents: read
 
@@ -113,19 +116,19 @@ jobs:
       - name: Make directory
         shell: bash
         run: |
-              mkdir -p ${{env.DOTNET_ROOT}}/migrate
+              mkdir -p ${{env.ArtifactPath}}/migrate
       
       - name: Create Migration Bundle
         shell: bash 
         run: |
               cd src/Chirp.Infrastructure/Chirp.Infrastructure.Repositories
-              dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.DOTNET_ROOT}}/migrate/bundle
+              dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.ArtifactPath}}/migrate/bundle
             
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
         with:
           name: migration
-          path: ${{env.DOTNET_ROOT}}/migrate
+          path: ${{env.ArtifactPath}}/migrate
   
   Download-Database: 
     name: Download database from azure
@@ -139,15 +142,15 @@ jobs:
           inlinescript: |
             az storage file download --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }} \
             --account-key ${{ secrets.STORAGE_ACCOUNT_KEY }} \
-            --share-name database-fileshare \
+            --share-name databases-fileshare \
             --path chirp.db \
-            --dest ${{env.DOTNET_ROOT}}/database
+            --dest ${{env.ArtifactPath}}/database
       
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
         with:
           name: database
-          path: ${{env.DOTNET_ROOT}}/database
+          path: ${{env.ArtifactPath}}/database
   
   Migration-Test: 
     name: Test database migration 
