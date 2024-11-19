@@ -9,13 +9,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Razor.Pages;
 
-public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : FollowModel(cheepRepository, userManager)
+public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : PageModel
 {
     public Author? Author { get; set; }
     [BindProperty]
     [StringLength(160, ErrorMessage = "Maximum length is 160")]
     public required string? Message { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
+
+    private FollowModel _followModel; 
+    private FollowModel lazyGetFollowModel() 
+    {
+        if(_followModel == null) { _followModel = new FollowModel(cheepRepository, userManager, User); }
+        return _followModel;
+    }
 
     
 
@@ -48,6 +55,11 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
 
         // Save the new Cheep (assuming a SaveCheepAsync method exists in your service or repository)
         await cheepRepository.CreateCheep(newCheep);
+        return RedirectToPage("");
+    }
+
+    public async Task<IActionResult> OnPostFollowAsync(string UsrnmToFollow) {
+        await lazyGetFollowModel().OnPostFollowAsync(UsrnmToFollow); 
         return RedirectToPage("");
     }
 }
