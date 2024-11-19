@@ -10,9 +10,9 @@
 }
 
 <div>
-
-    <partial name="_CheepBox" model="Model" />
     
+    @await Html.PartialAsync("_CheepBox", Model!.Author != null ? Model.Author.UserName : "Invalid User")
+
     <h2> Public Timeline </h2>
 
     @if (Model.Cheeps.Any())
