@@ -18,6 +18,8 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
 
     private FollowModel _followModel; 
+    // Idea of lazy initialization here is that the User we refer to probably isn't up to date when this class is created. 
+    // miight need some kind of logic to check if we should recreate the class if there are changes to the user, but from our tests so far that isn't relevant
     private FollowModel lazyGetFollowModel() 
     {
         if(_followModel == null) { _followModel = new FollowModel(cheepRepository, userManager, User); }
