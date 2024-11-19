@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Azure.Identity;
+using Chirp.Infrastructure.Services;
 
 namespace Chirp.Razor.Areas.Identity.Pages.Account
 {
@@ -128,21 +130,39 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                 return RedirectToPage("./Lockout");
             }
             else
-            {
-                // If the user does not have an account, then ask the user to create an account.
-                ReturnUrl = returnUrl;
-                ProviderDisplayName = info.ProviderDisplayName;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Name))
+            {     
+            //If user doesn't already have an account
+            //Automatically log the user in, after authentication by GIthub 
+            //and show the homepage as the first thing 
+                var userName = info.Principal.FindFirstValue(ClaimTypes.Name);
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+            //Create new instance of Author(which is the user)
+            //and set the email and username from the retrieved info from github
+                var user = new Author
                 {
-                    Input = new InputModel
-                    {
-                        UserName = info.Principal.FindFirstValue(ClaimTypes.Name),
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-                    };
+                    UserName = userName, 
+                    Email = email,
+                }; 
+
+                user.Cheeps = new List<Cheep>();
+
+                var newResult = await _userManager.CreateAsync(user);
+
+                //if the creation of a new user succeded
+                //we add login info to the account
+                if (newResult.Succeeded) 
+                {
+                    await _userManager.AddLoginAsync(user, info);
+                    _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+
+                    await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                    return LocalRedirect(returnUrl);
+                }
                 }
                 return Page();
             }
-        }
+       
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
@@ -169,24 +189,6 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                     {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
-
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                         return LocalRedirect(returnUrl);
                     }
@@ -197,8 +199,6 @@ namespace Chirp.Razor.Areas.Identity.Pages.Account
                 }
             }
 
-            ProviderDisplayName = info.ProviderDisplayName;
-            ReturnUrl = returnUrl;
             return Page();
         }
 
