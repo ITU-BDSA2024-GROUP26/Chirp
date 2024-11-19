@@ -44,7 +44,11 @@ public class Program
             } else {
                 connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
-            builder.Services.AddDbContext<CheepDbContext>(options => options.UseSqlite(connectionString));
+            builder.Services.AddDbContext<CheepDbContext>(options => {
+                    // ensure that we can execute non-transactional migrations 
+                    options.ConfigureWarnings(warnings => warnings.Log(RelationalEventId.NonTransactionalMigrationOperationWarning)); 
+                    options.UseSqlite(connectionString);}
+                    );
         }
 
         builder.Services.AddDefaultIdentity<Author>(options =>
