@@ -9,28 +9,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Razor.Pages;
 
-public class FollowModel(ICheepRepository cheepRepository, UserManager<Author> userManager) : PageModel
+public class FollowModel(ICheepRepository cheepRepository, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
 {
 
-    [BindProperty]
-    public required string? UsrnmToFollow { get; set; }
-
-    public async Task<ActionResult> OnPostFollowAsync() {
-        if (!ModelState.IsValid)
-        {
-            ModelState.AddModelError(string.Empty, "ops");
-            return Page(); 
-        }
+    public async Task OnPostFollowAsync(string UsrnmToFollow) {
 
         if (UsrnmToFollow == null ||User.Identity != null && !User.Identity.IsAuthenticated)
         {
-            return RedirectToPage("");
+            return;
         }
 
         Author curUser = await userManager.GetUserAsync(User);
 
         await cheepRepository.AddOrRemoveFollower(curUser.UserName ?? throw new Exception("Wtf user with null username"), UsrnmToFollow); 
-        return RedirectToPage("");
+        return;
 
     }
 }
