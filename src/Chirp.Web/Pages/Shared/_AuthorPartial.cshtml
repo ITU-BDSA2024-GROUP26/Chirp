@@ -14,12 +14,12 @@
     <strong>
         <a href="/@Model.AuthorName">@Model.AuthorName</a>
     </strong>
-    @if (SignInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User) && user != null && user.UserName != @Model.AuthorName)
     {
         <form method="post" asp-page-handler="Follow">
             <input type="hidden" name="UsrnmToFollow" value="@Model.AuthorName" />
             <button type="submit" class="btn btn-primary"> 
-                @if(user != null && user.FollowsAuthor(@Model.AuthorName)) 
+                @if(user.FollowsAuthor(@Model.AuthorName)) 
                 {
                     <p>[Unfollow]</p>
                 } else {
