@@ -105,7 +105,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
             } else {
                 user.FollowingList.Add(userTofollow);
             }
-
             });
     
         await context.SaveChangesAsync(); 
@@ -133,5 +132,4 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
         return await query.ToListAsync();
     } 
-
 }

@@ -226,7 +226,6 @@ public class CheepRepositoryTests : IAsyncLifetime
         foreach(var cheep in checkCheeps.ToList()) {
             Assert.Contains(cheep, followingCheeps); 
         }
-        
     }
 
     private async Task MakeHelgeFollowUser(string userName) 

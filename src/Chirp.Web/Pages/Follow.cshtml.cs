@@ -11,10 +11,8 @@ namespace Chirp.Razor.Pages;
 
 public class FollowModel(ICheepRepository cheepRepository, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
 {
-
     public async Task OnPostFollowAsync(string UsrnmToFollow) {
-
-        if (UsrnmToFollow == null ||User.Identity != null && !User.Identity.IsAuthenticated)
+        if (UsrnmToFollow == null ||(User.Identity != null && !User.Identity.IsAuthenticated))
         {
             return;
         }
@@ -23,6 +21,5 @@ public class FollowModel(ICheepRepository cheepRepository, UserManager<Author> u
 
         await cheepRepository.AddOrRemoveFollower(curUser.UserName ?? throw new Exception("Wtf user with null username"), UsrnmToFollow); 
         return;
-
     }
 }
