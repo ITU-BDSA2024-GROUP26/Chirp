@@ -4,6 +4,12 @@
 name: .Net Test
 on: [ push, workflow_call, workflow_dispatch ]
 
+env: 
+  ArtifactPath: /usr/share
+
+permissions:
+  contents: read
+
 jobs:
   setup-dotnet: 
     name: Setup dotnet
@@ -96,7 +102,94 @@ jobs:
         GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
         GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
       run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
+
+  Setup-Migration: 
+    name: Setup migration bundle
+    needs: setup-dotnet
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      
+      - name: Install dotnet-ef 
+        run: dotnet tool install --global dotnet-ef --version 9.0.0-rc.1.24451.1
+      
+      - name: Make directory
+        shell: bash
+        run: |
+              mkdir -p ${{env.ArtifactPath}}/migrate
+      
+      - name: Create Migration Bundle
+        shell: bash 
+        run: |
+              cd src/Chirp.Infrastructure/Chirp.Infrastructure.Repositories
+              ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.ArtifactPath}}/migrate/bundle
+            
+      - name: Upload artifacts for test job
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration
+          path: ${{env.ArtifactPath}}/migrate
   
-    
+  Download-Database: 
+    name: Download database from azure
+    runs-on: ubuntu-latest 
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Make target directory 
+        run: mkdir -p  ${{env.ArtifactPath}}/database
+
+      - name: Install azure CLI and download database
+        uses: Azure/CLI@v2
+        with: 
+          inlinescript: |
+            az storage file download --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }} \
+            --account-key ${{ secrets.STORAGE_ACCOUNT_KEY }} \
+            --share-name databases-fileshare \
+            --path chirp.db \
+            --dest $GITHUB_WORKSPACE/chirp.db
+      
+      - name: Copy database file
+        shell: bash
+        run: |
+          echo This Dir: 
+          ls 
+          cp chirp.db ${{env.ArtifactPath}}/database/chirp.db      
+
+      - name: Upload artifacts for test job
+        uses: actions/upload-artifact@v4
+        with:
+          name: database
+          path: ${{env.ArtifactPath}}/database
+  
+  Migration-Test: 
+    name: Test database migration 
+    needs: [Download-Database, Setup-Migration]
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4 
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      
+      - name: Ensure database was uploaded 
+        shell: bash 
+        run: |
+          if ! [ -f chirp.db ]; then 
+            exit 1
+          fi
+
+      - name: Execute bundle 
+        shell: bash
+        run: |
+          chmod +x bundle
+          ASPNETCORE_ENVIRONMENT=Production ./bundle --connection "Data Source=chirp.db"
+      
+      
+
+
+
         
         
