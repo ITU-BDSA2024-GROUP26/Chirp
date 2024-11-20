@@ -140,27 +140,6 @@ public class CheepRepositoryTests : IAsyncLifetime
         Assert.Null(exception);
     }
 
-    // [Fact]
-    // public async Task IsAuthorCreated() 
-    // {
-    //     //Arrange 
-    //     Author newAuthor = new Author()
-    //     {
-    //         Id = 13,
-    //         Name = "JoJo",
-    //         Email = "jojo_daBeast.com",
-    //         Cheeps = new List<Cheep>()
-    //     };
-    //
-    //     //Act
-    //     await _repository.CreateAuthor(newAuthor); 
-    //
-    //     //Assert
-    //     var createdAuthor = await _context.Authors.FindAsync(newAuthor.Id);
-    //     Assert.Equal(newAuthor.Name, createdAuthor.Name);
-    //     Assert.Equal(newAuthor.Email, createdAuthor.Email);
-    // }
-
     [Fact]
     public async Task CanFindAuthorbyName() 
     {
@@ -180,4 +159,89 @@ public class CheepRepositoryTests : IAsyncLifetime
         //Assert
         Assert.Equal("Roger Histand", foundAuthor?.UserName);  
     }
+
+    [Fact]
+    public async Task Test_GetAuthorsFollowing() 
+    {
+        //Arrange
+        await MakeHelgeFollowUser("Adrian"); 
+
+        //Act 
+        ICollection<Author> HelgeFollowers = await _repository.GetAuthorsFollowing("Helge"); 
+
+        //Assert
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        Assert.Contains(adrian, HelgeFollowers);
+    }
+
+    [Fact]
+    public async Task Test_AddingFollower() 
+    {
+        // act
+        await _repository.AddOrRemoveFollower("Adrian", "Helge");
+
+        // assert 
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        var helge = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
+
+        Assert.Contains(helge, adrian.FollowingList);
+    }
+
+    [Fact]
+    public async Task Test_RemovingFollower() 
+    {
+        //arrange 
+        await MakeHelgeFollowUser("Adrian");
+
+        // act 
+        await _repository.AddOrRemoveFollower("Helge", "Adrian");
+
+        // assert 
+        var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        var helge = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
+
+        Assert.DoesNotContain(adrian, helge.FollowingList);
+    }
+
+    [Fact]
+    public async Task Test_GetFollowingCheeps() 
+    {
+        //arrange 
+        await MakeHelgeFollowUser("Quintin Sitts");
+        await MakeHelgeFollowUser("Jacqualine Gilcoine"); 
+
+        // act 
+        var followingCheeps = await _repository.GetFollowingCheeps("Helge", -1, 0); 
+
+        // assert 
+        var checkCheeps = from cheep in _context.Cheeps
+                    .Include(c => c.Author) // from chatgpt 
+                     where cheep.Author!.UserName! == "Quintin Sitts" || cheep.Author!.UserName! == "Jacqualine Gilcoine"
+                     orderby cheep.Id descending
+                     select cheep; 
+        
+        await _context.SaveChangesAsync(); 
+
+
+        foreach(var cheep in checkCheeps.ToList()) {
+            Assert.Contains(cheep, followingCheeps); 
+        }
+    }
+
+    private async Task MakeHelgeFollowUser(string userName) 
+    {
+        var query = 
+            from a in _context.Users 
+            where a.UserName == "Helge" 
+            select a; 
+
+        var userToFollow = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
+
+        await query.ForEachAsync(user => {
+            user.FollowingList ??= new List<Author>(); // make sure it isn't null
+            if(user.FollowingList.Contains(userToFollow)) { return; }
+            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(userToFollow);
+            });
+        await _context.SaveChangesAsync();
+    } 
 }
