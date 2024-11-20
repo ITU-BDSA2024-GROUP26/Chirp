@@ -48,7 +48,6 @@ public class Tests : PageTest
         //await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
         await Expect(Page.GetByText("Adrian Hej, velkommen til kurset.")).ToBeVisibleAsync();
-
     }
 
     [Test, Order(2)]
@@ -83,8 +82,6 @@ public class Tests : PageTest
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Logout" })).ToBeVisibleAsync();
-
-
     }
 
     [Test, Order(4)]
@@ -112,7 +109,6 @@ public class Tests : PageTest
 
         // Assert
         await Expect(Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button)).ToBeVisibleAsync();
-        
     }
 
     [Test, Order(7)]
@@ -133,6 +129,5 @@ public class Tests : PageTest
         // Assert
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
-
     }
 }
