@@ -104,7 +104,15 @@ public class Tests : PageTest
     [Test, Order(5)] 
     public async Task TestUnfollow() 
     {
+        // Arrange
+        await TestLogin();
 
+        // Act
+        await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
+
+        // Assert
+        await Expect(Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button)).ToBeVisibleAsync();
+        
     }
 
     [Test, Order(7)]
