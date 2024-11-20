@@ -10,7 +10,6 @@
 }
 
 <div>
-    
     @await Html.PartialAsync("_CheepBox", Model!.Author != null ? Model.Author.UserName : "Invalid User")
 
     <h2> Public Timeline </h2>
@@ -22,9 +21,7 @@
             {
                 <li>
                     <p>
-                        <strong>
-                            <a href="/@cheep.AuthorName">@cheep.AuthorName</a>
-                        </strong>
+                        @await Html.PartialAsync("_AuthorPartial", cheep)
                         @cheep.MessageContent
                         <small>&mdash; @cheep.TimeStampStr</small>
                     </p>
