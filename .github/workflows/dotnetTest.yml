@@ -127,7 +127,7 @@ jobs:
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
         with:
-          name: migration
+          name: testmigration
           path: ${{env.ArtifactPath}}/migrate
   
   Download-Database: 
@@ -184,7 +184,7 @@ jobs:
       - name: Execute bundle 
         shell: bash
         run: |
-          chmod +x bundle
+          chmod +x tbundle
           ASPNETCORE_ENVIRONMENT=Production ./tbundle --connection "Data Source=chirp.db"
       
       
