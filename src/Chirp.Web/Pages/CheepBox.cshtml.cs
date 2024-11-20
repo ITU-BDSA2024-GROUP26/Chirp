@@ -20,6 +20,9 @@ public class CheepBoxModel(ICheepRepository cheepRepository, UserManager<Author>
             return ;
         }
         
+        // simply truncate the message if too long
+        if (Message.Length > 160) { Message = Message.Substring(0, 160); }
+
         // Create the new Cheep
         var newCheep = new Cheep
         {
