@@ -43,10 +43,11 @@ public class Tests : PageTest
         // so unavoidable code duplication(might be a smart way I don't know)
         await Page.GotoAsync("http://localhost:5000"); 
 
-        await Page.Locator("p").Filter(new() { HasText = "Adrian Hej, velkommen til kurset." }).GetByRole(AriaRole.Link).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
+
+        //await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
         await Expect(Page.GetByText("Adrian Hej, velkommen til kurset.")).ToBeVisibleAsync();
-
     }
 
     [Test, Order(2)]
@@ -81,11 +82,36 @@ public class Tests : PageTest
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Logout" })).ToBeVisibleAsync();
-
-
     }
 
     [Test, Order(4)]
+    public async Task TestFollow() 
+    {
+        // arrange 
+        await TestLogin();
+        // act
+        await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
+
+        // assert
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" })).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" })).ToBeVisibleAsync();
+    }
+
+    [Test, Order(5)] 
+    public async Task TestUnfollow() 
+    {
+        // Arrange
+        await TestLogin();
+
+        // Act
+        await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
+
+        // Assert
+        await Expect(Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button)).ToBeVisibleAsync();
+    }
+
+    [Test, Order(7)]
     public async Task TestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing
@@ -103,6 +129,5 @@ public class Tests : PageTest
         // Assert
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
-
     }
 }

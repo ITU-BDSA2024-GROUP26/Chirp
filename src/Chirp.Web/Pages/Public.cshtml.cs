@@ -12,11 +12,20 @@ namespace Chirp.Razor.Pages;
 public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : PageModel
 {
     public Author? Author { get; set; }
-    
     [BindProperty]
     [StringLength(160, ErrorMessage = "Maximum length is 160")]
-    public required string Message { get; set; }
+    public required string? Message { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
+
+    private FollowModel _followModel; 
+    // Idea of lazy initialization here is that the User we refer to probably isn't up to date when this class is created. 
+    // miight need some kind of logic to check if we should recreate the class if there are changes to the user, but from our tests so far that isn't relevant
+    private FollowModel lazyGetFollowModel() 
+    {
+        if(_followModel == null) { _followModel = new FollowModel(cheepRepository, userManager, User); }
+        return _followModel;
+    }
+
     
 
     public async Task<ActionResult> OnGetAsync([FromQuery] int page = 1)
@@ -26,7 +35,7 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
         return Page();
     }
     
-    public async Task<ActionResult> OnPostAsync() {
+    public async Task<ActionResult> OnPostShareAsync() {
         if (!ModelState.IsValid)
         {
             ModelState.AddModelError(string.Empty, "ops");
@@ -48,6 +57,11 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
 
         // Save the new Cheep (assuming a SaveCheepAsync method exists in your service or repository)
         await cheepRepository.CreateCheep(newCheep);
+        return RedirectToPage("");
+    }
+
+    public async Task<IActionResult> OnPostFollowAsync(string UsrnmToFollow) {
+        await lazyGetFollowModel().OnPostFollowAsync(UsrnmToFollow); 
         return RedirectToPage("");
     }
 }
