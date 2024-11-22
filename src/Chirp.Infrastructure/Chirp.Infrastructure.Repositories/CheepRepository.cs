@@ -119,7 +119,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
                     where u.UserName == userName
                     select u).First(); 
 
-        Console.WriteLine("Fat retard");
         if(user.FollowingList == null) { return []; }
 
         var query = (from cheep in context.Cheeps
@@ -133,7 +132,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         {
             query = query.Take(limit);
         }
-        Console.WriteLine($"Stinky retard {query.Count()}");
         await context.SaveChangesAsync();
 
         return await query.ToListAsync();
