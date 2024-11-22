@@ -94,10 +94,12 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         
         var query =
             from a in context.Users
+            .Include(a => a.FollowingList)
             where a.UserName == userName 
             select a; 
         
         await query.ForEachAsync(user => {
+            if(user.FollowingList == null) { Console.WriteLine("Fucking followinglist is null"); }
             user.FollowingList ??= new List<Author>();
 
             if(user.FollowingList.Contains(userTofollow)) {
@@ -112,8 +114,12 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
     public async Task<ICollection<Cheep>> GetFollowingCheeps(string userName, int limit = -1, int offset = 0)
     {   
-        var user = await context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
+        var user = (from u in context.Users
+                    .Include(u => u.FollowingList) // need this or nothing works
+                    where u.UserName == userName
+                    select u).First(); 
 
+        Console.WriteLine("Fat retard");
         if(user.FollowingList == null) { return []; }
 
         var query = (from cheep in context.Cheeps
@@ -127,7 +133,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         {
             query = query.Take(limit);
         }
-
+        Console.WriteLine($"Stinky retard {query.Count()}");
         await context.SaveChangesAsync();
 
         return await query.ToListAsync();
