@@ -114,7 +114,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
     {   
         var user = await context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
 
-        if(user.FollowingList == null) {throw new Exception("Trying to get following cheeps for user with empty followinglist");}
+        if(user.FollowingList == null) { return []; }
 
         var query = (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
