@@ -14,4 +14,11 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
         var cheeps = await cheepRepository.ReadCheeps(MaxCheeps, (page - 1) * MaxCheeps, authorRegex);
         return cheeps.Select(cheep => new CheepDTO(cheep));
     }
+
+    public async Task<IEnumerable<CheepDTO>> GetFollowingCheepsAsync(int page, string authorName) 
+    {
+        Console.WriteLine("retard");
+        var cheeps = await cheepRepository.GetFollowingCheeps(authorName, MaxCheeps, MaxCheeps * (page-1)); 
+        return cheeps.Select(cheep => new CheepDTO(cheep));
+    }
 }

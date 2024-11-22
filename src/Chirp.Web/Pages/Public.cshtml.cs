@@ -38,6 +38,7 @@ public class PublicModel(ICheepService service, ICheepRepository cheepRepository
 
     public async Task<ActionResult> OnGetAsync([FromQuery] int page = 1)
     {
+        Console.WriteLine("Yo retard");
         Author = await userManager.GetUserAsync(User);
         Cheeps = await service.GetCheepsAsync(page);
         return Page();
