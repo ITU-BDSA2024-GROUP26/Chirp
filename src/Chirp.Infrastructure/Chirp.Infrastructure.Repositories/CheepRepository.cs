@@ -111,7 +111,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         await context.SaveChangesAsync(); 
     }
 
-    public async Task<ICollection<Cheep>> GetFollowingCheeps(string userName, int limit = -1, int offset = 0)
+    public async Task<ICollection<Cheep>> GetPrivateTimelineCheeps(string userName, int limit = -1, int offset = 0)
     {   
         var user = (from u in context.Users
                     .Include(u => u.FollowingList) // need this or nothing works
@@ -122,7 +122,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
         var query = (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where user.FollowingList.Contains(cheep.Author)
+                     where user.FollowingList.Contains(cheep.Author) || cheep.Author.UserName == userName
                      orderby cheep.Id descending
                      select cheep)
                     .Skip(offset);
