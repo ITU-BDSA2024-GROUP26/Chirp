@@ -125,7 +125,6 @@ public class Tests : PageTest
         await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
         await Page.GetByRole(AriaRole.Link, new() { Name = "Private Timeline |" }).ClickAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" })).ToBeVisibleAsync();
-
     }
 
     [Test, Order(7)]
