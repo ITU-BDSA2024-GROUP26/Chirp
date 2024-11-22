@@ -39,7 +39,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
                      select cheep)
                     .Skip(offset);
         } else {
-            Console.WriteLine("qwe: ", authorNameRegex);
             query =  (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
                      where cheep.Author!.UserName! == authorNameRegex!
