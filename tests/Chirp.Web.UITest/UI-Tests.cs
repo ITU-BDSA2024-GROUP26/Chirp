@@ -111,7 +111,47 @@ public class Tests : PageTest
         await Expect(Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button)).ToBeVisibleAsync();
     }
 
+    [Test, Order(6)]
+    public async Task TestFollowPrivateTimeline() 
+    {
+        await Page.GotoAsync("http://localhost:5000"); 
+        await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("qwe");
+        await Page.GetByPlaceholder("password").ClickAsync();
+        await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Private Timeline |" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" })).ToBeVisibleAsync();
+
+    }
+
     [Test, Order(7)]
+    public async Task TestUnfollowPrivateTimeline() 
+    {
+        await Page.GotoAsync("http://localhost:5000"); 
+        
+        await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("qwe");
+        await Page.GetByPlaceholder("password").ClickAsync();
+        await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
+        await Page.GetByPlaceholder("password").ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Private Timeline |" }).ClickAsync();
+
+        
+        await Expect(Page.GetByText("No cheeps from the people you")).ToBeVisibleAsync();
+
+        
+    }
+
+    
+
+    [Test, Order(8)]
     public async Task TestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing
