@@ -126,8 +126,6 @@ public class Tests : PageTest
         await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Expect(Page.GetByText("Adrian [Unfollow] Hej,")).ToBeVisibleAsync();
-
-
     }
 
     [Test, Order(7)]
@@ -146,7 +144,6 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
         await Expect(Page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
-
     }
 
     [Test, Order(8)]
@@ -166,8 +163,6 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Textbox).FillAsync("test message");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await Expect(Page.GetByText("qwe test message")).ToBeVisibleAsync();
-
-
     }
 
     [Test, Order(9)]
