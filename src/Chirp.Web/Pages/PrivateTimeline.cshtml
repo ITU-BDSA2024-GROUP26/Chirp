@@ -1,4 +1,4 @@
-@page "/Private"
+@page "/{userName}"
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Chirp.Razor.Pages.PrivateTimelineModel
 @inject SignInManager<Chirp.Core.Entities.Author> SignInManager
@@ -7,15 +7,17 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
+    var routeName = HttpContext.GetRouteValue("userName");
 }
 
 <div>
+    <h2> @routeName's Timeline </h2>
+
     @await Html.PartialAsync("_CheepBox", Model!.Author != null ? Model.Author.UserName : "Invalid User")
 
-    <h2> Private Timeline </h2>
 
     @if (Model.Cheeps.Any())
-    {
+    {   
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
@@ -28,11 +30,7 @@
                 </li>
             }
         </ul>
-    }
-    else if(SignInManager.IsSignedIn(User))
-    {
-        <em>No cheeps from the people you follow so far</em>
     } else {
-        <em>You're not supposed to see this</em>
+        <em>There are no cheeps so far.</em>
     }
 </div>
