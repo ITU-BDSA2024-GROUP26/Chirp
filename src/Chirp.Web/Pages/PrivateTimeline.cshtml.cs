@@ -41,7 +41,7 @@ public class PrivateTimelineModel (ICheepService service, ICheepRepository cheep
     {
         Console.WriteLine("Yo retard");
         Author = await userManager.GetUserAsync(User);
-        Cheeps = await service.GetFollowingCheepsAsync(page, Author.UserName);
+        Cheeps = Author != null ? await service.GetFollowingCheepsAsync(page, Author?.UserName) : [];
         return Page();
     }
 
