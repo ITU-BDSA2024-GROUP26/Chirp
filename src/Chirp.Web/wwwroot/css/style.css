@@ -299,3 +299,16 @@ ul.nav li a:hover {
      border: none;
      cursor: pointer;
 }
+
+ForgetMeButton {
+    background-color: #971313;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+ForgetMeButton:hover {
+    background-color: #500a0a;
+}
