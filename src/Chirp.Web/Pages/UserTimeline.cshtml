@@ -7,8 +7,11 @@
 }
 
 <div>
-   
-    <button class="ForgetMeButton" style="background-color: red;">Forget Me!</button>
+
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="~/" method="post">
+                <button class="ForgetMeButton" style="background-color: red;">Forget Me!</button>
+            </form>
+
     
     <h2> @routeName's Timeline </h2>
 
