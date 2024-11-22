@@ -9,48 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Razor.Pages;
 
-public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) 
-    : PageModel
+public class PublicModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : TimelineModel(service, cheepRepository, userManager)
 {
-    public Author? Author { get; set; }
-    public ICheepRepository CheepRepository = cheepRepository;
-
-    private CheepBoxModel _cheepBoxModel;
-    private CheepBoxModel lazyGetCheepBoxModel() 
-    {
-        if(_cheepBoxModel == null) 
-        {
-            _cheepBoxModel = new CheepBoxModel(cheepRepository, userManager, User); 
-        }
-        return _cheepBoxModel;
-    }
-    
-    public required IEnumerable<CheepDTO> Cheeps { get; set; }
-
-    private FollowModel _followModel; 
-    // Idea of lazy initialization here is that the User we refer to probably isn't up to date when this class is created. 
-    // miight need some kind of logic to check if we should recreate the class if there are changes to the user, but from our tests so far that isn't relevant
-    private FollowModel lazyGetFollowModel() 
-    {
-        if(_followModel == null) { _followModel = new FollowModel(cheepRepository, userManager, User); }
-        return _followModel;
-    }
-
     public async Task<ActionResult> OnGetAsync([FromQuery] int page = 1)
     {
         Author = await userManager.GetUserAsync(User);
         Cheeps = await service.GetCheepsAsync(page);
         return Page();
-    }
-
-    public async Task<ActionResult> OnPostShareAsync(string Message) 
-    {
-        await lazyGetCheepBoxModel().OnPostShareAsync(Message); 
-        return RedirectToPage("");
-    }
-
-    public async Task<IActionResult> OnPostFollowAsync(string UsrnmToFollow) {
-        await lazyGetFollowModel().OnPostFollowAsync(UsrnmToFollow); 
-        return RedirectToPage("");
     }
 }
