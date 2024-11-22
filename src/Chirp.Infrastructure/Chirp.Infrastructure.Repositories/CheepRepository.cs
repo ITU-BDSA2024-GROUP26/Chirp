@@ -132,4 +132,15 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
         return await query.ToListAsync();
     } 
+
+     public async Task<Author?> DeleteAuthorByName(string name)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(a=> a.UserName == name) ?? throw new Exception("User can not be found!");
+
+        context.Users.Remove(user);
+        //check whether or not the deleted user's cheeps also are deleted
+        //if not then add manually smthn like .Include(cheeps???) 
+        await context.SaveChangesAsync(); 
+        return user;  
+    } 
 }
