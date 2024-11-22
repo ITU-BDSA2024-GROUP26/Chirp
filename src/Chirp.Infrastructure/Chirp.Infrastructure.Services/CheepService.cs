@@ -17,7 +17,7 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
 
     public async Task<IEnumerable<CheepDTO>> GetFollowingCheepsAsync(int page, string authorName) 
     {
-        var cheeps = await cheepRepository.GetFollowingCheeps(authorName, MaxCheeps, MaxCheeps * (page-1)); 
+        var cheeps = await cheepRepository.GetPrivateTimelineCheeps(authorName, MaxCheeps, MaxCheeps * (page-1)); 
         return cheeps.Select(cheep => new CheepDTO(cheep));
     }
 }
