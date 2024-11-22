@@ -115,50 +115,73 @@ public class Tests : PageTest
     public async Task TestFollowPrivateTimeline() 
     {
         await Page.GotoAsync("http://localhost:5000"); 
-        await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        
+        await TestLogin(); 
+        /* await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
         await Page.GetByPlaceholder("username").ClickAsync();
         await Page.GetByPlaceholder("username").FillAsync("qwe");
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync(); */
         await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Private Timeline |" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" })).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await Expect(Page.GetByText("Adrian [Unfollow] Hej,")).ToBeVisibleAsync();
+
+
     }
 
     [Test, Order(7)]
     public async Task TestUnfollowPrivateTimeline() 
     {
         await Page.GotoAsync("http://localhost:5000"); 
+        await TestLogin();
         
-        await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        /* await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
         await Page.GetByPlaceholder("username").ClickAsync();
         await Page.GetByPlaceholder("username").FillAsync("qwe");
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
-        await Page.GetByPlaceholder("password").ClickAsync();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync(); */
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Private Timeline |" }).ClickAsync();
+        await Expect(Page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
 
-        
-        await Expect(Page.GetByText("No cheeps from the people you")).ToBeVisibleAsync();
     }
 
-    
-
     [Test, Order(8)]
+    public async Task TestOwnCheepsShowUpPrivateTimeline() 
+    {
+        await Page.GotoAsync("http://localhost:5000"); 
+        await TestLogin();
+        /* await Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("qwe");
+        await Page.GetByPlaceholder("password").ClickAsync();
+        await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync(); */
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox).FillAsync("test message");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(Page.GetByText("qwe test message")).ToBeVisibleAsync();
+
+
+    }
+
+    [Test, Order(9)]
     public async Task TestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing
         await Page.GotoAsync("http://localhost:5000"); 
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await TestLogin();
+        /* await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByPlaceholder("username").ClickAsync();
         await Page.GetByPlaceholder("username").FillAsync("qwe");
         await Page.GetByPlaceholder("password").ClickAsync();
         await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync(); */
 
         // act 
         await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
