@@ -110,7 +110,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
     
         await context.SaveChangesAsync(); 
     }
-
+    
     public async Task<ICollection<Cheep>> GetPrivateTimelineCheeps(string userName, int limit = -1, int offset = 0)
     {   
         var user = (from u in context.Users
@@ -134,17 +134,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         await context.SaveChangesAsync();
 
         return await query.ToListAsync();
-    } 
-
-     public async Task<Author?> DeleteAuthorByName(string name)
-    {
-        var user = await context.Users.FirstOrDefaultAsync(a=> a.UserName == name) ?? throw new Exception("User can not be found!");
-
-        context.Users.Remove(user);
-        //check whether or not the deleted user's cheeps also are deleted
-        //if not then add manually smthn like .Include(cheeps???) 
-        await context.SaveChangesAsync(); 
-        return user;  
     }
 
     public async Task<Author?> DeleteAuthor(string name)
@@ -168,7 +157,5 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         await context.SaveChangesAsync();
 
         return user;
-    }
-     
-     
+    }  
 }
