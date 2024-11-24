@@ -60,8 +60,8 @@
     </form>
 </section>
 
-<section>
-    <form method="post" onsubmit="return confirm('Are you sure you want to delete your account and all your information? This action cannot be undone.');">
+<section class="Forget-me">
+    <form method="post" asp-page-handler="ForgetMe" onsubmit="return confirm('Are you sure you want to delete your account and all your information? This action cannot be undone.');">
         <button class="ForgetMeButton" style="background-color: red;">Forget Me!</button>
     </form>
 </section>
