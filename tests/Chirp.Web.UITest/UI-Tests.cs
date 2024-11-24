@@ -115,13 +115,8 @@ public class Tests : PageTest
     public async Task TestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing
-        await Page.GotoAsync("http://localhost:5000"); 
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
-        await Page.GetByPlaceholder("username").ClickAsync();
-        await Page.GetByPlaceholder("username").FillAsync("qwe");
-        await Page.GetByPlaceholder("password").ClickAsync();
-        await Page.GetByPlaceholder("password").FillAsync("Qwe$$213");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GotoAsync("http://localhost:5000");
+        await TestLogin(); 
 
         // act 
         await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
@@ -130,4 +125,20 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
+
+    public async Task ForgetmeTestLogout() 
+    {
+        // Arrange part, logging in is already expected to work due to previous test passing 
+        await Page.GotoAsync("http://localhost:5000");
+        await TestLogin();
+        
+        await Page.GetByRole(AriaRole.Button, new() { Name = "my timeline" }).ClickAsync();//change "my timeline" to "About me", once it is working
+
+        // Act
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Forget Me!" }).ClickAsync();
+
+        // Assert
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
+    }
+
 }
