@@ -111,12 +111,47 @@ public class Tests : PageTest
         await Expect(Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button)).ToBeVisibleAsync();
     }
 
+    [Test, Order(6)]
+    public async Task TestFollowPrivateTimeline() 
+    {
+        await Page.GotoAsync("http://localhost:5000"); 
+        
+        await TestLogin(); 
+        
+        await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await Expect(Page.GetByText("Adrian [Unfollow] Hej,")).ToBeVisibleAsync();
+    }
+
     [Test, Order(7)]
+    public async Task TestUnfollowPrivateTimeline() 
+    {
+        await Page.GotoAsync("http://localhost:5000"); 
+        await TestLogin();
+        
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
+        await Expect(Page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
+    }
+
+    [Test, Order(8)]
+    public async Task TestOwnCheepsShowUpPrivateTimeline() 
+    {
+        await Page.GotoAsync("http://localhost:5000"); 
+        await TestLogin();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox).FillAsync("test message");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(Page.GetByText("qwe test message")).ToBeVisibleAsync();
+    }
+
+    [Test, Order(9)]
     public async Task TestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing
-        await Page.GotoAsync("http://localhost:5000");
-        await TestLogin(); 
+        await Page.GotoAsync("http://localhost:5000"); 
+        await TestLogin();
 
         // act 
         await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
