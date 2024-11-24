@@ -160,4 +160,23 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
+
+    public async Task TestGithubOAuth() 
+    {
+        // Arrange 
+        await Page.GotoAsync("http://localhost:5000");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Register"}).ClickAsync(); 
+
+        // Act
+        await Page.GetByRole(AriaRole.Button, new() { Name = "GitHub"}).ClickAsync();
+         //maybe use github secrets?
+        await Page.GetByLabel("Username or email address").FillAsync("testjojostar"); //just a test account for github
+        await Page.GetByLabel("Password").ClickAsync(); 
+        //maybe use github secrets?
+        await Page.GetByLabel("Password").FillAsync("JoeJoestar123"); 
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact= true}).ClickAsync();
+
+        // Assert
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
+    }
 }
