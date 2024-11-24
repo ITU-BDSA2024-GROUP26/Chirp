@@ -136,7 +136,7 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         return await query.ToListAsync();
     }
 
-    public async Task<Author?> DeleteAuthor(string name)
+    public async Task<Author?> DeleteAuthorByName(string name)
     {
         // Find author by name
         var user = await context.Users

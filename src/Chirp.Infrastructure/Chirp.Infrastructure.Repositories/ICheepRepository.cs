@@ -20,7 +20,6 @@ public interface ICheepRepository
     public Task AddOrRemoveFollower(string userName, string usernmToFollow);
 
     public Task<ICollection<Cheep>> GetPrivateTimelineCheeps(string userName, int limit, int offset);
-    
+
     public Task<Author?>DeleteAuthorByName(string name); 
-    public Task<Author?>DeleteAuthor(string name); 
 }
