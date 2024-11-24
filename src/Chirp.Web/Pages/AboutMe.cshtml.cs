@@ -64,7 +64,7 @@ public class AboutMeModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync() 
+    public async Task<IActionResult> OnPostForgetMeAsync() 
     {
         
        var Author = await _userManager.GetUserAsync(User);
