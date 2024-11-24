@@ -16,15 +16,15 @@ input[type="email"],
 input[type="text"],
 input[type="tel"],
 input[type="password"] {
-    background: white;
-    border: 1px solid #e6c0bf;
-    padding: 2px;
-    font-family: 'Trebuchet MS', sans-serif;
-    font-size: 14px;
-    border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    color: #571010;
+  background: white;
+  border: 1px solid #e6c0bf;
+  padding: 2px;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 14px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  color: #571010;
 }
 
 input[type="submit"] {
@@ -47,7 +47,7 @@ div.page {
   margin: 30px auto;
 }
 
-div.page > h1 {
+div.page>h1 {
   background: #cc6e6e;
   margin: 0;
   padding: 10px 14px;
@@ -78,20 +78,20 @@ div.page div.navigation a {
 }
 
 div.page div.navigation form {
-    display: contents;
+  display: contents;
 }
 
 div.page div.navigation form button {
-    padding: unset;
-    background: unset;
-    color: #444;
-    font-weight: bold;
-    display: inline-block;
-    font-size: unset;
-    cursor: pointer;
-    text-decoration: underline;
-    font-family: unset;
-    letter-spacing: unset;
+  padding: unset;
+  background: unset;
+  color: #444;
+  font-weight: bold;
+  display: inline-block;
+  font-size: unset;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: unset;
+  letter-spacing: unset;
 }
 
 div.page h2 {
@@ -247,55 +247,77 @@ li.topic {
 }
 
 form * {
-    margin: 2px 0;
+  margin: 2px 0;
 }
 
 button {
-    background-color: #cc6e6e;
-    border: none;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
+  background-color: #cc6e6e;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: #8b4949;
+  background-color: #8b4949;
 }
 
 ul.nav {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #cc6e6e;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #cc6e6e;
 }
 
 ul.nav li {
-    float: left;
+  float: left;
 }
 
 ul.nav li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 8px 8px;
-    text-decoration: none;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 8px 8px;
+  text-decoration: none;
 }
 
 ul.nav li a:hover {
-    background-color: #8b4949;
+  background-color: #8b4949;
 }
 
 .change-page-btns {
-     /* inspired by https://www.geeksforgeeks.org/how-to-fix-button-position-in-css */
-     position: relative;
-     top: 0px;
-     left: 225px;
-     background-color: #4caf50;
-     color: white;
-     padding: 10px 20px;
-     border: none;
-     cursor: pointer;
+  /* inspired by https://www.geeksforgeeks.org/how-to-fix-button-position-in-css */
+  position: relative;
+  top: 0px;
+  left: 225px;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
 }
