@@ -142,5 +142,30 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         //if not then add manually smthn like .Include(cheeps???) 
         await context.SaveChangesAsync(); 
         return user;  
-    } 
+    }
+
+    public async Task<Author?> DeleteAuthor(string name)
+    {
+        // Find author by name
+        var user = await context.Users
+                       .Include(a => a.Cheeps) // Ensure the user's cheep
+                       .FirstOrDefaultAsync(a => a.UserName == name) 
+                   ?? throw new Exception("User cannot be found!");
+
+        // Remove user's cheeps
+        if (user.Cheeps != null && user.Cheeps.Any())
+        {
+            context.Cheeps.RemoveRange(user.Cheeps);
+        }
+
+        // Remove user
+        context.Users.Remove(user);
+
+        // Save changes
+        await context.SaveChangesAsync();
+
+        return user;
+    }
+     
+     
 }
