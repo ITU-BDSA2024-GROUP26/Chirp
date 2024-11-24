@@ -169,11 +169,13 @@ public class Tests : PageTest
 
         // Act
         await Page.GetByRole(AriaRole.Button, new() { Name = "GitHub"}).ClickAsync();
-         //maybe use github secrets?
-        await Page.GetByLabel("Username or email address").FillAsync("testjojostar"); //just a test account for github
+         
+         var gitUsername = Environment.GetEnvironmentVariable("GITHUBCLIENTID") ?? "testjojostar"; 
+         var gitPassword = Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")?? "Joejoestar123"; 
+        await Page.GetByLabel("Username or email address").FillAsync(gitUsername);
         await Page.GetByLabel("Password").ClickAsync(); 
-        //maybe use github secrets?
-        await Page.GetByLabel("Password").FillAsync("JoeJoestar123"); 
+        
+        await Page.GetByLabel("Password").FillAsync(gitPassword); 
         await Page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact= true}).ClickAsync();
 
         // Assert
