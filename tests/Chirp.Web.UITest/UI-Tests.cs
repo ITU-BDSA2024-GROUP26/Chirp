@@ -174,5 +174,4 @@ public class Tests : PageTest
         // Assert
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
     }
-
 }
