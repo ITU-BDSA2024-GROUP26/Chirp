@@ -1,0 +1,61 @@
+@page "/about-me"
+@model Chirp.Razor.Pages.AboutMeModel
+@{
+    ViewData["Title"] = "About Me";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+
+<section class="profile-section">
+    <h2>My Information</h2>
+    <div class="profile-info">
+        <p><strong>Username:</strong> @Model.CurrentUser.UserName</p>
+        <p><strong>Email:</strong> @Model.CurrentUser.Email</p>
+    </div>
+</section>
+
+<section class="following-section">
+    <h2>Following</h2>
+    @if (Model.FollowingList != null && Model.FollowingList.Any())
+    {
+                        <ul>
+            @foreach (var user in Model.FollowingList)
+            {
+                                                <li>@user</li>
+            }
+                        </ul>
+    }
+    else
+    {
+                        <p>You are not following anyone.</p>
+    }
+</section>
+
+<section class="cheeps-section">
+    <h2>Your Cheeps</h2>
+    @if (Model.UserCheeps != null && Model.UserCheeps.Any())
+    {
+                        <ul class="cheep-list">
+            @foreach (var cheep in Model.UserCheeps)
+            {
+                                                <li class="cheep-item">
+                                                    <p>@cheep.MessageContent</p>
+                                                    <small>Posted on @cheep.TimeStampStr</small>
+                                                </li>
+            }
+                        </ul>
+    }
+    else
+    {
+                        <p>You have not posted any cheeps yet.</p>
+    }
+</section>
+
+<section>
+    <h2>Download Your Data</h2>
+    <form method="post">
+        <button type="submit" class="btn btn-primary">Download Your Data</button>
+    </form>
+</section>

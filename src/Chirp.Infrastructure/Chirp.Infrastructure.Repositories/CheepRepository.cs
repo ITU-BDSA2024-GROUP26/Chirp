@@ -39,7 +39,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
                      select cheep)
                     .Skip(offset);
         } else {
-            Console.WriteLine("qwe: ", authorNameRegex);
             query =  (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
                      where cheep.Author!.UserName! == authorNameRegex!
@@ -94,10 +93,12 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         
         var query =
             from a in context.Users
+            .Include(a => a.FollowingList)
             where a.UserName == userName 
             select a; 
         
         await query.ForEachAsync(user => {
+            if(user.FollowingList == null) { Console.WriteLine("Fucking followinglist is null"); }
             user.FollowingList ??= new List<Author>();
 
             if(user.FollowingList.Contains(userTofollow)) {
@@ -110,15 +111,18 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         await context.SaveChangesAsync(); 
     }
 
-    public async Task<ICollection<Cheep>> GetFollowingCheeps(string userName, int limit = -1, int offset = 0)
+    public async Task<ICollection<Cheep>> GetPrivateTimelineCheeps(string userName, int limit = -1, int offset = 0)
     {   
-        var user = await context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
+        var user = (from u in context.Users
+                    .Include(u => u.FollowingList) // need this or nothing works
+                    where u.UserName == userName
+                    select u).First(); 
 
-        if(user.FollowingList == null) {throw new Exception("Trying to get following cheeps for user with empty followinglist");}
+        if(user.FollowingList == null) { return []; }
 
         var query = (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where user.FollowingList.Contains(cheep.Author)
+                     where user.FollowingList.Contains(cheep.Author) || cheep.Author.UserName == userName
                      orderby cheep.Id descending
                      select cheep)
                     .Skip(offset);
@@ -127,7 +131,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         {
             query = query.Take(limit);
         }
-
         await context.SaveChangesAsync();
 
         return await query.ToListAsync();
