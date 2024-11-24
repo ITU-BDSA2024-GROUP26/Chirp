@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.IO.Compression;
 using Microsoft.AspNetCore.Authentication;
 using System.Text;
+using Azure.Identity;
 
 
 namespace Chirp.Razor.Pages;
@@ -62,6 +63,18 @@ public class AboutMeModel : PageModel
 
         return Page();
     }
+
+    public async Task<IActionResult> OnPostAsync() 
+    {
+        
+       var Author = await _userManager.GetUserAsync(User);
+
+        await _cheepRepository.DeleteAuthorByName(Author.UserName);
+        await _signInManager.SignOutAsync();
+        return RedirectToPage("/Public");
+    }
+
+
 
 
 }
