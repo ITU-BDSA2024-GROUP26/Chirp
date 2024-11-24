@@ -21,4 +21,5 @@ public interface ICheepRepository
 
     public Task<ICollection<Cheep>> GetFollowingCheeps(string userName, int limit, int offset);
     public Task<Author?>DeleteAuthorByName(string name); 
+    public Task<Author?>DeleteAuthor(string name); 
 }
