@@ -16,7 +16,7 @@ public class Tests : PageTest
     private Process _server;
 
     [OneTimeSetUp]
-    public void OneTimeSetUp() 
+    public void OneTimeSetUp()
     {
         // Launch the server we will send requests to 
         // Note that this requires quite a bit of setup: 
@@ -28,7 +28,7 @@ public class Tests : PageTest
     }
 
     [OneTimeTearDown]
-    public void Cleanup() 
+    public void Cleanup()
     {
         _server.Kill();
         _server.Dispose();
@@ -41,7 +41,7 @@ public class Tests : PageTest
         // need to run this here and not in a [Setup] tagged method 
         // because we have no guarantee that [OnetimeSetup] will run before [Setup]
         // so unavoidable code duplication(might be a smart way I don't know)
-        await Page.GotoAsync("http://localhost:5000"); 
+        await Page.GotoAsync("http://localhost:5000");
 
         await Page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
 
@@ -51,12 +51,12 @@ public class Tests : PageTest
     }
 
     [Test, Order(2)]
-    public async Task TestRegisterUser() 
+    public async Task TestRegisterUser()
     {
         await Page.GotoAsync("http://localhost:5000/");
         await Page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
-        await Page.GetByPlaceholder("username", new() { Exact = true}).ClickAsync();
-        await Page.GetByPlaceholder("username", new() { Exact = true}).FillAsync("qwe");
+        await Page.GetByPlaceholder("username", new() { Exact = true }).ClickAsync();
+        await Page.GetByPlaceholder("username", new() { Exact = true }).FillAsync("qwe");
         await Page.GetByPlaceholder("name@example.com").ClickAsync();
         await Page.GetByPlaceholder("name@example.com").FillAsync("qwe@example.com");
         await Page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
@@ -71,10 +71,10 @@ public class Tests : PageTest
     }
 
     [Test, Order(3)]
-    public async Task TestLogin() 
+    public async Task TestLogin()
     {
-        await Page.GotoAsync("http://localhost:5000"); 
-        
+        await Page.GotoAsync("http://localhost:5000");
+
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByPlaceholder("username").ClickAsync();
         await Page.GetByPlaceholder("username").FillAsync("qwe");
@@ -85,7 +85,7 @@ public class Tests : PageTest
     }
 
     [Test, Order(4)]
-    public async Task TestFollow() 
+    public async Task TestFollow()
     {
         // arrange 
         await TestLogin();
@@ -98,8 +98,8 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" })).ToBeVisibleAsync();
     }
 
-    [Test, Order(5)] 
-    public async Task TestUnfollow() 
+    [Test, Order(5)]
+    public async Task TestUnfollow()
     {
         // Arrange
         await TestLogin();
@@ -112,32 +112,32 @@ public class Tests : PageTest
     }
 
     [Test, Order(6)]
-    public async Task TestFollowPrivateTimeline() 
+    public async Task TestFollowPrivateTimeline()
     {
-        await Page.GotoAsync("http://localhost:5000"); 
-        
-        await TestLogin(); 
-        
+        await Page.GotoAsync("http://localhost:5000");
+
+        await TestLogin();
+
         await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Expect(Page.GetByText("Adrian [Unfollow] Hej,")).ToBeVisibleAsync();
     }
 
     [Test, Order(7)]
-    public async Task TestUnfollowPrivateTimeline() 
+    public async Task TestUnfollowPrivateTimeline()
     {
-        await Page.GotoAsync("http://localhost:5000"); 
+        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
-        
+
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" }).ClickAsync();
         await Expect(Page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
     }
 
     [Test, Order(8)]
-    public async Task TestOwnCheepsShowUpPrivateTimeline() 
+    public async Task TestOwnCheepsShowUpPrivateTimeline()
     {
-        await Page.GotoAsync("http://localhost:5000"); 
+        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox).ClickAsync();
@@ -147,10 +147,10 @@ public class Tests : PageTest
     }
 
     [Test, Order(9)]
-    public async Task TestLogout() 
+    public async Task TestLogout()
     {
         // Arrange part, logging in is already expected to work due to previous test passing
-        await Page.GotoAsync("http://localhost:5000"); 
+        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
 
         // act 
@@ -161,17 +161,20 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
 
-    public async Task ForgetmeTestLogout() 
+    [Test, order(10)]
+    public async Task ForgetmeTestLogout()
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
         await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "About me" }).ClickAsync();//change "my timeline" to "About me", once it is working
-        
+        await Page.GetByRole(AriaRole.Link, new() { Name = "About me" }).ClickAsync();//change "my timeline" to "About me", once it is working
+
         // Act
         await Page.GetByRole(AriaRole.Button, new() { Name = "Forget Me!" }).ClickAsync();
-        
+
         // Assert
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
+        //await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
 }
