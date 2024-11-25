@@ -161,6 +161,7 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
 
+    [Test, Order(10)]
     public async Task TestGithubOAuth() 
     {
         // Arrange 
@@ -170,15 +171,17 @@ public class Tests : PageTest
         // Act
         await Page.GetByRole(AriaRole.Button, new() { Name = "GitHub"}).ClickAsync();
          
-         var gitUsername = Environment.GetEnvironmentVariable("GITHUBCLIENTID") ?? "testjojostar"; 
-         var gitPassword = Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")?? "Joejoestar123"; 
+        var gitUsername = Environment.GetEnvironmentVariable("GITHUBCLIENTID") ?? "testjojostar"; 
+        var gitPassword = Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")?? "JoeJoestar123"; 
+        
         await Page.GetByLabel("Username or email address").FillAsync(gitUsername);
         await Page.GetByLabel("Password").ClickAsync(); 
         
         await Page.GetByLabel("Password").FillAsync(gitPassword); 
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact= true}).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Sign in" }).ClickAsync();
 
         // Assert
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name= "my timeline" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "logout" })).ToBeVisibleAsync();
     }
 }
