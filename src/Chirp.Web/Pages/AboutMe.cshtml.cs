@@ -12,7 +12,6 @@ using System.Text.Json;
 using System.IO.Compression;
 using Microsoft.AspNetCore.Authentication;
 using System.Text;
-using Azure.Identity;
 
 
 namespace Chirp.Razor.Pages;
@@ -35,7 +34,7 @@ public class AboutMeModel : PageModel
     }
 
     public AuthorDto? CurrentUser { get; set; }
-    public IEnumerable<string> FollowingList { get; set; } = new List<string>();
+    public IEnumerable<AuthorDto> FollowingList { get; set; } = new List<AuthorDto>();
     public IEnumerable<CheepDTO> UserCheeps { get; set; } = new List<CheepDTO>();
 
     // Handler for GET request to populate the page with user data
@@ -55,8 +54,8 @@ public class AboutMeModel : PageModel
         CurrentUser = new AuthorDto(user);
 
         // Fetch the list of users the current user is following 
-        var followingAuthors = await _cheepRepository.GetAuthorsFollowing(user.UserName);
-        FollowingList = followingAuthors.Select(a => a.UserName ?? "Unknown").ToList();
+        FollowingList = await _cheepService.GetFollowingAuthorsAsync(user.UserName ?? "Unknown");
+
 
         // Fetch the user's cheeps
         UserCheeps = await _cheepService.GetCheepsAsync(page: 1, authorRegex: user.UserName);
@@ -64,17 +63,14 @@ public class AboutMeModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostForgetMeAsync() 
+    public async Task<IActionResult> OnPostForgetMeAsync()
     {
-       var Author = await _userManager.GetUserAsync(User);
+        var Author = await _userManager.GetUserAsync(User);
 
         await _cheepRepository.DeleteAuthorByName(Author.UserName);
         await _signInManager.SignOutAsync();
         return RedirectToPage("/Public");
     }
-
-
-
 
 }
 

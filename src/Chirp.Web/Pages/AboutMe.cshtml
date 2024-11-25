@@ -20,16 +20,16 @@
     <h2>Following</h2>
     @if (Model.FollowingList != null && Model.FollowingList.Any())
     {
-                        <ul>
+                            <ul>
             @foreach (var user in Model.FollowingList)
             {
-                                                <li>@user</li>
+                                                        <li>@user.UserName</li>
             }
-                        </ul>
+                            </ul>
     }
     else
     {
-                        <p>You are not following anyone.</p>
+                            <p>You are not following anyone.</p>
     }
 </section>
 
@@ -37,19 +37,19 @@
     <h2>Your Cheeps</h2>
     @if (Model.UserCheeps != null && Model.UserCheeps.Any())
     {
-                        <ul class="cheep-list">
+                            <ul class="cheep-list">
             @foreach (var cheep in Model.UserCheeps)
             {
-                                                <li class="cheep-item">
-                                                    <p>@cheep.MessageContent</p>
-                                                    <small>Posted on @cheep.TimeStampStr</small>
-                                                </li>
+                                                        <li class="cheep-item">
+                                                            <p>@cheep.MessageContent</p>
+                                                            <small>Posted on @cheep.TimeStampStr</small>
+                                                        </li>
             }
-                        </ul>
+                            </ul>
     }
     else
     {
-                        <p>You have not posted any cheeps yet.</p>
+                            <p>You have not posted any cheeps yet.</p>
     }
 </section>
 
@@ -65,4 +65,4 @@
         <button class="ForgetMeButton" style="background-color: red;">Forget Me!</button>
     </form>
 </section>
-   
+
