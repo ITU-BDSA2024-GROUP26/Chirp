@@ -66,7 +66,6 @@ public class AboutMeModel : PageModel
 
     public async Task<IActionResult> OnPostForgetMeAsync() 
     {
-        
        var Author = await _userManager.GetUserAsync(User);
 
         await _cheepRepository.DeleteAuthorByName(Author.UserName);
