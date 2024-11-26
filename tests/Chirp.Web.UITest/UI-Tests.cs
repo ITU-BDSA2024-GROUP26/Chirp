@@ -161,17 +161,17 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
 
-    [Test, order(10)]
-    public async Task ForgetmeTestLogout()
+    [Test, Order(10)]
+    public async Task ForgetmeTestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
         await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
-
+        
         // Act
         await Page.GetByRole(AriaRole.Button, new() { Name = "Forget Me!" }).ClickAsync();
-
+        
         // Assert
         //await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
