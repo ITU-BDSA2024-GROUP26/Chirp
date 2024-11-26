@@ -6,8 +6,6 @@
 
 <h1>@ViewData["Title"]</h1>
 
-
-
 <section class="profile-section">
     <h2>My Information</h2>
     <div class="profile-info">
@@ -20,16 +18,16 @@
     <h2>Following</h2>
     @if (Model.FollowingList != null && Model.FollowingList.Any())
     {
-                            <ul>
+                                        <ul>
             @foreach (var user in Model.FollowingList)
             {
-                                                        <li>@user.UserName</li>
+                                                                                <li>@user.UserName</li>
             }
-                            </ul>
+                                        </ul>
     }
     else
     {
-                            <p>You are not following anyone.</p>
+                                        <p>You are not following anyone.</p>
     }
 </section>
 
@@ -37,31 +35,31 @@
     <h2>Your Cheeps</h2>
     @if (Model.UserCheeps != null && Model.UserCheeps.Any())
     {
-                            <ul class="cheep-list">
+                                        <ul class="cheep-list">
             @foreach (var cheep in Model.UserCheeps)
             {
-                                                        <li class="cheep-item">
-                                                            <p>@cheep.MessageContent</p>
-                                                            <small>Posted on @cheep.TimeStampStr</small>
-                                                        </li>
+                                                                                <li class="cheep-item">
+                                                                                    <p>@cheep.MessageContent</p>
+                                                                                    <small>Posted on @cheep.TimeStampStr</small>
+                                                                                </li>
             }
-                            </ul>
+                                        </ul>
     }
     else
     {
-                            <p>You have not posted any cheeps yet.</p>
+                                        <p>You have not posted any cheeps yet.</p>
     }
 </section>
 
 <section>
     <h2>Download Your Data</h2>
     <form method="post">
-        <button type="submit" class="btn btn-primary">Download Your Data</button>
+        <button type="submit" class="btn btn-primary" style="background-color: blue;">Download Your Data</button>
     </form>
 </section>
 
 <section class="Forget-me">
-    <form method="post" asp-page-handler="ForgetMe" onsubmit="return confirm('Are you sure you want to delete your account and all your information? This action cannot be undone.');">
+    <form method="post" asp-page-handler="ForgetMe">
         <button class="ForgetMeButton" style="background-color: red;">Forget Me!</button>
     </form>
 </section>
