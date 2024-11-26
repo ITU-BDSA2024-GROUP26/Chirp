@@ -1,10 +1,5 @@
-using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Chirp.Web;
-using NUnit;
-using NUnit.Framework.Internal;
 using System.Diagnostics;
 
 namespace Chirp.Web.UITest;
@@ -16,15 +11,32 @@ public class Tests : PageTest
     private Process _server;
 
     [OneTimeSetUp]
-    public void OneTimeSetUp()
+    public async Task OneTimeSetUpAsync()
     {
         // Launch the server we will send requests to 
         // Note that this requires quite a bit of setup: 
         // The binaries(from dotnet publish) of the razor Pages project need to be in the bin/debug/net8.0 folder of this project 
         System.Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
         _server = Process.Start("dotnet", "Chirp.Web.dll");
+        
+        // Before returning, wait for the server to start up by pinging it.
+        using var client = new HttpClient();
+        const int maxRetries = 20;
+        var delay = TimeSpan.FromSeconds(1);
 
-        Thread.Sleep(20000); // give the server a little time, otherwise the first test can start before it's live
+        for (var i = 0; i <= maxRetries; i++)
+        {
+            try
+            {
+                await client.GetAsync("http://localhost:5000/");
+                return;
+            }
+            catch (Exception e)
+            {
+                await Task.Delay(delay);
+            }
+        }
+        throw new Exception("Server did not start within the expected time.");
     }
 
     [OneTimeTearDown]
@@ -114,8 +126,6 @@ public class Tests : PageTest
     [Test, Order(6)]
     public async Task TestFollowPrivateTimeline()
     {
-        await Page.GotoAsync("http://localhost:5000");
-
         await TestLogin();
 
         await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
@@ -126,7 +136,6 @@ public class Tests : PageTest
     [Test, Order(7)]
     public async Task TestUnfollowPrivateTimeline()
     {
-        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
 
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
@@ -137,7 +146,6 @@ public class Tests : PageTest
     [Test, Order(8)]
     public async Task TestOwnCheepsShowUpPrivateTimeline()
     {
-        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox).ClickAsync();
@@ -150,7 +158,6 @@ public class Tests : PageTest
     public async Task TestLogout()
     {
         // Arrange part, logging in is already expected to work due to previous test passing
-        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
 
         // act 
@@ -162,10 +169,44 @@ public class Tests : PageTest
     }
 
     [Test, Order(10)]
-    public async Task ForgetmeTestLogout() 
+    public async Task TestLoggedOutAboutMeButtonHidden()
+    {
+        await Page.GotoAsync("http://localhost:5000");
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "About me" })).ToBeHiddenAsync();
+    }
+    
+    [Test, Order(11)]
+    public async Task TestLoggedInAboutMeButtonVisible()
+    {
+        await TestLogin();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "About me" })).ToBeVisibleAsync();
+    }
+    
+    [Test, Order(12)]
+    public async Task TestAboutMePage()
+    {
+        await TestLogin();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "About me" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "My Information" })).ToBeVisibleAsync();
+        await Expect(Page.GetByText("Username: qwe")).ToBeVisibleAsync();
+        await Expect(Page.GetByText("Email: qwe@example.com")).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Following" })).ToBeVisibleAsync();
+        await Expect(Page.GetByText("You are not following anyone.")).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Your Cheeps" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("test message Posted on");
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Download Your Data" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Download Your Data" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Forget Me!" })).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await Page.Locator("li").Filter(new() { HasText = "Adrian [Follow] Hej," }).GetByRole(AriaRole.Button).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "About me" }).ClickAsync();
+        await Expect(Page.Locator("ul").Filter(new() { HasText = "Adrian" })).ToBeVisibleAsync();
+    }
+
+    [Test, Order(13)]
+    public async Task ForgetMeTestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
-        await Page.GotoAsync("http://localhost:5000");
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
         
@@ -177,4 +218,6 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
+    
+    
 }
