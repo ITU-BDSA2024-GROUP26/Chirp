@@ -313,7 +313,6 @@ ul.nav li a:hover {
 }
 
 .btn-primary {
-  background-color: #007bff;
   color: white;
   transition: background-color 0.3s;
 }
