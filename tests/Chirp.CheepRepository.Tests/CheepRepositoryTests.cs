@@ -243,4 +243,41 @@ public class CheepRepositoryTests : IAsyncLifetime
             });
         await _context.SaveChangesAsync();
     } 
+    
+    [Fact]
+    public async Task DeleteAuthorByName()
+    {
+        // Arrange
+        var author = new Author
+        {
+            UserName = "TestUser",
+            Email = "testuser@example.com",
+            Cheeps = new List<Cheep>()
+        };
+
+        var cheep1 = new Cheep { Text = "First cheep", TimeStamp = DateTime.UtcNow, Author = author };
+        var cheep2 = new Cheep { Text = "Second cheep", TimeStamp = DateTime.UtcNow, Author = author };
+
+   
+        author.Cheeps.Add(cheep1);
+        author.Cheeps.Add(cheep2);
+
+        // Add the author and their cheeps to the database
+        await _context.Users.AddAsync(author);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var deletedAuthor = await _repository.DeleteAuthorByName("TestUser");
+
+        // Assert
+        // Verify that the author is removed from the Users table
+        Assert.NotNull(deletedAuthor);
+        Assert.Null(await _context.Users.FirstOrDefaultAsync(a => a.UserName == "TestUser"));
+
+        // Verify that all cheeps belonging to the author are removed from the Cheeps table
+        Assert.Empty(await _context.Cheeps.Where(c => c.AuthorId == deletedAuthor.Id).ToListAsync());
+
+        // Verify that the returned author matches the expected one
+        Assert.Equal("TestUser", deletedAuthor.UserName);
+    }
 }
