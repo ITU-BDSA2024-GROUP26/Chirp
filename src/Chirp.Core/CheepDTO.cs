@@ -1,7 +1,6 @@
 using System.Globalization;
-using Chirp.Core.Entities;
 
-namespace Chirp.Core.DTOs;
+namespace Chirp.Core;
 
 public class CheepDTO(string author, string message, DateTime timeStamp, int id)
 {

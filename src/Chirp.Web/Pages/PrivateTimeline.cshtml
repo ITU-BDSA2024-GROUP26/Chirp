@@ -1,8 +1,8 @@
 @page "/{userName}"
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Chirp.Razor.Pages.PrivateTimelineModel
-@inject SignInManager<Chirp.Core.Entities.Author> SignInManager
-@inject UserManager<Chirp.Core.Entities.Author> UserManager
+@inject SignInManager<Chirp.Core.Author> SignInManager
+@inject UserManager<Chirp.Core.Author> UserManager
 
 @{
     ViewData["Title"] = "Chirp!";

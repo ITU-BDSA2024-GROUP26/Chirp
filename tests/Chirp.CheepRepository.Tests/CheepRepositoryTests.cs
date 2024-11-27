@@ -1,7 +1,5 @@
 using Chirp.Core;
-using Chirp.Core.Entities;
 using Chirp.Infrastructure;
-using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
@@ -29,7 +27,7 @@ public class CheepRepositoryTests : IAsyncLifetime
             null, null, null, null, null, null);
         await DbInitializer.SeedDatabase(_context, userManager);
         
-        _repository = new Chirp.Infrastructure.Repositories.CheepRepository(_context);
+        _repository = new Chirp.Infrastructure.CheepRepository(_context);
     }
     
     public async Task DisposeAsync()
