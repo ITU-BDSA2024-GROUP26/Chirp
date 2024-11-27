@@ -166,15 +166,15 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
                        .FirstOrDefaultAsync(a => a.UserName == name)
                    ?? throw new Exception("User cannot be found!");
         
+        // remove the user we want to delete from the followinglists of all his followers, to avoid "danging" foreign keys
         var followers = from u in context.Users
                         .Include(a => a.FollowingList)
                         where u.FollowingList != null && u.FollowingList!.Contains(user)
                         select u; 
         
         await followers.ForEachAsync(u => {
-            if (u.FollowingList == null) { return; }
-            u.FollowingList?.Remove(user);
-    }); 
+            u.FollowingList!.Remove(user);
+        }); 
 
 
         // Remove user's cheeps
