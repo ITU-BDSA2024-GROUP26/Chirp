@@ -234,8 +234,5 @@ public class Tests : PageTest
         
         await Page.Locator("li").Filter(new() { HasText = "Qwe [Follow] test" }).GetByRole(AriaRole.Button).ClickAsync();
         await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
-
     }
-    
-    
 }
