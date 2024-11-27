@@ -1,31 +1,34 @@
-@inject SignInManager<Chirp.Core.Entities.Author> SignInManager 
+@inject SignInManager<Chirp.Core.Entities.Author> SignInManager
 @inject UserManager<Chirp.Core.Entities.Author> UserManager
 @using Chirp.Core.DTOs
 @using Chirp.Core.Entities
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    Author user = await UserManager.GetUserAsync(User);
+    var currentUser = await UserManager.GetUserAsync(User);
 }
 
-@model CheepDTO; //we pass the cheepDTO here
+@* we pass the cheepDTO here *@
+@model CheepDTO; 
 
-<p >
+<p>
     <strong>
         <a href="/@Model.AuthorName">@Model.AuthorName</a>
     </strong>
-    @if (SignInManager.IsSignedIn(User) && user != null && user.UserName != @Model.AuthorName)
+    @if (SignInManager.IsSignedIn(User) && currentUser != null && currentUser.UserName != @Model.AuthorName)
     {
-        <form method="post" asp-page-handler="Follow">
-            <input type="hidden" name="UsrnmToFollow" value="@Model.AuthorName" />
-            <button type="submit" class="btn btn-primary"> 
-                @if(user.FollowsAuthor(@Model.AuthorName)) 
+    <form method="post" asp-page-handler="Follow">
+    <input type="hidden" name="UsrnmToFollow" value="@Model.AuthorName" />
+    <button type="submit" class="btn btn-primary">
+        @if (currentUser.FollowsAuthor(@Model.AuthorName))
                 {
-                    <p>[Unfollow]</p>
-                } else {
-                    <p>[Follow]</p>
+                <p>[Unfollow]</p>
                 }
-            </button>
-        </form>
+                else
+                {
+                <p>[Follow]</p>
+                }
+        </button>
+    </form>
     }
 </p>
