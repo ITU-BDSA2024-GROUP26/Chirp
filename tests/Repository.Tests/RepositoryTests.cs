@@ -12,7 +12,8 @@ namespace CheepRepository.Tests;
 
 public class CheepRepositoryTests : IAsyncLifetime
 {
-    private ICheepRepository _repository;
+    private ICheepRepository _cheepRepository;
+    private IAuthorRepository _authorRepository; 
     private CheepDbContext _context;
     
     private readonly DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
@@ -27,7 +28,8 @@ public class CheepRepositoryTests : IAsyncLifetime
             null, null, null, null, null, null);
         await DbInitializer.SeedDatabase(_context, userManager);
         
-        _repository = new Infrastructure.CheepRepository(_context);
+        _cheepRepository = new Infrastructure.CheepRepository(_context);
+        _authorRepository = new Infrastructure.AuthorRepository(_context);
     }
     
     public async Task DisposeAsync()
@@ -48,7 +50,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         };
     
         // Act
-        await _repository.CreateCheep(newCheep);
+        await _cheepRepository.CreateCheep(newCheep);
     
         // Assert
         var cheeps = await _context.Cheeps.ToListAsync();
@@ -59,7 +61,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task ReadCheeps_ReturnsAllCheeps()
     {
         var expectedNumCheeps = _context.Cheeps.Count();
-        var cheeps = await _repository.ReadCheeps(-1, 0);
+        var cheeps = await _cheepRepository.ReadCheeps(-1, 0);
         var actualNumCheeps = cheeps.Count;
     
         // Assert
@@ -74,7 +76,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         int limit = 2;
 
         // Act
-        var cheeps = await _repository.ReadCheeps(limit, 0);
+        var cheeps = await _cheepRepository.ReadCheeps(limit, 0);
 
         // Assert
         Assert.Equal(limit, cheeps.Count);
@@ -87,7 +89,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         int offset = 1;
 
         // Act
-        var cheeps = await _repository.ReadCheeps(-1, offset);
+        var cheeps = await _cheepRepository.ReadCheeps(-1, offset);
 
         // Assert
         var allCheeps = await _context.Cheeps.ToListAsync();
@@ -104,7 +106,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         string name = "Helge"; // Assuming there are authors with names starting with 'Helge'
 
         // Act
-        var cheeps = await _repository.ReadCheeps(-1, 0, name);
+        var cheeps = await _cheepRepository.ReadCheeps(-1, 0, name);
 
         // Assert
         Assert.All(cheeps, c => Assert.Equal(name, c.Author!.UserName!));
@@ -119,7 +121,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         var newText = "Updated text";
 
         // Act
-        await _repository.UpdateCheep(cheep.Id, newText);
+        await _cheepRepository.UpdateCheep(cheep.Id, newText);
 
         // Assert
         var updatedCheep = await _context.Cheeps.FindAsync(cheep.Id);
@@ -134,7 +136,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         var newText = "Should not work";
 
         // Act & Assert
-        var exception = await Record.ExceptionAsync(() => _repository.UpdateCheep(nonExistentId, newText)); 
+        var exception = await Record.ExceptionAsync(() => _cheepRepository.UpdateCheep(nonExistentId, newText)); 
         Assert.Null(exception);
     }
 
@@ -142,7 +144,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task CanFindAuthorbyName() 
     {
         //Act
-        var foundAuthor = await _repository.FindAuthorByName("Roger Histand"); 
+        var foundAuthor = await _authorRepository.FindAuthorByName("Roger Histand"); 
 
         //Assert
         Assert.Equal("Roger+Histand@hotmail.com", foundAuthor?.Email);
@@ -152,7 +154,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task CanFindAuthorbyEmail() 
     {
         //Act
-        var foundAuthor = await _repository.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
+        var foundAuthor = await _authorRepository.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
 
         //Assert
         Assert.Equal("Roger Histand", foundAuthor?.UserName);  
@@ -162,10 +164,10 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_GetAuthorsFollowing() 
     {
         //Arrange
-        await MakeHelgeFollowUser("Adrian"); 
+        await MakeAFollowB("Helge", "Adrian"); 
 
         //Act 
-        ICollection<Author> HelgeFollowers = await _repository.GetAuthorsFollowing("Helge"); 
+        ICollection<Author> HelgeFollowers = await _authorRepository.GetAuthorsFollowing("Helge"); 
 
         //Assert
         var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
@@ -176,7 +178,7 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_AddingFollower() 
     {
         // act
-        await _repository.AddOrRemoveFollower("Adrian", "Helge");
+        await _authorRepository.AddOrRemoveFollower("Adrian", "Helge");
 
         // assert 
         var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
@@ -189,10 +191,10 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_RemovingFollower() 
     {
         //arrange 
-        await MakeHelgeFollowUser("Adrian");
+        await MakeAFollowB("Helge", "Adrian");
 
         // act 
-        await _repository.AddOrRemoveFollower("Helge", "Adrian");
+        await _authorRepository.AddOrRemoveFollower("Helge", "Adrian");
 
         // assert 
         var adrian = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
@@ -205,11 +207,11 @@ public class CheepRepositoryTests : IAsyncLifetime
     public async Task Test_GetPrivateTimelineCheeps() 
     {
         //arrange 
-        await MakeHelgeFollowUser("Quintin Sitts");
-        await MakeHelgeFollowUser("Jacqualine Gilcoine"); 
+        await MakeAFollowB("Helge", "Quintin Sitts");
+        await MakeAFollowB("Helge", "Jacqualine Gilcoine"); 
 
         // act 
-        var followingCheeps = await _repository.GetPrivateTimelineCheeps("Helge", -1, 0); 
+        var followingCheeps = await _cheepRepository.GetPrivateTimelineCheeps("Helge", -1, 0); 
 
         // assert 
         var checkCheeps = from cheep in _context.Cheeps
@@ -225,19 +227,19 @@ public class CheepRepositoryTests : IAsyncLifetime
         }
     }
 
-    private async Task MakeHelgeFollowUser(string userName) 
+    private async Task MakeAFollowB(string aUsrname, string bUsrname) 
     {
         var query = 
             from a in _context.Users 
-            where a.UserName == "Helge" 
+            where a.UserName == aUsrname 
             select a; 
 
-        var userToFollow = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == userName);
+        var userToFollow = await _context.Users.FirstOrDefaultAsync(a=> a.UserName == bUsrname);
 
         await query.ForEachAsync(user => {
             user.FollowingList ??= new List<Author>(); // make sure it isn't null
-            if(user.FollowingList.Contains(userToFollow)) { return; }
-            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(userToFollow);
+            if(user.FollowingList.Contains(userToFollow!)) { return; }
+            (user.FollowingList ?? throw new Exception("Fucking followinglist is null")).Add(userToFollow!);
             });
         await _context.SaveChangesAsync();
     } 
@@ -265,7 +267,7 @@ public class CheepRepositoryTests : IAsyncLifetime
         await _context.SaveChangesAsync();
 
         // Act
-        var deletedAuthor = await _repository.DeleteAuthorByName("TestUser");
+        var deletedAuthor = await _authorRepository.DeleteAuthorByName("TestUser");
 
         // Assert
         // Verify that the author is removed from the Users table
@@ -277,5 +279,15 @@ public class CheepRepositoryTests : IAsyncLifetime
 
         // Verify that the returned author matches the expected one
         Assert.Equal("TestUser", deletedAuthor.UserName);
+    }
+
+    [Fact]
+    public async Task TestMutalFollow() // ensure we can get followers and cheeps without problems from both 
+    {
+        await MakeAFollowB("Helge", "Adrian"); 
+        await MakeAFollowB("Adrian", "Helge");
+
+        await Test_GetAuthorsFollowing(); 
+        await Test_GetPrivateTimelineCheeps(); 
     }
 }
