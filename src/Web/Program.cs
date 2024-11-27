@@ -60,44 +60,40 @@ public class Program
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<ICheepService, CheepService>();
-        // Taken from Helge
-        builder.Services.AddAuthentication(options =>
+
+        var githubClientId = builder.Configuration["authentication:github:clientId"]
+                             ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID");
+        
+        var githubClientSecret = builder.Configuration["authentication:github:clientSecret"]
+                                 ?? Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET");
+
+        if (githubClientId is not null && githubClientSecret is not null)
         {
-        /*options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = "GitHub";
-        */
-        })
-        //.AddCookie()
-        .AddGitHub(o =>
-        {
-        o.ClientId = builder.Configuration["authentication:github:clientId"] 
-                     ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID")
-                     ?? throw new InvalidDataException("Github client id not found");
-        o.ClientSecret = builder.Configuration["authentication:github:clientSecret"]
-                         ?? Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")
-                         ?? throw new InvalidDataException("Github client secret not found");
-        o.CallbackPath = "/signin-github";
+            // Taken from Helge
+            builder.Services.AddAuthentication()
+                .AddGitHub(o =>
+                {
+                    o.ClientId = githubClientId;
+                    o.ClientSecret = githubClientSecret;
+                    o.CallbackPath = "/signin-github";
+                    o.Scope.Add("read:user");//access to the github-user's public profile information
+                    o.Scope.Add("user:email");//access to the github-user's primary email address
+                    o.Scope.Add("user:");
+                    o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+                });
         
-        o.Scope.Add("read:user");//access to the github-user's public profile information
+            // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
+            builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(365));
         
-        o.Scope.Add("user:email");//access to the github-user's primary email address
-        o.Scope.Add("user:");
-        
-        o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-        });
-        
-        // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
-        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(365));
-        
-        // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-8.0
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowChirp", policy =>
+            // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-8.0
+            builder.Services.AddCors(options =>
             {
-                policy.WithOrigins("https://bdsagroup26chirprazor.azurewebsites.net"); //Only allow chirp
+                options.AddPolicy("AllowChirp", policy =>
+                {
+                    policy.WithOrigins("https://bdsagroup26chirprazor.azurewebsites.net"); //Only allow chirp
+                });
             });
-        });
+        }
         
         var app = builder.Build();
         

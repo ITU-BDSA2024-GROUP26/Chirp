@@ -63,8 +63,8 @@ jobs:
       - name: Create Migration Bundle
         shell: bash 
         run: |
-          cd src/Chirp.Infrastructure
-          ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../Chirp.Web -o ${{env.DOTNET_ROOT}}/migrate/bundle
+          cd src/Infrastructure
+          ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../Web -o ${{env.DOTNET_ROOT}}/migrate/bundle
           
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -92,10 +92,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build with dotnet
-        run: dotnet build src/Chirp.Web/ --configuration Release
+        run: dotnet build src/Web/ --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish src/Chirp.Web/ -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish src/Web/ -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
