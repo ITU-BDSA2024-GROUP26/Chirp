@@ -1,0 +1,100 @@
+using Core;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure;
+
+public class AuthorRepository(CheepDbContext context) : IAuthorRepository
+{
+    
+    public async Task<Author?> FindAuthorByName(string name)
+    {
+        return await context.Users.FirstOrDefaultAsync(a => a.UserName == name);
+    }
+
+    public async Task<Author?> FindAuthorByEmail(string email)
+    {
+        return await context.Users.FirstOrDefaultAsync(a => a.Email == email);
+    }
+
+    public async Task<ICollection<Author>> GetAuthorsFollowing(string name)
+    {
+        //Author author = await FindAuthorByName(name) ?? throw new Exception($"Null author {name}");
+
+        IQueryable<Author> query =
+            from a in context.Users
+            .Include(a => a.FollowingList) // need this or nothing works
+            where a.UserName == name
+            // where a.FollowingList.Contains(author) // this will only work if there is some inbuilt equality shit 
+            select a;
+
+        Author author = await query.FirstAsync();
+
+        return author.FollowingList ?? new List<Author>();
+    }
+
+    // Adds the follower, if user is already following unfollow instead
+    public async Task AddOrRemoveFollower(string userName, string usernmToFollow)
+    {
+        if (userName == usernmToFollow) { throw new Exception("User can't follow himself"); }
+
+        Author userTofollow = await FindAuthorByName(usernmToFollow) ?? throw new Exception($"Null user to follow {usernmToFollow}");
+
+        var query =
+            from a in context.Users
+            .Include(a => a.FollowingList)
+            where a.UserName == userName
+            select a;
+
+        await query.ForEachAsync(user =>
+        {
+            if (user.FollowingList == null) { Console.WriteLine("Fucking followinglist is null"); }
+            user.FollowingList ??= new List<Author>();
+
+            if (user.FollowingList.Contains(userTofollow))
+            {
+                user.FollowingList.Remove(userTofollow);
+            }
+            else
+            {
+                user.FollowingList.Add(userTofollow);
+            }
+        });
+
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<Author?> DeleteAuthorByName(string name)
+    {
+        // Find author by name
+        var user = await context.Users
+                       .Include(a => a.Cheeps) // Ensure the user's cheep
+                       .Include(a => a.FollowingList)
+                       .FirstOrDefaultAsync(a => a.UserName == name)
+                   ?? throw new Exception("User cannot be found!");
+        
+        // remove the user we want to delete from the followinglists of all his followers, to avoid "danging" foreign keys
+        var followers = from u in context.Users
+                        .Include(a => a.FollowingList)
+                        where u.FollowingList != null && u.FollowingList!.Contains(user)
+                        select u; 
+        
+        await followers.ForEachAsync(u => {
+            u.FollowingList!.Remove(user);
+        }); 
+
+
+        // Remove user's cheeps
+        if (user.Cheeps != null && user.Cheeps.Any())
+        {
+            context.Cheeps.RemoveRange(user.Cheeps);
+        }
+
+        // Remove user
+        context.Users.Remove(user);
+
+        // Save changes
+        await context.SaveChangesAsync();
+
+        return user;
+    }
+}

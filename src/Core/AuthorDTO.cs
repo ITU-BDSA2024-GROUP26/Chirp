@@ -15,6 +15,6 @@ public class AuthorDto(string? userName, string? email, ICollection<AuthorDto>? 
             return new List<AuthorDto>();
         }
 
-        return followersList.Select(author => new AuthorDto(author)).ToList();
+        return followersList.Select(author => new AuthorDto(author.UserName, author.Email, null)).ToList();
     }
 }
