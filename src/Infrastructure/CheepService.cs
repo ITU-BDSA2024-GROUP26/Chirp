@@ -1,16 +1,6 @@
-using Core;
-using Infrastructure;
-
 namespace Infrastructure;
-
-using System.Formats.Tar;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using Core;
-using Infrastructure.Migrations;
-using Microsoft.AspNetCore.Identity;
 
 public class CheepService(ICheepRepository cheepRepository) : ICheepService
 {
@@ -46,5 +36,11 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
         };
         await cheepRepository.CreateCheep(newCheep);
         return ;
+    }
+
+    public async Task AddOrRemoveFollower(string userName, string userToFollowName) 
+    {
+        await cheepRepository.AddOrRemoveFollower(userName, userToFollowName); 
+        return; 
     }
 }
