@@ -5,7 +5,6 @@ namespace Infrastructure;
 
 public class AuthorRepository(CheepDbContext context) : IAuthorRepository
 {
-    
     public async Task<Author?> FindAuthorByName(string name)
     {
         return await context.Users.FirstOrDefaultAsync(a => a.UserName == name);
