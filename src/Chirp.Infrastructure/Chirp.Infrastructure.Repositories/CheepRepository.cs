@@ -162,8 +162,20 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         // Find author by name
         var user = await context.Users
                        .Include(a => a.Cheeps) // Ensure the user's cheep
+                       .Include(a => a.FollowingList)
                        .FirstOrDefaultAsync(a => a.UserName == name)
                    ?? throw new Exception("User cannot be found!");
+        
+        var followers = from u in context.Users
+                        .Include(a => a.FollowingList)
+                        where u.FollowingList != null && u.FollowingList!.Contains(user)
+                        select u; 
+        
+        await followers.ForEachAsync(u => {
+            if (u.FollowingList == null) { return; }
+            u.FollowingList?.Remove(user);
+    }); 
+
 
         // Remove user's cheeps
         if (user.Cheeps != null && user.Cheeps.Any())
