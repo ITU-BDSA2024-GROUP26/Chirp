@@ -10,5 +10,4 @@ public interface IAuthorRepository
     public Task<ICollection<Author>> GetAuthorsFollowing(string name); 
     public Task AddOrRemoveFollower(string userName, string usernmToFollow);
     public Task<Author?>DeleteAuthorByName(string name); 
-
 }
