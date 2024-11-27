@@ -1,10 +1,10 @@
-using Chirp.Core.DTOs;
-using Chirp.Infrastructure.Services;
+using Chirp.Core;
+using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using Chirp.Core.Entities;
-using Chirp.Infrastructure.Repositories;
+using Chirp.Core;
+using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Razor.Pages;

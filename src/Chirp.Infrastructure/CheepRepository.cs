@@ -1,6 +1,6 @@
-using Chirp.Core.Entities;
+using Chirp.Core;
 
-namespace Chirp.Infrastructure.Repositories;
+namespace Chirp.Infrastructure;
 
 using Core;
 using System.Text.RegularExpressions;

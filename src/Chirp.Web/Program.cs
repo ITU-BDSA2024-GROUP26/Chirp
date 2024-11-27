@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using Chirp.Core.Entities;
-using Chirp.Infrastructure.Repositories;
-using Chirp.Infrastructure.Services;
+using Chirp.Core;
+using Chirp.Infrastructure;
+using Chirp.Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;

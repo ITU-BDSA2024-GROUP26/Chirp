@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Chirp.Core.Entities;
+using Chirp.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Azure.Identity;
-using Chirp.Infrastructure.Services;
+using Chirp.Infrastructure;
 
 namespace Chirp.Razor.Areas.Identity.Pages.Account
 {

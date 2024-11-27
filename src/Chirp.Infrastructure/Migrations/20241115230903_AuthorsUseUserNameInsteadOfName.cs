@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Chirp.Infrastructure.Repositories.Migrations
+namespace Chirp.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AuthorsUseUserNameInsteadOfName : Migration

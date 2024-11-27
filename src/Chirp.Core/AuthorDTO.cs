@@ -1,6 +1,4 @@
-using Chirp.Core.Entities;
-
-namespace Chirp.Core.DTOs;
+namespace Chirp.Core;
 
 public class AuthorDto(string? userName, string? email, ICollection<AuthorDto>? FollowingList)
 {

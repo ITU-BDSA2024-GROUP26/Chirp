@@ -1,8 +1,8 @@
 using System;
-using Chirp.Core.Entities;
+using Chirp.Core;
 using Microsoft.AspNetCore.Identity;
 
-namespace Chirp.Infrastructure.Repositories;
+namespace Chirp.Infrastructure;
 
 public static class DbInitializer
 {

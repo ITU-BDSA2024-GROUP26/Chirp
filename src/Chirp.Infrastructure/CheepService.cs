@@ -1,15 +1,15 @@
-using Chirp.Core.DTOs;
-using Chirp.Infrastructure.Repositories;
+using Chirp.Core;
+using Chirp.Infrastructure;
 
-namespace Chirp.Infrastructure.Services;
+namespace Chirp.Infrastructure;
 
 using System.Formats.Tar;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
-using Chirp.Core.Entities;
-using Chirp.Infrastructure.Repositories.Migrations;
+using Chirp.Core;
+using Chirp.Infrastructure.Migrations;
 using Microsoft.AspNetCore.Identity;
 
 public class CheepService(ICheepRepository cheepRepository) : ICheepService
