@@ -126,6 +126,5 @@ public class AboutMeModel : PageModel
         await _signInManager.SignOutAsync();
         return RedirectToPage("/Public");
     }
-
 }
 
