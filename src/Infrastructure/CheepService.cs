@@ -43,4 +43,9 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
         await cheepRepository.AddOrRemoveFollower(userName, userToFollowName); 
         return; 
     }
+
+    public async Task DeleteAuthorByName(string authorName) 
+    {
+        await cheepRepository.DeleteAuthorByName(authorName); 
+    }
 }

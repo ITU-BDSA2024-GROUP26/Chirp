@@ -19,14 +19,12 @@ public class AboutMeModel : PageModel
 {
     //public string? AuthorName => HttpContext.GetRouteValue("Author")?.ToString();
     private readonly ICheepService _cheepService;
-    private readonly ICheepRepository _cheepRepository;
     private readonly UserManager<Author> _userManager;
     private readonly SignInManager<Author> _signInManager;
 
-    public AboutMeModel(ICheepService cheepService, ICheepRepository cheepRepository, UserManager<Author> userManager, SignInManager<Author> signInManager)
+    public AboutMeModel(ICheepService cheepService, UserManager<Author> userManager, SignInManager<Author> signInManager)
     {
         _cheepService = cheepService;
-        _cheepRepository = cheepRepository;
         _userManager = userManager;
         _signInManager = signInManager;
     }
@@ -120,7 +118,7 @@ public class AboutMeModel : PageModel
     {
         var Author = await _userManager.GetUserAsync(User);
 
-        await _cheepRepository.DeleteAuthorByName(Author.UserName);
+        await _cheepService.DeleteAuthorByName(Author.UserName);
         await _signInManager.SignOutAsync();
         return RedirectToPage("/Public");
     }

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 namespace Web.Pages;
 
-public class PrivateTimelineModel (ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) : TimelineModel(service, cheepRepository, userManager)
+public class PrivateTimelineModel (ICheepService service, UserManager<Author> userManager) : TimelineModel(service, userManager)
 {
     [BindProperty(SupportsGet = true)]
     public string? userName { get; set; }
