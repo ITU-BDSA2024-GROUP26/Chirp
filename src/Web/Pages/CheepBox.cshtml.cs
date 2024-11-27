@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Web.Pages;
 
-public class CheepBoxModel(ICheepRepository cheepRepository, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
+public class CheepBoxModel(ICheepService service, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
 {
     public Author? Author { get; set; }
     
@@ -21,16 +21,10 @@ public class CheepBoxModel(ICheepRepository cheepRepository, UserManager<Author>
         // simply truncate the message if too long
         if (Message.Length > 160) { Message = Message.Substring(0, 160); }
 
-        // Create the new Cheep
-        var newCheep = new Cheep
-        {
-            Author = await userManager.GetUserAsync(User),                    // Set the Author
-            Text = Message,                     // Set the text from the form input (Message property)
-            TimeStamp = DateTime.UtcNow         // Set the current timestamp
-        };
+        // Create the new Cheep 
 
         // Save the new Cheep (assuming a SaveCheepAsync method exists in your service or repository)
-        await cheepRepository.CreateCheep(newCheep);
+        await service.SendCheep((await userManager.GetUserAsync(User)).UserName, Message, DateTime.UtcNow);
         return;
     }
 }

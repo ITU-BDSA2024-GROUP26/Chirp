@@ -1,16 +1,6 @@
-using Core;
-using Infrastructure;
-
 namespace Infrastructure;
-
-using System.Formats.Tar;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using Core;
-using Infrastructure.Migrations;
-using Microsoft.AspNetCore.Identity;
 
 public class CheepService(ICheepRepository cheepRepository) : ICheepService
 {
@@ -36,20 +26,26 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
     }
 
 
-    /*public async Task<IEnumerable<Author>?> ExtractFollowersList(Author.followersList)
+    public async Task SendCheep(string authorName, string content, DateTime timeSent)
     {
-        if (followersList == null)
+        Cheep newCheep = new Cheep
         {
-            return new string[0];
-        }
+            Author = await cheepRepository.FindAuthorByName(authorName),
+            Text = content,
+            TimeStamp = timeSent
+        };
+        await cheepRepository.CreateCheep(newCheep);
+        return ;
+    }
 
-        ICollection<string> res = new string[followersList.Count];
+    public async Task AddOrRemoveFollower(string userName, string userToFollowName) 
+    {
+        await cheepRepository.AddOrRemoveFollower(userName, userToFollowName); 
+        return; 
+    }
 
-        foreach (Author a in followersList)
-        {
-            res.Add(a.UserName ?? throw new Exception("Author with null name"));
-        }
-
-        return res;
-    }*/
+    public async Task DeleteAuthorByName(string authorName) 
+    {
+        await cheepRepository.DeleteAuthorByName(authorName); 
+    }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Web.Pages;
 
-public class FollowModel(ICheepRepository cheepRepository, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
+public class FollowModel(ICheepService service, UserManager<Author> userManager, System.Security.Claims.ClaimsPrincipal User)
 {
     public async Task OnPostFollowAsync(string UsrnmToFollow) {
         if (UsrnmToFollow == null ||(User.Identity != null && !User.Identity.IsAuthenticated))
@@ -15,9 +15,9 @@ public class FollowModel(ICheepRepository cheepRepository, UserManager<Author> u
             return;
         }
 
-        Author curUser = await userManager.GetUserAsync(User);
+        Author curUser = await userManager!.GetUserAsync(User!);
 
-        await cheepRepository.AddOrRemoveFollower(curUser.UserName ?? throw new Exception("Wtf user with null username"), UsrnmToFollow); 
+        await service.AddOrRemoveFollower(curUser.UserName ?? throw new Exception("Wtf user with null username"), UsrnmToFollow); 
         return;
     }
 }
