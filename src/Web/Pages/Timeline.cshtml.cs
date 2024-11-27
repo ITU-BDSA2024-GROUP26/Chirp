@@ -8,12 +8,11 @@ using Microsoft.AspNetCore.Identity;
 namespace Web.Pages;
 
 // Base class for timelines, containing the functionality all three timelines use(Author and Cheep fields, following, sending cheeps)
-public class TimelineModel(ICheepService service, ICheepRepository cheepRepository, UserManager<Author> userManager) 
+public class TimelineModel(ICheepService service, UserManager<Author> userManager) 
     : PageModel
 {
     public Author? Author { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
-    public ICheepRepository CheepRepository = cheepRepository;
 
     private CheepBoxModel? _cheepBoxModel;
     private CheepBoxModel lazyGetCheepBoxModel() 
