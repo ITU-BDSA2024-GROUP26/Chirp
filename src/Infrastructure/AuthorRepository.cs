@@ -20,14 +20,13 @@ public class AuthorRepository(CheepDbContext context) : IAuthorRepository
     {
         //Author author = await FindAuthorByName(name) ?? throw new Exception($"Null author {name}");
 
-        IQueryable<Author> query =
-            from a in context.Users
-            .Include(a => a.FollowingList) // need this or nothing works
+        Author author = await
+            (from a in context.Users
+            .Include(a => a.FollowingList) /* need this or nothing works */
             where a.UserName == name
-            // where a.FollowingList.Contains(author) // this will only work if there is some inbuilt equality shit 
-            select a;
+            select a).FirstAsync();
 
-        Author author = await query.FirstAsync();
+        if(author.FollowingList != null && author.FollowingList.Contains(author)) { throw new Exception("Author follows himself"); }
 
         return author.FollowingList ?? new List<Author>();
     }
@@ -39,26 +38,22 @@ public class AuthorRepository(CheepDbContext context) : IAuthorRepository
 
         Author userTofollow = await FindAuthorByName(usernmToFollow) ?? throw new Exception($"Null user to follow {usernmToFollow}");
 
-        var query =
-            from a in context.Users
+        var user =
+            (from a in context.Users
             .Include(a => a.FollowingList)
             where a.UserName == userName
-            select a;
+            select a).First();
 
-        await query.ForEachAsync(user =>
+        user.FollowingList ??= new List<Author>();
+
+        if (user.FollowingList.Contains(userTofollow))
         {
-            if (user.FollowingList == null) { Console.WriteLine("Fucking followinglist is null"); }
-            user.FollowingList ??= new List<Author>();
-
-            if (user.FollowingList.Contains(userTofollow))
-            {
-                user.FollowingList.Remove(userTofollow);
-            }
-            else
-            {
-                user.FollowingList.Add(userTofollow);
-            }
-        });
+            user.FollowingList.Remove(userTofollow);
+        }
+        else
+        {
+            user.FollowingList.Add(userTofollow);
+        }
 
         await context.SaveChangesAsync();
     }
