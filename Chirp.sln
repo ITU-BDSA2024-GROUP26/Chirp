@@ -5,17 +5,17 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{15CC87F5-702E-4C47-8A5B-4DD68F44D00B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Core", "src\Chirp.Core\Chirp.Core.csproj", "{492749E6-1CEC-4682-AB2B-85CB838D47D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{492749E6-1CEC-4682-AB2B-85CB838D47D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Infrastructure", "src\Chirp.Infrastructure\Chirp.Infrastructure.csproj", "{2FF2EB27-582E-4EFA-B907-A67D927D4855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{2FF2EB27-582E-4EFA-B907-A67D927D4855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Web", "src\Chirp.Web\Chirp.Web.csproj", "{F7C4F9D2-73E8-404A-BFD8-389A6196B6D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{F7C4F9D2-73E8-404A-BFD8-389A6196B6D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C05F2362-9935-4470-9D5F-6A92255E33F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CheepRepository.Tests", "tests\Chirp.CheepRepository.Tests\Chirp.CheepRepository.Tests.csproj", "{6895489A-746D-498C-9DBB-4AA4C1CB2F6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheepRepository.Tests", "tests\CheepRepository.Tests\CheepRepository.Tests.csproj", "{6895489A-746D-498C-9DBB-4AA4C1CB2F6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Web.UITest", "tests\Chirp.Web.UITest\Chirp.Web.UITest.csproj", "{4F68FADB-1949-45CD-9FA5-BD09C4788440}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.UITest", "tests\Web.UITest\Web.UITest.csproj", "{4F68FADB-1949-45CD-9FA5-BD09C4788440}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
