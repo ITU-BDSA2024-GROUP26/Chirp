@@ -2,7 +2,7 @@ namespace Infrastructure;
 using System.Linq;
 using Core;
 
-public class CheepService(ICheepRepository cheepRepository) : ICheepService
+public class CheepService(ICheepRepository cheepRepository, IAuthorRepository authorRepository) : ICheepService
 {
     private const int MaxCheeps = 32;
 
@@ -20,7 +20,7 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
 
     public async Task<IEnumerable<AuthorDto>> GetFollowingAuthorsAsync(string userName)
     {
-        var followers = await cheepRepository.GetAuthorsFollowing(userName);
+        var followers = await authorRepository.GetAuthorsFollowing(userName);
 
         return followers.Select(author => new AuthorDto(author));
     }
@@ -30,7 +30,7 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
     {
         Cheep newCheep = new Cheep
         {
-            Author = await cheepRepository.FindAuthorByName(authorName),
+            Author = await authorRepository.FindAuthorByName(authorName),
             Text = content,
             TimeStamp = timeSent
         };
@@ -40,12 +40,12 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
 
     public async Task AddOrRemoveFollower(string userName, string userToFollowName) 
     {
-        await cheepRepository.AddOrRemoveFollower(userName, userToFollowName); 
+        await authorRepository.AddOrRemoveFollower(userName, userToFollowName); 
         return; 
     }
 
     public async Task DeleteAuthorByName(string authorName) 
     {
-        await cheepRepository.DeleteAuthorByName(authorName); 
+        await authorRepository.DeleteAuthorByName(authorName); 
     }
 }

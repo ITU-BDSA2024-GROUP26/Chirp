@@ -59,6 +59,7 @@ public class Program
 
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
+        builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
         builder.Services.AddScoped<ICheepService, CheepService>();
 
         var githubClientId = builder.Configuration["authentication:github:clientId"]
