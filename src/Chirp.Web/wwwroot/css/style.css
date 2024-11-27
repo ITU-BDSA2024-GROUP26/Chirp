@@ -313,25 +313,10 @@ ul.nav li a:hover {
 }
 
 .btn-primary {
-  background-color: #007bff;
   color: white;
   transition: background-color 0.3s;
 }
 
 .btn-primary:hover {
   background-color: #0056b3;
-}
-.ForgetMeButton {
-    background-color: #971313;
-    border: none;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    width: 50%; /* Set to half of its parent container's width */
-    height: 50%; /* Adjust height if needed */
-}
-.ForgetMeButton:hover {
-    background-color: #500a0a;
 }
