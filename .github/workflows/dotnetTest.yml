@@ -85,23 +85,23 @@ jobs:
       uses: cakhanif/action-install-powershell@v1
     
     - name: Build UItest project 
-      run: dotnet build tests/Chirp.Web.UITest 
+      run: dotnet build tests/Web.UITest 
     
     - name: Install Playwright with dependencies
       if: steps.playwright-bins.outputs.cache-hit != 'true'
-      run: pwsh tests/Chirp.Web.UITest/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      run: pwsh tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install --with-deps
 
-    - name: Build Chirp.Web binaries 
-      run: dotnet build src/Chirp.Web/ -c Debug 
+    - name: Build Web binaries 
+      run: dotnet build src/Web/ -c Debug 
     
-    - name: Export Chirp.Web binaries 
-      run: dotnet publish src/Chirp.Web/ -c Debug -o tests/Chirp.Web.UITest/bin/Debug/net8.0
+    - name: Export Web binaries 
+      run: dotnet publish src/Web/ -c Debug -o tests/Web.UITest/bin/Debug/net8.0
 
     - name: Run Tests
       env:
         GITHUBCLIENTID: ${{ secrets.GITHUBCLIENTID }}
         GITHUBCLIENTSECRET: ${{ secrets.GITHUBCLIENTSECRET }}
-      run: dotnet test tests/Chirp.Web.UITest --no-build --verbosity normal
+      run: dotnet test tests/Web.UITest --no-build --verbosity normal
 
   Setup-Migration: 
     name: Setup migration bundle
@@ -121,8 +121,8 @@ jobs:
       - name: Create Migration Bundle
         shell: bash 
         run: |
-              cd src/Chirp.Infrastructure
-              ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../Chirp.Web -o ${{env.ArtifactPath}}/migrate/tbundle
+              cd src/Infrastructure
+              ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../Web -o ${{env.ArtifactPath}}/migrate/tbundle
             
       - name: Upload artifacts for test job
         uses: actions/upload-artifact@v4
