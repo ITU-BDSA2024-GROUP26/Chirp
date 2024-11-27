@@ -36,20 +36,15 @@ public class CheepService(ICheepRepository cheepRepository) : ICheepService
     }
 
 
-    /*public async Task<IEnumerable<Author>?> ExtractFollowersList(Author.followersList)
+    public async Task SendCheep(string authorName, string content, DateTime timeSent)
     {
-        if (followersList == null)
+        Cheep newCheep = new Cheep
         {
-            return new string[0];
-        }
-
-        ICollection<string> res = new string[followersList.Count];
-
-        foreach (Author a in followersList)
-        {
-            res.Add(a.UserName ?? throw new Exception("Author with null name"));
-        }
-
-        return res;
-    }*/
+            Author = await cheepRepository.FindAuthorByName(authorName),
+            Text = content,
+            TimeStamp = timeSent
+        };
+        await cheepRepository.CreateCheep(newCheep);
+        return ;
+    }
 }

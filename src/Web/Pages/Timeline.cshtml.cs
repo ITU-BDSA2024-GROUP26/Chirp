@@ -20,7 +20,7 @@ public class TimelineModel(ICheepService service, ICheepRepository cheepReposito
     {
         if(_cheepBoxModel == null) 
         {
-            _cheepBoxModel = new CheepBoxModel(cheepRepository, userManager, User); 
+            _cheepBoxModel = new CheepBoxModel(service, userManager, User); 
         }
         return _cheepBoxModel;
     }
