@@ -8,13 +8,13 @@ using Moq;
 using Xunit;
 
 
-namespace CheepRepository.Tests;
+namespace Repository.Tests;
 
-public class CheepRepositoryTests : IAsyncLifetime
+public class RepositoryTests : IAsyncLifetime
 {
-    private ICheepRepository _cheepRepository;
-    private IAuthorRepository _authorRepository; 
-    private CheepDbContext _context;
+    private ICheepRepository? _cheepRepository;
+    private IAuthorRepository? _authorRepository; 
+    private CheepDbContext? _context;
     
     private readonly DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
