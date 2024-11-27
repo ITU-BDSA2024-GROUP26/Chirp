@@ -64,7 +64,7 @@ jobs:
         shell: bash 
         run: |
           cd src/Chirp.Infrastructure
-          ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../../Chirp.Web -o ${{env.DOTNET_ROOT}}/migrate/bundle
+          ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations bundle -s ../Chirp.Web -o ${{env.DOTNET_ROOT}}/migrate/bundle
           
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
