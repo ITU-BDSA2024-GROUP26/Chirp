@@ -207,6 +207,8 @@ public class Tests : PageTest
     public async Task ForgetMeTestLogout() 
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
+        await MakeHelgeFollowQwe(); 
+
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
         
@@ -217,6 +219,22 @@ public class Tests : PageTest
         //await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
+    }
+
+    private async Task MakeHelgeFollowQwe() 
+    {
+        await Page.GotoAsync("http://localhost:5000");
+
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("Helge");
+        await Page.GetByPlaceholder("password").ClickAsync();
+        await Page.GetByPlaceholder("password").FillAsync("LetM31n!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        
+        await Page.Locator("li").Filter(new() { HasText = "Qwe [Follow] test" }).GetByRole(AriaRole.Button).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
+
     }
     
     
