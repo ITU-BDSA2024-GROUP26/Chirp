@@ -15,7 +15,7 @@ public class TimelineModel(ICheepService service, ICheepRepository cheepReposito
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
     public ICheepRepository CheepRepository = cheepRepository;
 
-    private CheepBoxModel _cheepBoxModel;
+    private CheepBoxModel? _cheepBoxModel;
     private CheepBoxModel lazyGetCheepBoxModel() 
     {
         if(_cheepBoxModel == null) 
@@ -26,12 +26,12 @@ public class TimelineModel(ICheepService service, ICheepRepository cheepReposito
     }
     
 
-    private FollowModel _followModel; 
+    private FollowModel? _followModel; 
     // Idea of lazy initialization here is that the User we refer to probably isn't up to date when this class is created. 
     // miight need some kind of logic to check if we should recreate the class if there are changes to the user, but from our tests so far that isn't relevant
     private FollowModel lazyGetFollowModel() 
     {
-        if(_followModel == null) { _followModel = new FollowModel(cheepRepository, userManager, User); }
+        if(_followModel == null) { _followModel = new FollowModel(service, userManager, User); }
         return _followModel;
     }
 
