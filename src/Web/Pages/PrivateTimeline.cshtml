@@ -1,0 +1,37 @@
+@page "/{userName}"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Web.Pages.PrivateTimelineModel
+@inject SignInManager<Core.Author> SignInManager
+@inject UserManager<Core.Author> UserManager
+
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout";
+    var routeName = HttpContext.GetRouteValue("userName");
+}
+
+<div>
+    
+    <h2> @routeName's Timeline </h2>
+
+    @await Html.PartialAsync("_CheepBox", Model!.Author != null ? Model.Author.UserName : "Invalid User")
+
+
+    @if (Model.Cheeps.Any())
+    {   
+        <ul id="messagelist" class="cheeps">
+            @foreach (var cheep in Model.Cheeps)
+            {
+                <li>
+                    <p>
+                        @await Html.PartialAsync("_AuthorPartial", cheep)
+                        @cheep.MessageContent
+                        <small>&mdash; @cheep.TimeStampStr</small>
+                    </p>
+                </li>
+            }
+        </ul>
+    } else {
+        <em>There are no cheeps so far.</em>
+    }
+</div>

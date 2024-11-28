@@ -14,6 +14,7 @@ jobs:
   test:
     name: Test
     uses: ./.github/workflows/dotnetTest.yml
+    secrets: inherit
     
   
   release:
@@ -46,7 +47,7 @@ jobs:
           release_name="Chirp-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish src/Chirp.Web/Chirp.Web.csproj -c Release -o "$release_name"
+          dotnet publish src/Web/Web.csproj -c Release -o "$release_name"
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
