@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Web.Pages.PublicModel
 @inject SignInManager<Core.Author> SignInManager
@@ -28,12 +29,17 @@
                 </li>
             }
         </ul>
+    @await Html.PartialAsync("_ChangePage", null) 
+    
     }
     else
     {
         <em>There are no cheeps so far.</em>
     }
+
+     
 </div>
+
 
 <style>
 

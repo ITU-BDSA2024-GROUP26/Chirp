@@ -1,0 +1,11 @@
+@inject SignInManager<Core.Author> SignInManager 
+@inject UserManager<Core.Author> UserManager
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div>
+        <button type="submit" class="change-page-btns btn-primary ">Previous page</button>
+        <button type="submit" class="change-page-btns btn-primary">Next page</button>
+    </div>
+}
