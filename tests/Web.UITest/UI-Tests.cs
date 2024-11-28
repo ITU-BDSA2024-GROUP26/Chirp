@@ -255,7 +255,7 @@ public class Tests : PageTest
         
         await Page.GetByLabel("Password").FillAsync(gitPassword); 
         await Page.GetByRole(AriaRole.Button, new() { Name = "Sign in" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Authorize ITU-BDSA2024-GROUP26" }).ClickAsync();
+       // await Page.GetByRole(AriaRole.Button, new() { Name = "Authorize ITU-BDSA2024-GROUP26" }).ClickAsync();
         // Assert
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name= "my timeline" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "logout" })).ToBeVisibleAsync();
