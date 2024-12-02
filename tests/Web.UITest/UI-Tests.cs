@@ -1,5 +1,6 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using NUnit.Framework;
 using System.Diagnostics;
 
 namespace Web.UITest;
@@ -221,7 +222,7 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
 
-    /*[Test, Order(14)]
+    [Test, Order(14)]
     public async Task DownloadInfo()
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
@@ -234,10 +235,8 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { Name = "Download Your Data" }).ClickAsync();
 
         // Assert
-        //await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
-        //await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
-        await Expect(Page).ToContainTextAsync("Following");
-    }*/
+        Assert.IsTrue((await Page.ContentAsync()).Contains("Following:"));
+    }
 
     private async Task MakeHelgeFollowQwe()
     {
