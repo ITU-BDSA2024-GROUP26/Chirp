@@ -223,7 +223,7 @@ public class Tests : PageTest
     }
 
     [Test, Order(14)]
-    public async Task DownloadInfo()
+    public async Task TestDownloadInfo()
     {
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
