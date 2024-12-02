@@ -225,9 +225,6 @@ public class Tests : PageTest
     [Test, Order(14)]
     public async Task DownloadInfo()
     {
-        // Arrange part, logging in is already expected to work due to previous test passing 
-        await MakeHelgeFollowQwe();
-
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
 
