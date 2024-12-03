@@ -15,6 +15,22 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
     public async Task CreateCheep(Cheep newCheep)
     {
         await context.AddAsync(newCheep);
+
+        // notification logic
+        Author sender = newCheep.Author!;
+
+        // for followers
+        var followers = from author in context.Users 
+                        where author.FollowsAuthor(sender) 
+                        select author; 
+
+        foreach(var f in followers) {
+            Notification notif = new Notification(newCheep, f, false); 
+            await context.AddAsync(notif);
+        }
+
+        // for tags TODO 
+
         await context.SaveChangesAsync();
     }
 
