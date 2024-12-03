@@ -15,10 +15,11 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
     {
         if(User.Identity == null || !User.Identity.IsAuthenticated) {
             
-            return RedirectToPage("/");
+            return RedirectToPage("/Public");
         }
         var author = await userManager.GetUserAsync(User); 
         notifications = await service.GetAuthorsNotifications(author!.UserName!); 
+        Console.WriteLine($"Length of notifications in pagemodel {notifications.Count()}");
         return Page();
     }
     

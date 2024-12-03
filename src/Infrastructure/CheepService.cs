@@ -52,7 +52,7 @@ public class CheepService(ICheepRepository cheepRepository, IAuthorRepository au
     public async Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName)
     { 
         var notifs = await authorRepository.GetNotifications(userName);
-
+        Console.WriteLine($"Length of notifications in cheepservice {notifs.Count}");
         List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
 
         foreach(var notif in notifs) {
