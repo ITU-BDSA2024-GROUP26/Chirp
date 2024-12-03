@@ -8,4 +8,5 @@ public class CheepDbContext(DbContextOptions<CheepDbContext> options) : Identity
 {
     public static bool TestingSetup { get; set; } // decides whether we should manually migrate in code or not 
     public DbSet<Cheep> Cheeps { get; set; }
+    public DbSet<Notification> notifications { get; set; }
 }
