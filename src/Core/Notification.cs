@@ -3,12 +3,15 @@ using System.ComponentModel.DataAnnotations;
 namespace Core;
 
 
-public class Notification(Cheep cheep, Author authorToNotify,  bool tagNotification)
+public class Notification
 {
     [Required]
-    public required Cheep cheep {get; set;} = cheep; // the cheep the notification is in reference to 
+    public required int cheepID {get; set; } // the cheep the notification is in reference to 
     [Required]
-    public required Author authorToNotify { get; set;} = authorToNotify;
+    public required int authorID { get; set;}
     [Required]
-    public required bool tagNotification { get; set; } = tagNotification; // are we notifying due to the author being tagged or following 
+    public required bool tagNotification { get; set; }// are we notifying due to the author being tagged or following 
+
+    public Cheep cheep {get; set;}
+    public Author  authorToNotify { get; set; }
 }
