@@ -49,6 +49,4 @@ public class UnitTest1: IAsyncLifetime
         Assert.Contains(true ,followingList.Select(a => a.UserName == "Adrian")); 
         Assert.DoesNotContain(true, followingList.Select(a => a.UserName == "Helge")); 
     }
-
-    
 }
