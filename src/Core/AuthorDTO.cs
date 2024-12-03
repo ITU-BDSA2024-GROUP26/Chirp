@@ -4,8 +4,9 @@ public class AuthorDto(string? userName, string? email, ICollection<AuthorDto>? 
 {
     public string? UserName { get; set; } = userName;
     public string? Email { get; set; } = email;
-    public ICollection<AuthorDto>? FollowingList { get; set; }
+    public ICollection<AuthorDto>? FollowingList { get; set; } = FollowingList;
 
+    public Stack<NotificationDTO>? notifications { get; set; }
     public AuthorDto(Author author) : this(author.UserName, author.Email, ExtractFollowersList(author.FollowingList)) { }
 
     static private ICollection<AuthorDto> ExtractFollowersList(IEnumerable<Author>? followersList)
