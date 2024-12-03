@@ -1,8 +1,13 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Infrastructure;
 using System.Linq;
 using Core;
 
-public class CheepService(ICheepRepository cheepRepository, IAuthorRepository authorRepository) : ICheepService
+public class CheepService(
+    ICheepRepository cheepRepository, 
+    IAuthorRepository authorRepository,
+    IDbRepository dbRepository) : ICheepService
 {
     private const int MaxCheeps = 32;
 
@@ -47,5 +52,15 @@ public class CheepService(ICheepRepository cheepRepository, IAuthorRepository au
     public async Task DeleteAuthorByName(string authorName) 
     {
         await authorRepository.DeleteAuthorByName(authorName); 
+    }
+
+    public async Task SeedDatabaseAsync()
+    {
+        await dbRepository.SeedAsync();
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await dbRepository.ResetAsync();
     }
 }

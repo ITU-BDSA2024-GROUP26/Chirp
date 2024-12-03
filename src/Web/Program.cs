@@ -60,6 +60,7 @@ public class Program
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+        builder.Services.AddScoped<IDbRepository, DbRepository>();
         builder.Services.AddScoped<ICheepService, CheepService>();
 
         var githubClientId = builder.Configuration["authentication:github:clientId"]
@@ -102,8 +103,8 @@ public class Program
         {
             var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
             if (app.Environment.IsDevelopment()) await context.Database.MigrateAsync();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
-            await DbInitializer.SeedDatabase(context, userManager);
+            var service = scope.ServiceProvider.GetRequiredService<ICheepService>();
+            await service.SeedDatabaseAsync();
         }
 
         // Configure the HTTP request pipeline.
