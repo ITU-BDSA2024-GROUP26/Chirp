@@ -205,6 +205,22 @@ public class Tests : PageTest
     }
 
     [Test, Order(13)]
+    public async Task TestDownloadInfo()
+    {
+        // Arrange part, logging in is already expected to work due to previous test passing 
+        await MakeHelgeFollowQwe();
+
+        await TestLogin();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
+
+        // Act
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Download Your Data" }).ClickAsync();
+
+        // Assert
+        Assert.IsTrue((await Page.ContentAsync()).Contains("Following:"));
+    }
+
+    [Test, Order(14)]
     public async Task ForgetMeTestLogout()
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
@@ -222,21 +238,7 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
     }
 
-    [Test, Order(14)]
-    public async Task TestDownloadInfo()
-    {
-        // Arrange part, logging in is already expected to work due to previous test passing 
-        await MakeHelgeFollowQwe();
 
-        await TestLogin();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
-
-        // Act
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Download Your Data" }).ClickAsync();
-
-        // Assert
-        //Assert.IsTrue((await Page.ContentAsync()).Contains("Following:"));
-    }
 
     private async Task MakeHelgeFollowQwe()
     {
