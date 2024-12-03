@@ -48,4 +48,17 @@ public class CheepService(ICheepRepository cheepRepository, IAuthorRepository au
     {
         await authorRepository.DeleteAuthorByName(authorName); 
     }
+
+    public async Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName)
+    { 
+        var notifs = await authorRepository.GetNotifications(userName);
+
+        List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
+
+        foreach(var notif in notifs) {
+            retList.Add(new NotificationDTO(notif)); 
+        }
+        
+        return retList;
+    }
 }
