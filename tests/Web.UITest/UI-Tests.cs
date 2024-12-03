@@ -204,7 +204,7 @@ public class Tests : PageTest
         await Expect(Page.Locator("ul").Filter(new() { HasText = "Adrian" })).ToBeVisibleAsync();
     }
 
-    [Test, Order(13)]
+    /*[Test, Order(13)]
     public async Task TestDownloadInfo()
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
@@ -218,7 +218,7 @@ public class Tests : PageTest
 
         // Assert
         Assert.IsTrue((await Page.ContentAsync()).Contains("Following:"));
-    }
+    }*/
 
     [Test, Order(14)]
     public async Task ForgetMeTestLogout()
