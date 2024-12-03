@@ -58,7 +58,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p ${{env.DOTNET_ROOT}}/migrate
-          cp startup.sh ${{env.DOTNET_ROOT}}/migrate
+          cp scripts/startup.sh ${{env.DOTNET_ROOT}}/migrate
 
       - name: Create Migration Bundle
         shell: bash 
