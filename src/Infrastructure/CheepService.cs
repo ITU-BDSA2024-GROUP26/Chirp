@@ -56,7 +56,7 @@ public class CheepService(ICheepRepository cheepRepository, IAuthorRepository au
         List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
 
         foreach(var notif in notifs) {
-            retList.Add(new NotificationDTO(notif)); 
+            retList.Add(new NotificationDTO(notif.cheep.Text, notif.cheep.Author!.UserName!, notif.tagNotification)); 
         }
         
         return retList;

@@ -1,6 +1,6 @@
 namespace Core;
 
-public record NotificationDTO(int cheepID, string authorName, bool tagNotification)
+public record NotificationDTO(string cheepContent, string authorName, bool tagNotification)
 {
     public override string ToString()
     {
@@ -11,6 +11,4 @@ public record NotificationDTO(int cheepID, string authorName, bool tagNotificati
             return authorName + " chirped!"; 
         }
     }
-
-    public NotificationDTO(Notification n) : this(n.cheep.Id, n.cheep.Author!.UserName!, n.tagNotification) {}
 }
