@@ -96,10 +96,13 @@ public class AuthorRepository(CheepDbContext context) : IAuthorRepository
     {
         var author = await FindAuthorByName(authorName); 
         var query = from notif in context.notifications 
-                    where notif.authorToNotify == author
+                    .Include(n => n.cheep).ThenInclude(c => c.Author)
+                    where notif.authorID == author!.Id
                     select notif; 
         
         await context.SaveChangesAsync(); 
+
+        Console.WriteLine($"Notifications length in repository {query.Count()}");
 
         return await query.ToListAsync(); 
     }

@@ -18,21 +18,24 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
          
 
         // notification logic
-        /* Author sender = newCheep.Author!; */
+        Author sender = newCheep.Author!;
 
         // for followers
-        /* var followers = from author in context.Users 
-                        where author.FollowsAuthor(sender) 
-                        select author;  */
+        var followers = from author in context.Users 
+                        .Include(a => a.FollowingList)
+                        where author.FollowingList != null && author.FollowingList.Contains(sender)
+                        select author; 
 
-        /* foreach(var f in followers) {
+        await context.SaveChangesAsync();
+
+        foreach(var f in followers) {
             Notification notif = new Notification{ 
-                cheep = newCheep, 
-                authorToNotify = f, 
-                tagNotification = false
+                cheepID=qwe.Entity.Id,
+                authorID=f.Id,
+                tagNotification=false
             };
             await context.AddAsync(notif);
-        } */
+        }
 
         // for tags TODO 
 
