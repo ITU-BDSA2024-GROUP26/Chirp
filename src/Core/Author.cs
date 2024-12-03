@@ -12,9 +12,6 @@ public class Author : IdentityUser
     [Required]
     public ICollection<Author>? FollowingList { get; set; }
 
-    // Link the cheeps that the author should be notified about 
-    public Stack<Cheep>? Notifications { get; set; }
-
     public bool FollowsAuthor(Author authorToCheck) 
     {
         if(FollowingList == null) { return false; }

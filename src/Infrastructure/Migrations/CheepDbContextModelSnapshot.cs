@@ -88,7 +88,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Cheep", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -103,11 +103,32 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Cheeps");
+                });
+
+            modelBuilder.Entity("Core.Notification", b =>
+                {
+                    b.Property<int>("cheepID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("authorID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("authorToNotifyId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("tagNotification")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("cheepID", "authorID");
+
+                    b.HasIndex("authorToNotifyId");
+
+                    b.ToTable("notifications");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -258,6 +279,23 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Core.Notification", b =>
+                {
+                    b.HasOne("Core.Author", "authorToNotify")
+                        .WithMany()
+                        .HasForeignKey("authorToNotifyId");
+
+                    b.HasOne("Core.Cheep", "cheep")
+                        .WithMany()
+                        .HasForeignKey("cheepID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("authorToNotify");
+
+                    b.Navigation("cheep");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
