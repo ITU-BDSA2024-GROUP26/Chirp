@@ -91,4 +91,16 @@ public class AuthorRepository(CheepDbContext context) : IAuthorRepository
 
         return user;
     }
+
+    public async Task<ICollection<Notification>> GetNotifications(string authorName)
+    {
+        var author = await FindAuthorByName(authorName); 
+        var query = from notif in context.notifications 
+                    where notif.authorToNotify == author
+                    select notif; 
+        
+        await context.SaveChangesAsync(); 
+
+        return await query.ToListAsync(); 
+    }
 }
