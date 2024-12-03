@@ -204,27 +204,52 @@ public class Tests : PageTest
         await Expect(Page.Locator("ul").Filter(new() { HasText = "Adrian" })).ToBeVisibleAsync();
     }
 
-    /*[Test, Order(13)]
+    [Test, Order(13)]
     public async Task TestDownloadInfo()
     {
-        // Arrange part, logging in is already expected to work due to previous test passing 
-        await MakeHelgeFollowQwe();
+        await Page.GotoAsync("http://localhost:5000");
 
-        await TestLogin();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
+        // Login to Helge's account and follow Qwe
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByPlaceholder("username").ClickAsync();
+        await Page.GetByPlaceholder("username").FillAsync("Helge");
+        await Page.GetByPlaceholder("password").ClickAsync();
+        await Page.GetByPlaceholder("password").FillAsync("LetM31n!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.Locator("li").Filter(new() { HasText = "Qwe [Follow] test" }).GetByRole(AriaRole.Button).ClickAsync();
 
-        // Act
+        // Go to about me and download data
+        await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();
+
+        // Handle download
+        var downloadTask = Page.WaitForDownloadAsync(); // Wait for the download event
         await Page.GetByRole(AriaRole.Button, new() { Name = "Download Your Data" }).ClickAsync();
-
-        // Assert
-        Assert.IsTrue((await Page.ContentAsync()).Contains("Following:"));
-    }*/
+        var download = await downloadTask;
+        await download.SaveAsAsync("about-me.txt" + download.SuggestedFilename);
+        
+        // Assert that we are still on the same page
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Following" })).ToBeVisibleAsync();
+        
+        // Assert that the file contains the correct information
+        var fileContent = await File.ReadAllTextAsync("about-me.txt" + download.SuggestedFilename);
+        const string expectedContent = """
+                                       Helge's information:
+                                       -----------------------
+                                       Name: Helge
+                                       Email: ropf@itu.dk
+                                       Following:
+                                       - qwe
+                                       Cheeps:
+                                       - "Hello, BDSA students!" (08/01/23 12:16:48)
+                                       
+                                       """;
+        Assert.That(fileContent, Is.EqualTo(expectedContent));
+    }
 
     [Test, Order(14)]
     public async Task ForgetMeTestLogout()
     {
         // Arrange part, logging in is already expected to work due to previous test passing 
-        await MakeHelgeFollowQwe();
 
         await TestLogin();
         await Page.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();//change "my timeline" to "About me", once it is working
@@ -236,23 +261,6 @@ public class Tests : PageTest
         //await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();   
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Register" })).ToBeVisibleAsync();
-    }
-
-
-
-    private async Task MakeHelgeFollowQwe()
-    {
-        await Page.GotoAsync("http://localhost:5000");
-
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
-        await Page.GetByPlaceholder("username").ClickAsync();
-        await Page.GetByPlaceholder("username").FillAsync("Helge");
-        await Page.GetByPlaceholder("password").ClickAsync();
-        await Page.GetByPlaceholder("password").FillAsync("LetM31n!");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-
-        await Page.Locator("li").Filter(new() { HasText = "Qwe [Follow] test" }).GetByRole(AriaRole.Button).ClickAsync();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
     }
 }
 
