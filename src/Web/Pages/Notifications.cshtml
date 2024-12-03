@@ -20,14 +20,17 @@
             {
                 <li>
                     <p>
-                        <a href="/@notif.authorName"> @notif.authorName</a>
-                        @if (notif.tagNotification) {
-                            <p> chirped!</p>
-                        } else {
-                            <p> tagged you!</p>
-                        }
-                        <p>@notif.cheepContent</p>
+                        <span>
+                            <a href="/@notif.authorName">@notif.authorName</a>
+                            @if (!notif.tagNotification) {
+                                <span> chirped!</span>
+                            } else {
+                                <span> chirped!</span>
+                            }
+                        </span>
                     </p>
+
+                    <p>@notif.cheepContent</p>
                 </li>
             }
         </ul>
