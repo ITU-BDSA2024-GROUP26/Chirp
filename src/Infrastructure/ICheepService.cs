@@ -14,4 +14,5 @@ public interface ICheepService
     public Task DeleteAuthorByName(string authorName);
     public Task SeedDatabaseAsync();
     public Task ResetDatabaseAsync();
+    public Task<(byte[] FileData, string ContentType, string FileName)> DownloadAuthorInfo(Author author);
 }
