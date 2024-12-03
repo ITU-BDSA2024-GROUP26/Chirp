@@ -1,0 +1,37 @@
+@page "/notifications"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Web.Pages.NotificationsModel
+@inject SignInManager<Core.Author> SignInManager
+@inject UserManager<Core.Author> UserManager
+
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout";
+}
+
+<div>
+    
+    <h2> Notifications </h2>
+
+    @if (Model.notifications.Any())
+    {   
+        <ul>
+            @foreach (var notif in Model.notifications)
+            {
+                <li>
+                    <p>
+                        <a href="/@notif.authorName"> @notif.authorName</a>
+                        @if (notif.tagNotification) {
+                            <p> chirped!</p>
+                        } else {
+                            <p> tagged you!</p>
+                        }
+                        <p>@notif.cheepContent</p>
+                    </p>
+                </li>
+            }
+        </ul>
+    } else {
+        <em>No notifications, you're all caught up!</em>
+    }
+</div>
