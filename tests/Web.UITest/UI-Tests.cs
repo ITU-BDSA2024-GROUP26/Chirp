@@ -78,7 +78,6 @@ public class UiTests : PageTest
         });
         
         await followButton.ClickAsync();
-        
     }
 
     private async Task CheepOnCurrentPage(IPage page, string message)
