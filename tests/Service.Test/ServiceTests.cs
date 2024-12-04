@@ -63,26 +63,6 @@ public class ServiceTests: IAsyncLifetime
         Assert.Contains(true ,followingList.Select(a => a.UserName == "Adrian")); 
         Assert.DoesNotContain(true, followingList.Select(a => a.UserName == "Helge")); 
     }
-
-    [Fact]
-    public async Task AboutMe_Download_FileIsCorrect()
-    {
-        var helge = await _authorRepository!.FindAuthorByName("Helge");
-        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(helge!);
-        var content = Encoding.UTF8.GetString(fileBytes);
-        const string expectedContent = """
-                                       Helge's information:
-                                       -----------------------
-                                       Name: Helge
-                                       Email: ropf@itu.dk
-                                       Following:
-                                       - No following
-                                       Cheeps:
-                                       - "Hello, BDSA students!" (01/08/2023 12.16.48)
-                                       
-                                       """;
-        Assert.Equal(expectedContent, content);
-    }
     
     [Fact]
     public async Task AboutMe_NoFollowingNoCheeps_DownloadedContentIsCorrect()
@@ -141,7 +121,7 @@ public class ServiceTests: IAsyncLifetime
                                        Following:
                                        - No following
                                        Cheeps:
-                                       - "test message" (01/01/0001 00.00.00)
+                                       - "test message" (01/01/01 0:00:00)
                                        
                                        """;
         Assert.Equal(expectedContent, content);

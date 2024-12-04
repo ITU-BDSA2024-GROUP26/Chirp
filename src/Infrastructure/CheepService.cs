@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 
@@ -95,7 +96,8 @@ public class CheepService(
         {
             foreach (var cheep in author.Cheeps)
             {
-                content.AppendLine($"- \"{cheep.Text}\" ({cheep.TimeStamp})");
+                var formattedTimestamp = cheep.TimeStamp.ToString("MM/dd/yy H:mm:ss", CultureInfo.InvariantCulture);
+                content.AppendLine($"- \"{cheep.Text}\" ({formattedTimestamp})");
             }
         }
         else content.AppendLine("- No Cheeps posted yet");
