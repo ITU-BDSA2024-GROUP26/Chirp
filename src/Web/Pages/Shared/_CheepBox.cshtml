@@ -7,20 +7,25 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="cheepbox">
-    <h3>What's on your mind, @Model</h3>
-    <form method="post" asp-page-handler="Share" onsubmit="playSound()">
-        <input type="text" name="Message" required>
-        <input type="submit" value="Share">
-    </form>
-    <audio id="sendSound" src="sounds/mixkit-fast-small-sweep-transition-166.mp3" preload="auto" volume="1.0"></audio>
-    </div>
-}
-
-@section Scripts {
-    <script>
-        function playSound() {
-            var sound = document.getElementById('sendSound');
-            sound.play();
+        <h3>What's on your mind, @Model</h3>
+        
+        <script>
+        function playSound(event) {
+            event.preventDefault();
+            // Use the existing audio element
+            const sound = document.getElementById('sendSound');
+            // Reset the audio in case it has been played before
+            sound.currentTime = 0;
+        
+            // Attempt to play the sound
+            sound.play()
         }
-    </script>
+        </script>
+        
+        <form method="post" asp-page-handler="Share">
+            <input type="text" name="Message" required>
+            <input type="submit" value="Share" onclick="playSound(event)">
+        </form>
+        <audio id="sendSound" src="sounds/mixkit-fast-small-sweep-transition-166.mp3" preload="auto"></audio>
+    </div>
 }
