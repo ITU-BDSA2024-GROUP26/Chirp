@@ -48,4 +48,9 @@ public class CheepService(ICheepRepository cheepRepository, IAuthorRepository au
     {
         await authorRepository.DeleteAuthorByName(authorName); 
     }
+
+    public int GetTotalCheepsAccount(string? author = null) 
+    {
+        return cheepRepository.GetTotalCheepsAccount(author);
+    }
 }

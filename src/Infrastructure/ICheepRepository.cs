@@ -11,4 +11,5 @@ public interface ICheepRepository
     // given a cheep ID this method updates the 
     public Task UpdateCheep(int id, string newMessage); 
     public Task<ICollection<Cheep>> GetPrivateTimelineCheeps(string userName, int limit, int offset);
+    public int GetTotalCheepsAccount(string? author = null);
 }

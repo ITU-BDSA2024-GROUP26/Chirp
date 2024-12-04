@@ -11,4 +11,5 @@ public interface ICheepService
     public Task SendCheep(string authorName, string content, DateTime timeSent);
     public Task AddOrRemoveFollower(string userName, string userToFollowName);  
     public Task DeleteAuthorByName(string authorName); 
+    public int GetTotalCheepsAccount(string? author = null); 
 }
