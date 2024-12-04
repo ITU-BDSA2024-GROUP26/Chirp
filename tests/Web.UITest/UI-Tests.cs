@@ -342,49 +342,7 @@ public class UiTests : PageTest
          Assert.That(download, Is.Not.Null);
      }
      
-//      [Test]
-//      public async Task TestDownloadInfo()
-//      {
-//          // Create two independent browsers, one for a test user and one for Helge's user.
-//          var context = await Browser.NewContextAsync();
-//          var helgeUserPage = await context.NewPageAsync();
-//          var testUserPage = Page; // For clarity, we use an alias for the default Page object
-//          await Login(helgeUserPage, "Helge", "LetM31n!");
-//          await Register("test", testUserPage);
-//          
-//          // Send a cheep with the test user.
-//          await CheepOnCurrentPage(testUserPage, "Hey Helge! You're such a design pattern :)");
-//          
-//          // Helge is flattered and follows test <3
-//          await helgeUserPage.ReloadAsync(); // Need to reload the page, so that test's cheep appears.
-//          await ToggleFollowingOnCurrentPage(helgeUserPage, "test");
-//
-//          // Go to the about me page and download the data
-//          await helgeUserPage.GetByRole(AriaRole.Link, new() { Name = "about me" }).ClickAsync();
-//          var downloadTask = helgeUserPage.WaitForDownloadAsync(); // Wait for the download event
-//          await helgeUserPage.GetByRole(AriaRole.Button, new() { Name = "Download Your Data" }).ClickAsync();
-//          var download = await downloadTask;
-//          await download.SaveAsAsync("about-me.txt" + download.SuggestedFilename);
-//
-//          // Assert that we are still on the same page
-//          await Expect(helgeUserPage.GetByRole(AriaRole.Heading, new() { Name = "Following" })).ToBeVisibleAsync();
-//
-//          // Assert that the file contains the correct information
-//          var fileContent = await File.ReadAllTextAsync("about-me.txt" + download.SuggestedFilename);
-//          const string expectedContent = """
-//                                         Helge's information:
-//                                         -----------------------
-//                                         Name: Helge
-//                                         Email: ropf@itu.dk
-//                                         Following:
-//                                         - test
-//                                         Cheeps:
-//                                         - "Hello, BDSA students!" (08/01/23 12:16:48)
-//
-//                                         """;
-//          Assert.That(fileContent, Is.EqualTo(expectedContent));
-     // }
-//
+     
      [Test]
      public async Task AboutMe_ForgetMeButtonRedirectsToLoggedOutPublicTimeline()
      {
