@@ -61,57 +61,9 @@ public class AboutMeModel : PageModel
 
     public async Task<IActionResult> OnPostDownloadInfoAsync()
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToPage("/Public");
-        }
-
-        FollowingList = await _cheepService.GetFollowingAuthorsAsync(user.UserName ?? "Uknown");
-
-        UserCheeps = await _cheepService.GetCheepsAsync(page: 1, authorRegex: user.UserName);
-
-
-        // Create the textfile
-        var content = new StringBuilder();
-        content.AppendLine($"{user.UserName}'s information:");
-        content.AppendLine($"-----------------------");
-
-        content.AppendLine($"Name: {user.UserName}");
-
-        if (!string.IsNullOrEmpty(user.Email) && user.Email != " ") content.AppendLine($"Email: {user.Email}");
-        else content.AppendLine($"Email: No Email");
-
-        content.AppendLine("Following:");
-        if (user.FollowingList != null)
-        {
-            if (user.FollowingList.Any())
-            {
-                foreach (var follow in user.FollowingList)
-                {
-                    content.AppendLine($"- {follow.UserName}");
-                }
-            }
-            else content.AppendLine("- No following");
-        }
-        else content.AppendLine("- No following");
-
-        content.AppendLine("Cheeps:");
-
-        if (UserCheeps.Any())
-        {
-            foreach (var cheep in UserCheeps)
-            {
-                content.AppendLine($"- \"{cheep.MessageContent}\" ({cheep.TimeStampStr})");
-            }
-        }
-        else content.AppendLine("- No Cheeps posted yet");
-
-        // Convert content into bytes and return file
-        byte[] fileBytes = Encoding.UTF8.GetBytes(content.ToString());
-        string fileName = $"{user.UserName}_Chirp_data.txt";
-        return File(fileBytes, "text/plain", fileName);
+        var user = await _userManager.GetUserAsync(User) ?? throw new UnauthorizedAccessException();
+        var (fileBytes, contentType, fileName) = await _cheepService.DownloadAuthorInfo(user);
+        return File(fileBytes, contentType, fileName);
     }
 
     public async Task<IActionResult> OnPostForgetMeAsync()
