@@ -49,7 +49,6 @@ public class ServiceTests: IAsyncLifetime
         author.NormalizedEmail = author.Email;
         await _userManager!.CreateAsync(author);
         return await _authorRepository!.FindAuthorByName(username);
-        
     }
     
     [Fact] 
