@@ -71,8 +71,9 @@ public class CheepService(
         var name = author.UserName;
         var email = author.Email;
         
-        // var followingList = await GetFollowingAuthorsAsync(name);
-        // var userCheeps = await cheepRepository.ReadCheeps(-1, 0, );
+        
+        var followingList = await GetFollowingAuthorsAsync(name!);
+        var userCheeps = await cheepRepository.ReadCheeps(-1, 0, name);
         
         // Create the textfile
         var content = new StringBuilder();
@@ -82,9 +83,9 @@ public class CheepService(
         content.AppendLine($"Email: {email}");
         
         content.AppendLine("Following:");
-        if (author.FollowingList != null && author.FollowingList.Count != 0)
+        if (followingList.Any())
         {
-            foreach (var following in author.FollowingList)
+            foreach (var following in followingList)
             {
                 content.AppendLine($"- {following.UserName}");
             }
@@ -92,9 +93,9 @@ public class CheepService(
         else content.AppendLine("- No following");
         
         content.AppendLine("Cheeps:");
-        if (author.Cheeps != null && author.Cheeps.Count != 0)
+        if (userCheeps.Count != 0)
         {
-            foreach (var cheep in author.Cheeps)
+            foreach (var cheep in userCheeps)
             {
                 var formattedTimestamp = cheep.TimeStamp.ToString("MM/dd/yy H:mm:ss", CultureInfo.InvariantCulture);
                 content.AppendLine($"- \"{cheep.Text}\" ({formattedTimestamp})");
