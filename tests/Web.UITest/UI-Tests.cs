@@ -172,7 +172,6 @@ public class UiTests : PageTest
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "register" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "login" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "About me" })).ToBeHiddenAsync();
-    
     }
     
     [Test]
