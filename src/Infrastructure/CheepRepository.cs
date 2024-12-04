@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 using SQLitePCL;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Infrastructure.Migrations;
 
 public class CheepRepository(CheepDbContext context) : ICheepRepository
 {
@@ -40,6 +41,20 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         }
 
         // for tags TODO 
+        var tagFinderRegex = new Regex("@(\\w+)"); 
+        var matches = tagFinderRegex.Matches(newCheep.Text); 
+        foreach (Match match in matches) {
+            if (match.Groups.Count < 2) { continue; }
+            var authorToTag = await context.Users.FirstOrDefaultAsync(a => a.UserName == match.Groups[1].Value); 
+            if (authorToTag == null) { continue; } // don't require input validation in higher levels 
+            Notification notif = new Notification{ 
+                cheepID=qwe.Entity.Id,
+                authorID=authorToTag!.Id,
+                tagNotification=true,
+                isNew=true
+            };
+            await context.AddAsync(notif);
+        }
 
         await context.SaveChangesAsync();
     }
@@ -111,9 +126,14 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
         if (user.FollowingList == null) { return []; }
 
+        var notifQuery = from notif in context.notifications 
+                        where notif.authorID == user.Id
+                        select notif.cheepID; 
+
         var query = (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where user.FollowingList.Contains(cheep.Author) || cheep.Author.UserName == userName
+                     where user.FollowingList.Contains(cheep.Author!) || cheep.Author!.UserName == userName 
+                     || notifQuery.Contains(cheep.Id)
                      orderby cheep.Id descending
                      select cheep)
                     .Skip(offset);
