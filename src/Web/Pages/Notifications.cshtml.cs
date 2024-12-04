@@ -22,5 +22,13 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
         Console.WriteLine($"Length of notifications in pagemodel {notifications.Count()}");
         return Page();
     }
+
+    public async Task<JsonResult> OnGetNewNotifications()
+    {
+        var author = await userManager.GetUserAsync(User); 
+        // Fetch new notifications (replace with your logic)
+        var newNotifications = await service.GetAuthorsNotifications(author!.UserName!); 
+        return new JsonResult(newNotifications);
+    }
     
 }
