@@ -13,6 +13,7 @@
             <a href="/@(author?.UserName)">my timeline</a> |
             <a href="/">public timeline</a> |
             <a href="/about-me">About me</a> |
+            <a href="/notifications">Notifications</a>
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl=@Url.Page("") method="post">
                 <button type="submit">logout [@author?.UserName]</button>
             </form>
