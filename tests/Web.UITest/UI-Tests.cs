@@ -61,7 +61,7 @@ public class UiTests : PageTest
         
         var followButton = cheep.GetByRole(AriaRole.Button).Filter(new LocatorFilterOptions
         {
-            HasTextRegex = new Regex(@"\[?(Follow|Unfollow)\]?")
+            HasTextRegex = new Regex("Follow|Unfollow")
         });
         
         await followButton.ClickAsync();
@@ -74,7 +74,7 @@ public class UiTests : PageTest
         
         var followButton = Page.GetByRole(AriaRole.Button).Filter(new LocatorFilterOptions
         {
-            HasTextRegex = new Regex(@"\[?(Follow|Unfollow)\]?")
+            HasTextRegex = new Regex("Follow|Unfollow")
         });
         
         await followButton.ClickAsync();
@@ -216,7 +216,7 @@ public class UiTests : PageTest
      public async Task NotFollowingAuthor_ShowsFollowButton()
      {
          await Register("test", Page);
-         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Follow]" }).First).ToBeVisibleAsync();
+         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Follow" }).First).ToBeVisibleAsync();
      }
 
      [Test]
@@ -224,7 +224,7 @@ public class UiTests : PageTest
      {
          await Register("test", Page);
          await ToggleFollowingOnCurrentPage(Page, "Adrian");
-         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "[Unfollow]" })).ToBeVisibleAsync();
+         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
      }
 
      [Test]
@@ -245,7 +245,7 @@ public class UiTests : PageTest
          await ToggleFollowingOnCurrentPage(Page, "Adrian");
          await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
          
-         await Expect(Page.GetByText("Adrian [Unfollow] Hej,")).ToBeVisibleAsync();
+         await Expect(Page.GetByText("Adrian Unfollow Hej,")).ToBeVisibleAsync();
      }
 
      [Test]
