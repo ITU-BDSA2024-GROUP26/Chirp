@@ -49,9 +49,9 @@ public class CheepService(ICheepRepository cheepRepository, IAuthorRepository au
         await authorRepository.DeleteAuthorByName(authorName); 
     }
 
-    public async Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName)
+    public async Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName, bool getOld)
     { 
-        var notifs = await authorRepository.GetNotifications(userName);
+        var notifs = await authorRepository.GetNotifications(userName, getOld);
         Console.WriteLine($"Length of notifications in cheepservice {notifs.Count}");
         List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
 

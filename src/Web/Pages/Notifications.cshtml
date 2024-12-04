@@ -9,35 +9,7 @@
     Layout = "Shared/_Layout";
 }
 
-@* <div>
-    
-    <h2> Notifications </h2>
 
-    @if (Model.notifications.Any())
-    {   
-        <ul>
-            @foreach (var notif in Model.notifications)
-            {
-                <li>
-                    <p>
-                        <span>
-                            <a href="/@notif.authorName">@notif.authorName</a>
-                            @if (!notif.tagNotification) {
-                                <span> chirped!</span>
-                            } else {
-                                <span> tagged you!</span>
-                            }
-                        </span>
-                    </p>
-
-                    <p>@notif.cheepContent</p>
-                </li>
-            }
-        </ul>
-    } else {
-        <em>No notifications, you're all caught up!</em>
-    }
-</div> *@
 <!DOCTYPE html>
 <html lang="en">
 <head>

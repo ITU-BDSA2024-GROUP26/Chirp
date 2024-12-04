@@ -18,7 +18,7 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
             return RedirectToPage("/Public");
         }
         var author = await userManager.GetUserAsync(User); 
-        notifications = await service.GetAuthorsNotifications(author!.UserName!); 
+        notifications = await service.GetAuthorsNotifications(author!.UserName!, true); 
         Console.WriteLine($"Length of notifications in pagemodel {notifications.Count()}");
         return Page();
     }
@@ -27,7 +27,7 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
     {
         var author = await userManager.GetUserAsync(User); 
         // Fetch new notifications (replace with your logic)
-        var newNotifications = await service.GetAuthorsNotifications(author!.UserName!); 
+        var newNotifications = await service.GetAuthorsNotifications(author!.UserName!, false); 
         return new JsonResult(newNotifications);
     }
     
