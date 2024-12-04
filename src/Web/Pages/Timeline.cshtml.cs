@@ -14,12 +14,17 @@ public class TimelineModel(ICheepService service, UserManager<Author> userManage
     public Author? Author { get; set; }
     public required IEnumerable<CheepDTO> Cheeps { get; set; }
 
+    public int CurrentPage { get; set; } = 1;
+    public int MaxCheeps { get; set; } = 32;
+    public int TotalCheeps { get; set; }
+
+
     private CheepBoxModel? _cheepBoxModel;
     private CheepBoxModel lazyGetCheepBoxModel() 
     {
         if(_cheepBoxModel == null) 
         {
-            _cheepBoxModel = new CheepBoxModel(service, userManager, User); 
+             _cheepBoxModel = new CheepBoxModel(service, userManager, User); 
         }
         return _cheepBoxModel;
     }
@@ -30,9 +35,23 @@ public class TimelineModel(ICheepService service, UserManager<Author> userManage
     // miight need some kind of logic to check if we should recreate the class if there are changes to the user, but from our tests so far that isn't relevant
     private FollowModel lazyGetFollowModel() 
     {
-        if(_followModel == null) { _followModel = new FollowModel(service, userManager, User); }
+        if(_followModel == null) 
+        { 
+            _followModel = new FollowModel(service, userManager, User); 
+        }
         return _followModel;
     }
+
+    private ChangePageModel? _changePageModel; 
+    private ChangePageModel lazyGetChangePageModel() 
+    {
+        if(_changePageModel == null) 
+        {
+            _changePageModel = new ChangePageModel(service, userManager); 
+        }
+        return _changePageModel;
+    }
+
 
     public async Task<ActionResult> OnPostShareAsync(string Message) 
     {
@@ -40,8 +59,16 @@ public class TimelineModel(ICheepService service, UserManager<Author> userManage
         return RedirectToPage("");
     }
 
-    public async Task<IActionResult> OnPostFollowAsync(string UsrnmToFollow) {
+    public async Task<IActionResult> OnPostFollowAsync(string UsrnmToFollow) 
+    {
         await lazyGetFollowModel().OnPostFollowAsync(UsrnmToFollow); 
         return RedirectToPage("");
     }
+
+    public async Task<IActionResult> OnGetChangePageAsync(string Direction) {
+        await lazyGetChangePageModel().OnGetChangePageAsync(Direction); 
+        return RedirectToPage("");
+    }
+
+
 }

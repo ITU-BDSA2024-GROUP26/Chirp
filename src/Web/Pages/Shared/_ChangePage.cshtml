@@ -4,8 +4,12 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <div>
-        <button type="submit" class="change-page-btns btn-primary ">Previous page</button>
-        <button type="submit" class="change-page-btns btn-primary">Next page</button>
-    </div>
+    <section>
+        <form method="get" asp-page-handler="ChangePage">
+        <input type="hidden" name="currentPage" value="@Model.CurrentPage" />
+        <button type="submit" class="change-page-btns btn-primary" name= "direction" value="Previous" @(Model.CurrentPage == 1 ? "disabled" : "")>Previous page</button>
+        <button type="submit" class="change-page-btns btn-primary" name= "direction" value="Next" @(Model.CurrentPage * Model.MaxCheeps >= Model.TotalCheeps ? "disabled" : "")>Next page</button>
+        </form> 
+    </section>
+  
 }
