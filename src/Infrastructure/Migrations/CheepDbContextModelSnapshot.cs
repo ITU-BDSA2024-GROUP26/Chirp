@@ -118,6 +118,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("authorID")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("isNew")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("tagNotification")
                         .HasColumnType("INTEGER");
 

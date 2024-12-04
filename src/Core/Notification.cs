@@ -11,6 +11,8 @@ public class Notification
     public required string authorID { get; set;}
     [Required]
     public required bool tagNotification { get; set; }// are we notifying due to the author being tagged or following 
+    [Required] 
+    public required bool isNew {get; set;}
 
     public Cheep cheep {get; set;}
     public Author  authorToNotify { get; set; }

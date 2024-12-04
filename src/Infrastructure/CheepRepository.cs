@@ -26,13 +26,15 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
                         where author.FollowingList != null && author.FollowingList.Contains(sender)
                         select author; 
 
+        // need to save changes for us to find out what the ID of the cheep will be 
         await context.SaveChangesAsync();
 
         foreach(var f in followers) {
             Notification notif = new Notification{ 
                 cheepID=qwe.Entity.Id,
                 authorID=f.Id,
-                tagNotification=false
+                tagNotification=false,
+                isNew=true
             };
             await context.AddAsync(notif);
         }
