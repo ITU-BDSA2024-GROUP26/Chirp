@@ -246,7 +246,6 @@ public class UiTests : PageTest
          await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
          
          await Expect(Page.GetByText("Adrian [Unfollow] Hej,")).ToBeVisibleAsync();
-         
      }
 
      [Test]
