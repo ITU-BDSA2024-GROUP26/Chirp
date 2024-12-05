@@ -387,8 +387,6 @@ public class UiTests : PageTest
         await Page.GetByRole(AriaRole.Link, new() { Name = "Notifications" }).ClickAsync();
         await Expect(Page.Locator("p").Filter(new() { HasText = "Helge chirped!" })).ToBeVisibleAsync();
         await Expect(Page.GetByText("Helge chirped! testMessage123")).ToBeVisibleAsync();
-
-
      }
 
      [Test]
@@ -405,7 +403,6 @@ public class UiTests : PageTest
         await Page.GetByRole(AriaRole.Link, new() { Name = "Notifications" }).ClickAsync();
         await Expect(Page.GetByText("Helge tagged you!")).ToBeVisibleAsync();
         await Expect(Page.GetByText("Helge tagged you! @test")).ToBeVisibleAsync();
-
      }
 
      [Test]
