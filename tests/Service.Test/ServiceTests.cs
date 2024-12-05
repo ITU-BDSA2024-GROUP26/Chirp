@@ -2,16 +2,14 @@ using Core;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
-using Moq; 
+using System.Text;
 
 namespace Service.Test;
 
 public class ServiceTests
 {
-    private static async Task<(ICheepService, CheepDbContext, ICheepRepository, IAuthorRepository)> GetContext() // creates a seperate database for every test
+    private static async Task<(ICheepService, CheepDbContext, ICheepRepository, IAuthorRepository, UserManager<Author>)> GetContext() // creates a seperate database for every test
     {
         DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString()).EnableSensitiveDataLogging()
@@ -30,12 +28,21 @@ public class ServiceTests
         var _dbRepository = new DbRepository(_context, userManager);
         var _service = new CheepService(_cheepRepository, _authorRepository, _dbRepository);
 
-        return(_service, _context, _cheepRepository, _authorRepository);
+        return(_service, _context, _cheepRepository, _authorRepository, userManager);
     }
     
     private async Task Dispose(CheepDbContext _context)
     {
         await _context!.DisposeAsync();
+    }
+
+    private async Task<Author?> Register(string username, IAuthorRepository _authorRepository, UserManager<Author> _userManager)
+    {
+        Author author = new() { UserName = username, Email = username + "@test.com", Cheeps = new List<Cheep>()};
+        author.NormalizedUserName = author.UserName;
+        author.NormalizedEmail = author.Email;
+        await _userManager!.CreateAsync(author);
+        return await _authorRepository!.FindAuthorByName(username);
     }
 
     [Fact] 
@@ -44,7 +51,7 @@ public class ServiceTests
         ICheepService _service; 
         IAuthorRepository _authorRepository; 
         CheepDbContext _context; 
-        (_service, _context, _, _authorRepository) = await GetContext();
+        (_service, _context, _, _authorRepository,_) = await GetContext();
 
         await _authorRepository!.AddOrRemoveFollower("Helge", "Adrian");
         await _authorRepository!.AddOrRemoveFollower("Adrian", "Helge");
@@ -56,6 +63,66 @@ public class ServiceTests
 
         await Dispose(_context);
     }
+
+    [Fact]
+    public async Task AboutMe_NoFollowingNoCheeps_DownloadedContentIsCorrect()
+    {
+        UserManager<Author> _userManager; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        ICheepService _service;
+        (_service, _context, _, _authorRepository, _userManager) = await GetContext(); 
+
+        var author = await Register("test", _authorRepository, _userManager);
+        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!);
+        var content = Encoding.UTF8.GetString(fileBytes);
+        const string expectedContent = """
+                                       test's information:
+                                       -----------------------
+                                       Name: test
+                                       Email: test@test.com
+                                       Following:
+                                       - No following
+                                       Cheeps:
+                                       - No Cheeps posted yet
+
+                                       """;
+        Assert.Equal(expectedContent, content);
+
+        await Dispose(_context);
+    }
+
+    [Fact]
+    public async Task AboutMe_Following_DownloadedContentIsCorrect()
+    {
+        UserManager<Author> _userManager; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        ICheepService _service;
+        (_service, _context, _, _authorRepository, _userManager) = await GetContext(); 
+
+
+        var author = await Register("test", _authorRepository, _userManager);
+        await _authorRepository!.AddOrRemoveFollower("test", "Helge");
+        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!);
+        var content = Encoding.UTF8.GetString(fileBytes);
+        const string expectedContent = """
+                                       test's information:
+                                       -----------------------
+                                       Name: test
+                                       Email: test@test.com
+                                       Following:
+                                       - Helge
+                                       Cheeps:
+                                       - No Cheeps posted yet
+
+                                       """;
+        Assert.Equal(expectedContent, content);
+
+        await Dispose(_context);
+    }
+
+
 
     [Theory]  // note, every test contains a tag, but we have coverage that this doesn't matter from repository tests
     [InlineData("Test123 @Helge", true, true)]
@@ -84,7 +151,7 @@ public class ServiceTests
         IAuthorRepository _authorRepository; 
         ICheepRepository _cheepRepository; 
         CheepDbContext _context; 
-        (_service, _context, _cheepRepository, _authorRepository) = await GetContext();
+        (_service, _context, _cheepRepository, _authorRepository, _) = await GetContext();
         if(follow) {await _authorRepository!.AddOrRemoveFollower("Helge", "Adrian");}
 
         var adrian = await _authorRepository.FindAuthorByName("Adrian"); 
