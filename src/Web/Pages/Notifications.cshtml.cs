@@ -14,7 +14,6 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
     public async Task<ActionResult> OnGetAsync([FromQuery] int page = 1) 
     {
         if(User.Identity == null || !User.Identity.IsAuthenticated) {
-            
             return RedirectToPage("/Public");
         }
         var author = await userManager.GetUserAsync(User); 
@@ -30,5 +29,4 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
         var newNotifications = await service.GetAuthorsNotifications(author!.UserName!, false); 
         return new JsonResult(newNotifications);
     }
-    
 }
