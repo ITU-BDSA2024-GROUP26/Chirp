@@ -4,35 +4,36 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 
 namespace Repository.Tests;
-
-public class RepositoryTests : IAsyncLifetime
+public class RepositoryTests
 {
-    private ICheepRepository? _cheepRepository;
-    private IAuthorRepository? _authorRepository; 
-    private CheepDbContext? _context;
-    
-    private readonly DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
-        .UseInMemoryDatabase(Guid.NewGuid().ToString())
+    private async Task<(CheepDbContext, ICheepRepository, IAuthorRepository)> GetContext() // creates a seperate database for every test
+    {
+        DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
+        .UseInMemoryDatabase(Guid.NewGuid().ToString()).EnableSensitiveDataLogging()
         .Options;
 
-    public async Task InitializeAsync()
-    {
-        _context = new CheepDbContext(_options);
+        var _context = new CheepDbContext(_options);
         var store = new UserStore<Author>(_context);
         var userManager = new UserManager<Author>(store, null, new PasswordHasher<Author>(),
             null, null, null, null, null, null);
+        
+
         await DbInitializer.SeedDatabase(_context, userManager);
         
-        _cheepRepository = new Infrastructure.CheepRepository(_context);
-        _authorRepository = new Infrastructure.AuthorRepository(_context);
+        var _cheepRepository = new CheepRepository(_context);
+        var _authorRepository = new AuthorRepository(_context);
+
+        return(_context, _cheepRepository, _authorRepository);
     }
     
-    public async Task DisposeAsync()
+    private async Task Dispose(CheepDbContext _context)
     {
         await _context!.DisposeAsync();
     }
@@ -41,6 +42,9 @@ public class RepositoryTests : IAsyncLifetime
     [Fact]
     public async Task CreateCheep_AddsCheepToDatabase()
     {
+		ICheepRepository _cheepRepository; 
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _) = await GetContext();
         // Arrange
         const string text = "Hello world";
         var newCheep = new Cheep
@@ -55,23 +59,34 @@ public class RepositoryTests : IAsyncLifetime
         // Assert
         var cheeps = await _context!.Cheeps.ToListAsync();
         Assert.Equal(text, cheeps.Last().Text);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task ReadCheeps_ReturnsAllCheeps()
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         var expectedNumCheeps = _context!.Cheeps.Count();
         var cheeps = await _cheepRepository!.ReadCheeps(-1, 0);
         var actualNumCheeps = cheeps.Count;
     
         // Assert
         Assert.Equal(expectedNumCheeps, actualNumCheeps);
+
+        await Dispose(_context);
     }
 
 
     [Fact]
     public async Task ReadCheeps_ReturnsLimitedCheeps()
     {
+		ICheepRepository _cheepRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _) = await GetContext();
         // Arrange
         int limit = 2;
 
@@ -80,11 +95,17 @@ public class RepositoryTests : IAsyncLifetime
 
         // Assert
         Assert.Equal(limit, cheeps.Count);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task ReadCheeps_SkipsOffsetCheeps()
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         // Arrange
         int offset = 1;
 
@@ -97,11 +118,17 @@ public class RepositoryTests : IAsyncLifetime
         var expectedCheeps = allCheeps.Skip(offset).ToList();
         Assert.Equal(expectedCheeps.Count, cheeps.Count);
         Assert.Equal(expectedCheeps.Select(c => c.Id), cheeps.Select(c => c.Id));
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task ReadCheeps_FiltersByAuthorNameRegex()
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         // Arrange:
         string name = "Helge"; // Assuming there are authors with names starting with 'Helge'
 
@@ -110,12 +137,17 @@ public class RepositoryTests : IAsyncLifetime
 
         // Assert
         Assert.All(cheeps, c => Assert.Equal(name, c.Author!.UserName!));
+
+        await Dispose(_context);
     }
 
 
     [Fact]
     public async Task UpdateCheep_ChangesCheepText()
     {
+		ICheepRepository _cheepRepository; 
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _) = await GetContext();
         // Arrange
         var cheep = _context!.Cheeps.First();
         var newText = "Updated text";
@@ -126,11 +158,17 @@ public class RepositoryTests : IAsyncLifetime
         // Assert
         var updatedCheep = await _context!.Cheeps.FindAsync(cheep.Id);
         Assert.Equal(newText, updatedCheep!.Text!);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task UpdateCheep_NonExistentCheep_DoesNotThrow()
     {
+        ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         // Arrange
         int nonExistentId = 999;
         var newText = "Should not work";
@@ -138,33 +176,49 @@ public class RepositoryTests : IAsyncLifetime
         // Act & Assert
         var exception = await Record.ExceptionAsync(() => _cheepRepository!.UpdateCheep(nonExistentId, newText)); 
         Assert.Null(exception);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task CanFindAuthorbyName() 
     {
+        CheepDbContext _context;
+        IAuthorRepository _authorRepository;
+        (_context, _, _authorRepository) = await GetContext();
         //Act
         var foundAuthor = await _authorRepository!.FindAuthorByName("Roger Histand"); 
 
         //Assert
         Assert.Equal("Roger+Histand@hotmail.com", foundAuthor?.Email);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task CanFindAuthorbyEmail() 
     {
+        CheepDbContext _context;
+        IAuthorRepository _authorRepository;
+        (_context, _, _authorRepository) = await GetContext();
         //Act
         var foundAuthor = await _authorRepository!.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
 
         //Assert
         Assert.Equal("Roger Histand", foundAuthor?.UserName);  
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task Test_GetAuthorsFollowing() 
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         //Arrange
-        await MakeAFollowB("Helge", "Adrian"); 
+        await MakeAFollowB("Helge", "Adrian",  _context); 
 
         //Act 
         ICollection<Author> HelgeFollowers = await _authorRepository!.GetAuthorsFollowing("Helge"); 
@@ -172,11 +226,17 @@ public class RepositoryTests : IAsyncLifetime
         //Assert
         var adrian = await _context!.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
         Assert.Contains(adrian, HelgeFollowers);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task Test_AddingFollower() 
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         // act
         await _authorRepository!.AddOrRemoveFollower("Adrian", "Helge");
 
@@ -185,13 +245,19 @@ public class RepositoryTests : IAsyncLifetime
         var helge = await _context!.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
 
         Assert.Contains(helge, adrian!.FollowingList!);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task Test_RemovingFollower() 
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         //arrange 
-        await MakeAFollowB("Helge", "Adrian");
+        await MakeAFollowB("Helge", "Adrian",  _context); 
 
         // act 
         await _authorRepository!.AddOrRemoveFollower("Helge", "Adrian");
@@ -201,14 +267,20 @@ public class RepositoryTests : IAsyncLifetime
         var helge = await _context!.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
 
         Assert.DoesNotContain(adrian, helge!.FollowingList!);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task Test_GetPrivateTimelineCheeps() 
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         //arrange 
-        await MakeAFollowB("Helge", "Quintin Sitts");
-        await MakeAFollowB("Helge", "Jacqualine Gilcoine"); 
+        await MakeAFollowB("Helge", "Quintin Sitts",  _context); 
+        await MakeAFollowB("Helge", "Jacqualine Gilcoine",  _context); 
 
         // act 
         var followingCheeps = await _cheepRepository!.GetPrivateTimelineCheeps("Helge", -1, 0); 
@@ -225,9 +297,11 @@ public class RepositoryTests : IAsyncLifetime
         foreach(var cheep in checkCheeps.ToList()) {
             Assert.Contains(cheep, followingCheeps); 
         }
+
+        await Dispose(_context);
     }
 
-    private async Task MakeAFollowB(string aUsrname, string bUsrname) 
+    private async Task MakeAFollowB(string aUsrname, string bUsrname, CheepDbContext _context) 
     {
         var query = 
             from a in _context!.Users 
@@ -247,6 +321,10 @@ public class RepositoryTests : IAsyncLifetime
     [Fact]
     public async Task DeleteAuthorByName()
     {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
         // Arrange
         var author = new Author
         {
@@ -279,15 +357,148 @@ public class RepositoryTests : IAsyncLifetime
 
         // Verify that the returned author matches the expected one
         Assert.Equal("TestUser", deletedAuthor.UserName);
+
+        await Dispose(_context);
     }
 
     [Fact]
     public async Task TestMutalFollow() // ensure we can get followers and cheeps without problems from both 
     {
-        await MakeAFollowB("Helge", "Adrian"); 
-        await MakeAFollowB("Adrian", "Helge");
+        CheepDbContext _context; 
+        (_context, _, _) = await GetContext();
+        await MakeAFollowB("Helge", "Adrian",  _context); 
+        await MakeAFollowB("Adrian", "Helge",  _context); 
 
         await Test_GetAuthorsFollowing(); 
         await Test_GetPrivateTimelineCheeps(); 
+
+        await Dispose(_context);
+    }
+
+    [Theory] // just make sure that no matter whether we getold or not everything works
+    [InlineData("Test123", false)]
+    [InlineData("Test123", true)]
+    public async Task TestNotifyFollowNoTag(string cheepContent, bool getOld) 
+    {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        await MakeAFollowB("Helge", "Adrian",  _context); 
+        
+
+        var adrian =await _authorRepository!.FindAuthorByName("Adrian");
+        var helge =await _authorRepository!.FindAuthorByName("Helge");
+        await _cheepRepository!.CreateCheep(new Cheep{
+            Author=adrian,
+            Text=cheepContent
+        }); 
+        // ensure that own cheeps don't show up
+        await _cheepRepository!.CreateCheep(new Cheep{
+            Author=helge,
+            Text="very invalid cheep text"
+        }); 
+
+        Console.WriteLine("Hey fucktard");
+
+        var notifs = await _authorRepository.GetNotifications("Helge", getOld); 
+
+        Assert.True(notifs.All(n => {
+            return n.cheep.Text == cheepContent && n.authorID == helge!.Id; 
+            })); 
+
+        await Dispose(_context);
+    }
+
+    
+    [Theory] // idea here is tags should always show up and we should always know they are tag notifications
+    [InlineData("Test123 @Helge", true, true)]
+    [InlineData("@Helge test123", true, true)]
+    [InlineData("qwe @Helge test", true, true)]
+    [InlineData("@Helge", true, true)]
+    [InlineData(" @Helge ", true, true)]
+    [InlineData("Test123 @Helge", false, true)]
+    [InlineData("@Helge test123", false, true)]
+    [InlineData("qwe @Helge test", false, true)]
+    [InlineData("@Helge", false, true)]
+    [InlineData(" @Helge ", false, true)]
+    [InlineData("Test123 @Helge",  false, false)]
+    [InlineData("@Helge test123",  false, false)]
+    [InlineData("qwe @Helge test",  false, false)]
+    [InlineData("@Helge",  false, false)]
+    [InlineData(" @Helge ",  false, false)]
+    [InlineData("Test123 @Helge",  true, false)]
+    [InlineData("@Helge test123",  true, false)]
+    [InlineData("qwe @Helge test",  true, false)]
+    [InlineData("@Helge",  true, false)]
+    [InlineData(" @Helge ",  true, false)]
+    public async Task TestNotifiedWhenTagged(string cheepContent, bool getOld, bool follow) 
+    {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
+
+
+        var adrian = await _authorRepository!.FindAuthorByName("Adrian");
+        var helge = await _authorRepository!.FindAuthorByName("Helge");
+
+        if(follow) { await MakeAFollowB("Helge", "Adrian",  _context);  }
+        
+        await _cheepRepository!.CreateCheep(new Cheep{
+            Author=adrian, Text=cheepContent
+        }); 
+        
+        
+        await _cheepRepository!.CreateCheep(new Cheep{
+            Author=helge, Text="very invalid cheep text"
+        }); 
+
+        var notifs = await _authorRepository.GetNotifications("Helge", getOld); 
+        
+        Assert.True(notifs.All(n => {
+            return n.cheep.Text == cheepContent && n.authorID == helge!.Id && n.tagNotification; 
+            }));
+
+        await Dispose(_context);
+    }
+
+    [Theory] // idea here is make sure that no matter what combination of tags and no tags, only the new notification shows up 
+    [InlineData("test cheep 123", "qwjeqjw")]
+    [InlineData("test @Helge ", "qwewqeqw")]
+    [InlineData("lalalaal", "qwe @Helge")]
+    [InlineData("ejwjew @Helge", "qwe @Helge")]
+    public async Task TestNotShowingOldNotifications(string cheepContent, string invalidCheepContent)
+    {
+		ICheepRepository _cheepRepository; 
+        IAuthorRepository _authorRepository;
+        CheepDbContext _context; 
+        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        await MakeAFollowB("Helge", "Adrian",  _context); 
+        
+
+        var adrian =await _authorRepository!.FindAuthorByName("Adrian");
+        var helge =await _authorRepository!.FindAuthorByName("Helge");
+
+        // ensure that own cheeps don't show up
+        await _cheepRepository!.CreateCheep(new Cheep{
+            Author=adrian,
+            Text=invalidCheepContent
+        }); 
+
+        await _authorRepository.GetNotifications("Helge", false);
+
+        await _cheepRepository!.CreateCheep(new Cheep{
+            Author=adrian,
+            Text=cheepContent
+        }); 
+
+        var notifs = await _authorRepository.GetNotifications("Helge", false); 
+
+        Assert.True(notifs.All(n => {
+            return n.cheep.Text == cheepContent && n.authorID == helge!.Id; 
+            })); 
+
+        await Dispose(_context);
     }
 }
