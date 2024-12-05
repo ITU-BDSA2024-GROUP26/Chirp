@@ -30,7 +30,26 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
         // need to save changes for us to find out what the ID of the cheep will be 
         await context.SaveChangesAsync();
 
+        // for tags. NOTE: Tags are prioritized over following notifications 
+        var taggedAuthors = new List<Author>(); 
+        var tagFinderRegex = new Regex("@(\\w+)"); 
+        var matches = tagFinderRegex.Matches(newCheep.Text); 
+        foreach (Match match in matches) {
+            if (match.Groups.Count < 2) { continue; }
+            var authorToTag = await context.Users.FirstOrDefaultAsync(a => a.UserName == match.Groups[1].Value); 
+            if (authorToTag == null) { continue; } // don't require input validation in higher levels 
+            taggedAuthors.Add(authorToTag); // to make sure we don't double notify
+            Notification notif = new Notification{ 
+                cheepID=qwe.Entity.Id,
+                authorID=authorToTag!.Id,
+                tagNotification=true,
+                isNew=true
+            };
+            await context.AddAsync(notif);
+        }
+
         foreach(var f in followers) {
+            if(taggedAuthors.Contains(f)) { continue; }
             Notification notif = new Notification{ 
                 cheepID=qwe.Entity.Id,
                 authorID=f.Id,
@@ -40,21 +59,6 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
             await context.AddAsync(notif);
         }
 
-        // for tags TODO 
-        var tagFinderRegex = new Regex("@(\\w+)"); 
-        var matches = tagFinderRegex.Matches(newCheep.Text); 
-        foreach (Match match in matches) {
-            if (match.Groups.Count < 2) { continue; }
-            var authorToTag = await context.Users.FirstOrDefaultAsync(a => a.UserName == match.Groups[1].Value); 
-            if (authorToTag == null) { continue; } // don't require input validation in higher levels 
-            Notification notif = new Notification{ 
-                cheepID=qwe.Entity.Id,
-                authorID=authorToTag!.Id,
-                tagNotification=true,
-                isNew=true
-            };
-            await context.AddAsync(notif);
-        }
 
         await context.SaveChangesAsync();
     }
