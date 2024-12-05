@@ -4,11 +4,8 @@ using Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Web;
@@ -34,7 +31,8 @@ public class Program
             builder.Services.AddDbContext<CheepDbContext>(options => {
                     options.ConfigureWarnings(warnings => 
                     warnings.Log(RelationalEventId.NonTransactionalMigrationOperationWarning));
-                    options.UseSqlite(connection);}
+                    options.UseSqlite(connection);
+                    options.EnableSensitiveDataLogging();}
                     );
             CheepDbContext.TestingSetup = true;
         } else {
