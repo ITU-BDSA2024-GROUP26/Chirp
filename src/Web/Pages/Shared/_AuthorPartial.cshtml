@@ -18,14 +18,14 @@
     {
     <form method="post" asp-page-handler="Follow">
     <input type="hidden" name="UsrnmToFollow" value="@Model.AuthorName" />
-    <button type="submit" class="btn btn-primary">
+    <button type="submit" class="btn btn-primary follow-btn-position follow-btn-size">
         @if (currentUser.FollowsAuthor(@Model.AuthorName))
                 {
-                <p>[Unfollow]</p>
+                <span>Unfollow</span>
                 }
                 else
                 {
-                <p>[Follow]</p>
+                <span>Follow</span>
                 }
         </button>
     </form>

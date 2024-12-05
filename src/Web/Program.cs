@@ -58,6 +58,7 @@ public class Program
         // add services via DI  
         builder.Services.AddScoped<ICheepRepository, CheepRepository>(); 
         builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+        builder.Services.AddScoped<IDbRepository, DbRepository>();
         builder.Services.AddScoped<ICheepService, CheepService>();
 
         var githubClientId = builder.Configuration["authentication:github:clientId"]
@@ -98,18 +99,20 @@ public class Program
         
         using (var scope = app.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
-            if (app.Environment.IsDevelopment()) await context.Database.MigrateAsync();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
-            await DbInitializer.SeedDatabase(context, userManager);
-        }
-
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
+            if (app.Environment.IsDevelopment())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<CheepDbContext>();
+                await context.Database.MigrateAsync();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+            
+            var service = scope.ServiceProvider.GetRequiredService<ICheepService>();
+            await service.SeedDatabaseAsync();
         }
         
         app.UseHttpsRedirection();
@@ -133,6 +136,7 @@ public class Program
         app.UseAuthorization();
         
         app.MapRazorPages();
+        app.MapControllers();
 
         await app.RunAsync();
     }

@@ -1,4 +1,5 @@
 ﻿using Core;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure;
 
@@ -12,4 +13,7 @@ public interface ICheepService
     public Task AddOrRemoveFollower(string userName, string userToFollowName);  
     public Task DeleteAuthorByName(string authorName); 
     public Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName, bool getOld); 
+    public Task SeedDatabaseAsync();
+    public Task ResetDatabaseAsync();
+    public Task<(byte[] FileData, string ContentType, string FileName)> DownloadAuthorInfo(Author author);
 }
