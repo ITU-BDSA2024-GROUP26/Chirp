@@ -15,13 +15,18 @@ public class UiTests : PageTest
     private const string BaseUrl = "http://localhost:5000";
     private const string TestPassword = "Qwe$$213";
 
+    private async Task<IPage> GetNewPage() 
+    {
+        var context = await Browser.NewContextAsync();
+        return await context.NewPageAsync();
+    }
+
     private async Task<IPage> Register(string username, IPage? page = null)
     {
         // If no page argument is passed, open one.
         if (page == null)
         {
-            var context = await Browser.NewContextAsync();
-            page = await context.NewPageAsync();
+            page = await GetNewPage();
         }
 
         await page.GotoAsync(BaseUrl + "/Identity/Account/Register");
@@ -82,9 +87,9 @@ public class UiTests : PageTest
 
     private async Task CheepOnCurrentPage(IPage page, string message)
     {
-        await Page.GetByRole(AriaRole.Textbox).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox).FillAsync(message);
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox).FillAsync(message);
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
     }
     
     [OneTimeSetUp]
@@ -362,5 +367,66 @@ public class UiTests : PageTest
          await Login(Page, "test");
          
          await Expect(Page.GetByText("Invalid login attempt.")).ToBeVisibleAsync();
+     }
+
+     [Test]
+     public async Task NotificationWhenFollowing() 
+     {
+        // we follow Helge
+        await Register("test", Page); 
+        await ToggleFollowingOnCurrentPage(Page, "Helge"); 
+        
+        // Helge Chirps
+        var helgePage = await GetNewPage();
+        await Login(helgePage, "Helge", "LetM31n!"); 
+        await CheepOnCurrentPage(helgePage, "testMessage123");
+
+        Thread.Sleep(1000);
+
+        // we check if the notification shows up 
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Notifications" }).ClickAsync();
+        await Expect(Page.Locator("p").Filter(new() { HasText = "Helge chirped!" })).ToBeVisibleAsync();
+        await Expect(Page.GetByText("Helge chirped! testMessage123")).ToBeVisibleAsync();
+
+
+     }
+
+     [Test]
+     public async Task NotificationWhenTagged() 
+     {
+        await Register("test", Page); 
+        
+        // Helge Chirps
+        var helgePage = await GetNewPage();
+        await Login(helgePage, "Helge", "LetM31n!"); 
+        await CheepOnCurrentPage(helgePage, "@test testMessage123");
+
+        
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Notifications" }).ClickAsync();
+        await Expect(Page.GetByText("Helge tagged you!")).ToBeVisibleAsync();
+        await Expect(Page.GetByText("Helge tagged you! @test")).ToBeVisibleAsync();
+
+     }
+
+     [Test]
+     public async Task LiveNotification() 
+     {
+        // we follow Helge
+        await Register("test", Page); 
+        await ToggleFollowingOnCurrentPage(Page, "Helge"); 
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Notifications" })).ToBeVisibleAsync();
+
+        // go to notification pages
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Notifications" }).ClickAsync();
+
+        // let helge chirp
+        var helgePage = await GetNewPage();
+        await Login(helgePage, "Helge", "LetM31n!"); 
+        await CheepOnCurrentPage(helgePage, "testMessage123");
+
+        // the live notification fetcher runs every 5s
+        Thread.Sleep(6000);
+
+        await Expect(Page.GetByText("Helge chirped!")).ToBeVisibleAsync();
      }
 }
