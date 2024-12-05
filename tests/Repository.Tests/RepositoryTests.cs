@@ -399,8 +399,6 @@ public class RepositoryTests
             Text="very invalid cheep text"
         }); 
 
-        Console.WriteLine("Hey fucktard");
-
         var notifs = await _authorRepository.GetNotifications("Helge", getOld); 
 
         Assert.True(notifs.All(n => {
