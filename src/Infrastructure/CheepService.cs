@@ -9,7 +9,8 @@ using Core;
 public class CheepService(
     ICheepRepository cheepRepository, 
     IAuthorRepository authorRepository,
-    IDbRepository dbRepository) : ICheepService
+    IDbRepository dbRepository, 
+    INotificationRepository notificationRepository) : ICheepService
 {
     private const int MaxCheeps = 32;
 
@@ -58,9 +59,9 @@ public class CheepService(
 
     public async Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName, bool getOld)
     { 
-        var notifs = await authorRepository.GetNotifications(userName, getOld);
-        Console.WriteLine($"Length of notifications in cheepservice {notifs.Count}");
+        var notifs = await notificationRepository.GetNotifications(userName, getOld);
         List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
+        Console.WriteLine($"length of notifcations list in service {retList.Count}");
 
         foreach(var notif in notifs) {
             retList.Add(new NotificationDTO(notif.cheep.Text, notif.cheep.Author!.UserName!, notif.tagNotification)); 

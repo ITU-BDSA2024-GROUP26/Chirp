@@ -20,7 +20,7 @@
     <script>
         async function fetchNewNotifications() {
             try {
-                const response = await fetch('/Notifications?handler=NewNotifications');
+                const response = await fetch('/notifications?handler=NewNotifications');
                 if (response.ok) {
                     const newNotifications = await response.json();
                     if (newNotifications.length > 0) {
@@ -35,15 +35,17 @@
         function appendNotifications(notifications) {
             const ul = document.getElementById('notifications-list');
             notifications.forEach(notification => {
+                window.alert(JSON.stringify(notification))
                 const li = document.createElement('li');
+                //NOTE: apparently whatever JSON we sent gets converted to camelCase
                 li.innerHTML = `
                     <p>
                         <span>
-                            <a href="/${notification.AuthorName}">${notification.AuthorName}</a>
-                            ${notification.TagNotification ? 'tagged you!' : 'chirped!'}
+                            <a href="/${notification.authorName}">${notification.authorName}</a>
+                            ${notification.tagNotification ? 'tagged you!' : 'chirped!'}
                         </span>
-                    </p>
-                    <p>${notification.CheepContent}</p>`;
+                    </p> 
+                    <p>${notification.cheepContent}</p>`;
                 ul.appendChild(li);
             });
         }

@@ -9,7 +9,7 @@ namespace Service.Test;
 
 public class ServiceTests
 {
-    private static async Task<(ICheepService, CheepDbContext, ICheepRepository, IAuthorRepository, UserManager<Author>)> GetContext() // creates a seperate database for every test
+    private static async Task<(ICheepService, CheepDbContext, ICheepRepository, IAuthorRepository, INotificationRepository, UserManager<Author>)> GetContext() // creates a seperate database for every test
     {
         DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString()).EnableSensitiveDataLogging()
@@ -23,12 +23,13 @@ public class ServiceTests
 
         await DbInitializer.SeedDatabase(_context, userManager);
         
-        var _cheepRepository = new CheepRepository(_context);
+        var _notificationRepository = new NotificationRepository(_context);
+        var _cheepRepository = new CheepRepository(_context, _notificationRepository);
         var _authorRepository = new AuthorRepository(_context);
         var _dbRepository = new DbRepository(_context, userManager);
-        var _service = new CheepService(_cheepRepository, _authorRepository, _dbRepository);
+        var _service = new CheepService(_cheepRepository, _authorRepository, _dbRepository, _notificationRepository);
 
-        return(_service, _context, _cheepRepository, _authorRepository, userManager);
+        return(_service, _context, _cheepRepository, _authorRepository, _notificationRepository, userManager);
     }
     
     private async Task Dispose(CheepDbContext _context)
@@ -51,7 +52,7 @@ public class ServiceTests
         ICheepService _service; 
         IAuthorRepository _authorRepository; 
         CheepDbContext _context; 
-        (_service, _context, _, _authorRepository,_) = await GetContext();
+        (_service, _context, _, _authorRepository,_, _) = await GetContext();
 
         await _authorRepository!.AddOrRemoveFollower("Helge", "Adrian");
         await _authorRepository!.AddOrRemoveFollower("Adrian", "Helge");
@@ -71,7 +72,7 @@ public class ServiceTests
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
         ICheepService _service;
-        (_service, _context, _, _authorRepository, _userManager) = await GetContext(); 
+        (_service, _context, _, _authorRepository, _, _userManager) = await GetContext(); 
 
         var author = await Register("test", _authorRepository, _userManager);
         var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!);
@@ -99,7 +100,7 @@ public class ServiceTests
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
         ICheepService _service;
-        (_service, _context, _, _authorRepository, _userManager) = await GetContext(); 
+        (_service, _context, _, _authorRepository, _, _userManager) = await GetContext(); 
 
 
         var author = await Register("test", _authorRepository, _userManager);
@@ -151,7 +152,7 @@ public class ServiceTests
         IAuthorRepository _authorRepository; 
         ICheepRepository _cheepRepository; 
         CheepDbContext _context; 
-        (_service, _context, _cheepRepository, _authorRepository, _) = await GetContext();
+        (_service, _context, _cheepRepository, _authorRepository, _, _) = await GetContext();
         if(follow) {await _authorRepository!.AddOrRemoveFollower("Helge", "Adrian");}
 
         var adrian = await _authorRepository.FindAuthorByName("Adrian"); 
