@@ -60,6 +60,7 @@ public class Program
         builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
         builder.Services.AddScoped<IDbRepository, DbRepository>();
         builder.Services.AddScoped<ICheepService, CheepService>();
+        builder.Services.AddScoped<INotificationRepository, NotificationRepository>(); 
 
         var githubClientId = builder.Configuration["authentication:github:clientId"]
                              ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID");

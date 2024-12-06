@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 namespace Repository.Tests;
 public class RepositoryTests
 {
-    private async Task<(CheepDbContext, ICheepRepository, IAuthorRepository)> GetContext() // creates a seperate database for every test
+    private static async Task<( CheepDbContext, ICheepRepository, IAuthorRepository, INotificationRepository)> GetContext() // creates a seperate database for every test
     {
         DbContextOptions<CheepDbContext> _options = new DbContextOptionsBuilder<CheepDbContext>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString()).EnableSensitiveDataLogging()
@@ -27,10 +27,12 @@ public class RepositoryTests
 
         await DbInitializer.SeedDatabase(_context, userManager);
         
-        var _cheepRepository = new CheepRepository(_context);
+        var _notificationRepository = new NotificationRepository(_context);
+        var _cheepRepository = new CheepRepository(_context, _notificationRepository);
         var _authorRepository = new AuthorRepository(_context);
+        var _dbRepository = new DbRepository(_context, userManager);
 
-        return(_context, _cheepRepository, _authorRepository);
+        return(_context, _cheepRepository, _authorRepository, _notificationRepository);
     }
     
     private async Task Dispose(CheepDbContext _context)
@@ -44,7 +46,7 @@ public class RepositoryTests
     {
 		ICheepRepository _cheepRepository; 
         CheepDbContext _context; 
-        (_context, _cheepRepository, _) = await GetContext();
+        (_context, _cheepRepository, _, _) = await GetContext();
         // Arrange
         const string text = "Hello world";
         var newCheep = new Cheep
@@ -67,9 +69,8 @@ public class RepositoryTests
     public async Task ReadCheeps_ReturnsAllCheeps()
     {
 		ICheepRepository _cheepRepository; 
-        IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _, _) = await GetContext();
         var expectedNumCheeps = _context!.Cheeps.Count();
         var cheeps = await _cheepRepository!.ReadCheeps(-1, 0);
         var actualNumCheeps = cheeps.Count;
@@ -86,7 +87,7 @@ public class RepositoryTests
     {
 		ICheepRepository _cheepRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _) = await GetContext();
+        (_context, _cheepRepository, _, _) = await GetContext();
         // Arrange
         int limit = 2;
 
@@ -105,7 +106,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         // Arrange
         int offset = 1;
 
@@ -128,7 +129,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         // Arrange:
         string name = "Helge"; // Assuming there are authors with names starting with 'Helge'
 
@@ -147,7 +148,7 @@ public class RepositoryTests
     {
 		ICheepRepository _cheepRepository; 
         CheepDbContext _context; 
-        (_context, _cheepRepository, _) = await GetContext();
+        (_context, _cheepRepository, _, _) = await GetContext();
         // Arrange
         var cheep = _context!.Cheeps.First();
         var newText = "Updated text";
@@ -168,7 +169,7 @@ public class RepositoryTests
         ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         // Arrange
         int nonExistentId = 999;
         var newText = "Should not work";
@@ -185,7 +186,7 @@ public class RepositoryTests
     {
         CheepDbContext _context;
         IAuthorRepository _authorRepository;
-        (_context, _, _authorRepository) = await GetContext();
+        (_context, _, _authorRepository, _) = await GetContext();
         //Act
         var foundAuthor = await _authorRepository!.FindAuthorByName("Roger Histand"); 
 
@@ -200,7 +201,7 @@ public class RepositoryTests
     {
         CheepDbContext _context;
         IAuthorRepository _authorRepository;
-        (_context, _, _authorRepository) = await GetContext();
+        (_context, _, _authorRepository, _) = await GetContext();
         //Act
         var foundAuthor = await _authorRepository!.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
 
@@ -216,7 +217,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         //Arrange
         await MakeAFollowB("Helge", "Adrian",  _context); 
 
@@ -236,7 +237,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         // act
         await _authorRepository!.AddOrRemoveFollower("Adrian", "Helge");
 
@@ -255,7 +256,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         //arrange 
         await MakeAFollowB("Helge", "Adrian",  _context); 
 
@@ -277,7 +278,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         //arrange 
         await MakeAFollowB("Helge", "Quintin Sitts",  _context); 
         await MakeAFollowB("Helge", "Jacqualine Gilcoine",  _context); 
@@ -324,7 +325,7 @@ public class RepositoryTests
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         // Arrange
         var author = new Author
         {
@@ -365,7 +366,7 @@ public class RepositoryTests
     public async Task TestMutalFollow() // ensure we can get followers and cheeps without problems from both 
     {
         CheepDbContext _context; 
-        (_context, _, _) = await GetContext();
+        (_context, _, _, _) = await GetContext();
         await MakeAFollowB("Helge", "Adrian",  _context); 
         await MakeAFollowB("Adrian", "Helge",  _context); 
 
@@ -382,8 +383,9 @@ public class RepositoryTests
     {
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
+        INotificationRepository _notificationRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _notificationRepository) = await GetContext();
         await MakeAFollowB("Helge", "Adrian",  _context); 
         
 
@@ -399,7 +401,7 @@ public class RepositoryTests
             Text="very invalid cheep text"
         }); 
 
-        var notifs = await _authorRepository.GetNotifications("Helge", getOld); 
+        var notifs = await _notificationRepository.GetNotifications("Helge", getOld); 
 
         Assert.True(notifs.All(n => {
             return n.cheep.Text == cheepContent && n.authorID == helge!.Id; 
@@ -434,8 +436,9 @@ public class RepositoryTests
     {
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
+        INotificationRepository _notificationRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _notificationRepository) = await GetContext();
 
 
         var adrian = await _authorRepository!.FindAuthorByName("Adrian");
@@ -452,7 +455,7 @@ public class RepositoryTests
             Author=helge, Text="very invalid cheep text"
         }); 
 
-        var notifs = await _authorRepository.GetNotifications("Helge", getOld); 
+        var notifs = await _notificationRepository.GetNotifications("Helge", getOld); 
         
         Assert.True(notifs.All(n => {
             return n.cheep.Text == cheepContent && n.authorID == helge!.Id && n.tagNotification; 
@@ -470,8 +473,9 @@ public class RepositoryTests
     {
 		ICheepRepository _cheepRepository; 
         IAuthorRepository _authorRepository;
+        INotificationRepository _notificationRepository;
         CheepDbContext _context; 
-        (_context, _cheepRepository, _authorRepository) = await GetContext();
+        (_context, _cheepRepository, _authorRepository, _notificationRepository) = await GetContext();
         await MakeAFollowB("Helge", "Adrian",  _context); 
         
 
@@ -484,14 +488,14 @@ public class RepositoryTests
             Text=invalidCheepContent
         }); 
 
-        await _authorRepository.GetNotifications("Helge", false);
+        await _notificationRepository.GetNotifications("Helge", false);
 
         await _cheepRepository!.CreateCheep(new Cheep{
             Author=adrian,
             Text=cheepContent
         }); 
 
-        var notifs = await _authorRepository.GetNotifications("Helge", false); 
+        var notifs = await _notificationRepository.GetNotifications("Helge", false); 
 
         Assert.True(notifs.All(n => {
             return n.cheep.Text == cheepContent && n.authorID == helge!.Id; 

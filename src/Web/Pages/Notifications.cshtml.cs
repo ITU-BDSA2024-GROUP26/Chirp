@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using NuGet.Protocol;
 
 namespace Web.Pages;
 
@@ -22,11 +23,16 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
         return Page();
     }
 
+
+    // partly chatgpt(to go with the ajax script) 
     public async Task<JsonResult> OnGetNewNotifications()
     {
         var author = await userManager.GetUserAsync(User); 
-        // Fetch new notifications (replace with your logic)
         var newNotifications = await service.GetAuthorsNotifications(author!.UserName!, false); 
+        
+        var res = new JsonResult(newNotifications); 
+        Console.WriteLine($"Sending: {res.ToJson()}");
+
         return new JsonResult(newNotifications);
     }
 }
