@@ -23,7 +23,6 @@ public class Program
         // this is set globally to Production on our Azure server, so we don't need to worry about anything
         string? connectionString; 
         if(builder.Environment.IsDevelopment()) { // always use in memory for development now
-            
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
             
