@@ -9,7 +9,8 @@ using Core;
 public class CheepService(
     ICheepRepository cheepRepository, 
     IAuthorRepository authorRepository,
-    IDbRepository dbRepository) : ICheepService
+    IDbRepository dbRepository, 
+    INotificationRepository notificationRepository) : ICheepService
 {
     private const int MaxCheeps = 32;
 
@@ -56,6 +57,17 @@ public class CheepService(
         await authorRepository.DeleteAuthorByName(authorName); 
     }
 
+    public async Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName, bool getOld)
+    { 
+        var notifs = await notificationRepository.GetNotifications(userName, getOld);
+        List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
+
+        foreach(var notif in notifs) {
+            retList.Add(new NotificationDTO(notif.cheep.Text, notif.cheep.Author!.UserName!, notif.tagNotification)); 
+        }
+        
+        return retList;
+    }
     public async Task SeedDatabaseAsync()
     {
         await dbRepository.SeedAsync();

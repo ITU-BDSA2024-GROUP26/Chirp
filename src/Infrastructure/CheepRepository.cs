@@ -2,20 +2,18 @@ using Core;
 
 namespace Infrastructure;
 
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
-using System.Runtime.CompilerServices;
-using System.Diagnostics.CodeAnalysis;
-using SQLitePCL;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
-public class CheepRepository(CheepDbContext context) : ICheepRepository
+public class CheepRepository(CheepDbContext context, INotificationRepository notificationRepository) : ICheepRepository
 {
     public async Task CreateCheep(Cheep newCheep)
     {
-        await context.AddAsync(newCheep);
+        var tracker = await context.AddAsync(newCheep);
+
+        // need to save changes to ensure that the tracker knows the ID of the cheep
         await context.SaveChangesAsync();
+        
+        await notificationRepository.CreateNotification(tracker);
     }
 
     public async Task<ICollection<Cheep>> ReadCheeps(int limit = -1, int offset = 0, string? authorNameRegex = null)
@@ -85,9 +83,14 @@ public class CheepRepository(CheepDbContext context) : ICheepRepository
 
         if (user.FollowingList == null) { return []; }
 
+        var notifQuery = from notif in context.notifications 
+                        where notif.authorID == user.Id
+                        select notif.cheepID; 
+
         var query = (from cheep in context.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where user.FollowingList.Contains(cheep.Author) || cheep.Author.UserName == userName
+                     where user.FollowingList.Contains(cheep.Author!) || cheep.Author!.UserName == userName 
+                     || notifQuery.Contains(cheep.Id)
                      orderby cheep.Id descending
                      select cheep)
                     .Skip(offset);

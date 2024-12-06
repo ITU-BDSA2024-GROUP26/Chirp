@@ -4,11 +4,8 @@ using Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Web;
@@ -26,15 +23,14 @@ public class Program
         // this is set globally to Production on our Azure server, so we don't need to worry about anything
         string? connectionString; 
         if(builder.Environment.IsDevelopment()) { // always use in memory for development now
-            Console.WriteLine("Using in memory database");
-            
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
             
             builder.Services.AddDbContext<CheepDbContext>(options => {
                     options.ConfigureWarnings(warnings => 
                     warnings.Log(RelationalEventId.NonTransactionalMigrationOperationWarning));
-                    options.UseSqlite(connection);}
+                    options.UseSqlite(connection);
+                    options.EnableSensitiveDataLogging();}
                     );
             CheepDbContext.TestingSetup = true;
         } else {
@@ -52,7 +48,7 @@ public class Program
 
         builder.Services.AddDefaultIdentity<Author>(options =>
             {
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._+";
                 options.SignIn.RequireConfirmedAccount = false; //when signing in you are not required to confirm the account
             })
             .AddEntityFrameworkStores<CheepDbContext>();
@@ -62,6 +58,7 @@ public class Program
         builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
         builder.Services.AddScoped<IDbRepository, DbRepository>();
         builder.Services.AddScoped<ICheepService, CheepService>();
+        builder.Services.AddScoped<INotificationRepository, NotificationRepository>(); 
 
         var githubClientId = builder.Configuration["authentication:github:clientId"]
                              ?? Environment.GetEnvironmentVariable("GITHUBCLIENTID");
