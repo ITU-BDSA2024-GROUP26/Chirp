@@ -188,10 +188,10 @@ public class RepositoryTests
         IAuthorRepository _authorRepository;
         (_context, _, _authorRepository, _) = await GetContext();
         //Act
-        var foundAuthor = await _authorRepository!.FindAuthorByName("Roger Histand"); 
+        var foundAuthor = await _authorRepository!.FindAuthorByName("Roger_Histand"); 
 
         //Assert
-        Assert.Equal("Roger+Histand@hotmail.com", foundAuthor?.Email);
+        Assert.Equal("Roger_Histand@hotmail.com", foundAuthor?.Email);
 
         await Dispose(_context);
     }
@@ -203,10 +203,10 @@ public class RepositoryTests
         IAuthorRepository _authorRepository;
         (_context, _, _authorRepository, _) = await GetContext();
         //Act
-        var foundAuthor = await _authorRepository!.FindAuthorByEmail("Roger+Histand@hotmail.com"); 
+        var foundAuthor = await _authorRepository!.FindAuthorByEmail("Roger_Histand@hotmail.com"); 
 
         //Assert
-        Assert.Equal("Roger Histand", foundAuthor?.UserName);  
+        Assert.Equal("Roger_Histand", foundAuthor?.UserName);  
 
         await Dispose(_context);
     }
@@ -280,8 +280,8 @@ public class RepositoryTests
         CheepDbContext _context; 
         (_context, _cheepRepository, _authorRepository, _) = await GetContext();
         //arrange 
-        await MakeAFollowB("Helge", "Quintin Sitts",  _context); 
-        await MakeAFollowB("Helge", "Jacqualine Gilcoine",  _context); 
+        await MakeAFollowB("Helge", "Quintin_Sitts",  _context); 
+        await MakeAFollowB("Helge", "Jacqualine_Gilcoine",  _context); 
 
         // act 
         var followingCheeps = await _cheepRepository!.GetPrivateTimelineCheeps("Helge", -1, 0); 
@@ -289,7 +289,7 @@ public class RepositoryTests
         // assert 
         var checkCheeps = from cheep in _context!.Cheeps
                     .Include(c => c.Author) // from chatgpt 
-                     where cheep.Author!.UserName! == "Quintin Sitts" || cheep.Author!.UserName! == "Jacqualine Gilcoine" || cheep.Author!.UserName! == "Helge"
+                     where cheep.Author!.UserName! == "Quintin_Sitts" || cheep.Author!.UserName! == "Jacqualine_Gilcoine" || cheep.Author!.UserName! == "Helge"
                      orderby cheep.Id descending
                      select cheep; 
         
@@ -363,15 +363,42 @@ public class RepositoryTests
     }
 
     [Fact]
-    public async Task TestMutalFollow() // ensure we can get followers and cheeps without problems from both 
+    public async Task TestMutualFollow() // ensure we can get followers and cheeps without problems from both 
     {
         CheepDbContext _context; 
-        (_context, _, _, _) = await GetContext();
+        IAuthorRepository _authorRepository;
+        ICheepRepository _cheepRepository; 
+        (_context, _cheepRepository, _authorRepository, _) = await GetContext();
+        // act
         await MakeAFollowB("Helge", "Adrian",  _context); 
         await MakeAFollowB("Adrian", "Helge",  _context); 
 
-        await Test_GetAuthorsFollowing(); 
-        await Test_GetPrivateTimelineCheeps(); 
+        // NOTE: a bit of code duplication from the assertions in the privatetimeline check and following checks but this is the only way we actually see mutual chirps
+        //Assert
+        ICollection<Author> HelgeFollowers = await _authorRepository!.GetAuthorsFollowing("Helge"); 
+        ICollection<Author> AdrianFollowers = await _authorRepository!.GetAuthorsFollowing("Adrian"); 
+
+        // assert, ensure that both are set up as eachothers followers
+        var adrian = await _context!.Users.FirstOrDefaultAsync(a=> a.UserName == "Adrian");
+        var helge = await _context!.Users.FirstOrDefaultAsync(a=> a.UserName == "Helge");
+        Assert.Contains(adrian, HelgeFollowers);
+        Assert.Contains(helge, AdrianFollowers);
+
+        // assert, esure that boths private timelines contain all their cheeps
+        var helgePrivateCheeps = await _cheepRepository!.GetPrivateTimelineCheeps("Helge", -1, 0); 
+        var adrianPrivateCheeps = await _cheepRepository!.GetPrivateTimelineCheeps("Adrian", -1, 0); 
+
+        var checkCheeps = from cheep in _context!.Cheeps
+                    .Include(c => c.Author) // from chatgpt 
+                     where cheep.Author!.UserName! == "Adrian" || cheep.Author!.UserName! == "Helge"
+                     orderby cheep.Id descending
+                     select cheep; 
+        
+
+        foreach(var cheep in checkCheeps.ToList()) {
+            Assert.Contains(cheep, helgePrivateCheeps); 
+            Assert.Contains(cheep, adrianPrivateCheeps);
+        }
 
         await Dispose(_context);
     }
