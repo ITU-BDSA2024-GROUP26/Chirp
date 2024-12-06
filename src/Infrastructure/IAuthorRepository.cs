@@ -10,5 +10,4 @@ public interface IAuthorRepository
     public Task<ICollection<Author>> GetAuthorsFollowing(string name); 
     public Task AddOrRemoveFollower(string userName, string usernmToFollow);
     public Task<Author?>DeleteAuthorByName(string name); 
-    public Task<ICollection<Notification>> GetNotifications(string authorName, bool getOld); // get the pending notifications of the author in question
 }

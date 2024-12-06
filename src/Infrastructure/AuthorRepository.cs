@@ -91,24 +91,4 @@ public class AuthorRepository(CheepDbContext context) : IAuthorRepository
 
         return user;
     }
-
-    public async Task<ICollection<Notification>> GetNotifications(string authorName, bool getOld)
-    {
-        var author = await FindAuthorByName(authorName); 
-        var query = from notif in context.notifications 
-                    .Include(n => n.cheep).ThenInclude(c => c.Author)
-                    where notif.authorID == author!.Id && (notif.isNew || getOld)
-                    select notif; 
-        
-        Console.WriteLine($"Notifications length in repository {query.Count()}");
-
-        var retList = await query.ToListAsync();
-
-        await query.ForEachAsync(n => n.isNew = false); 
-
-        await context.SaveChangesAsync(); 
-
-
-        return retList; 
-    }
 }
