@@ -1,14 +1,14 @@
 namespace Core;
 
-public record NotificationDTO(string cheepContent, string authorName, bool tagNotification)
+public record NotificationDTO(string CheepContent, string AuthorName, bool TagNotification)
 {
     public override string ToString()
     {
-        if (tagNotification) 
+        if (TagNotification) 
         {
-            return authorName + " tagged you in a cheep!"; 
+            return AuthorName + " tagged you in a cheep!"; 
         } else {
-            return authorName + " chirped!"; 
+            return AuthorName + " chirped!"; 
         }
     }
 }

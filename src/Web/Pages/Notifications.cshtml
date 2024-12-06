@@ -39,11 +39,11 @@
                 li.innerHTML = `
                     <p>
                         <span>
-                            <a href="/${notification.authorName}">${notification.authorName}</a>
-                            ${notification.tagNotification ? 'tagged you!' : 'chirped!'}
+                            <a href="/${notification.AuthorName}">${notification.AuthorName}</a>
+                            ${notification.TagNotification ? 'tagged you!' : 'chirped!'}
                         </span>
                     </p>
-                    <p>${notification.cheepContent}</p>`;
+                    <p>${notification.CheepContent}</p>`;
                 ul.appendChild(li);
             });
         }
@@ -53,16 +53,16 @@
 </head>
 <body>
     <ul id="notifications-list">
-        @foreach (var notif in Model.notifications)
+        @foreach (var notif in Model.Notifications)
         {
             <li>
                 <p>
                     <span>
-                        <a href="/@notif.authorName">@notif.authorName</a>
-                        @(notif.tagNotification ? "tagged you!" : "chirped!")
+                        <a href="/@notif.AuthorName">@notif.AuthorName</a>
+                        @(notif.TagNotification ? "tagged you!" : "chirped!")
                     </span>
                 </p>
-                <p>@notif.cheepContent</p>
+                <p>@notif.CheepContent</p>
             </li>
         }
     </ul>

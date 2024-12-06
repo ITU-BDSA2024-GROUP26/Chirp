@@ -165,7 +165,7 @@ public class ServiceTests
         
         
         Assert.True(notifs.All(n => {
-            return n.authorName == adrian!.UserName && n.cheepContent == cheepContent && n.tagNotification;  
+            return n.AuthorName == adrian!.UserName && n.CheepContent == cheepContent && n.TagNotification;  
         }));
         await Dispose(_context);
     }
