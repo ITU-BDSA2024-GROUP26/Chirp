@@ -61,7 +61,6 @@ public class CheepService(
     { 
         var notifs = await notificationRepository.GetNotifications(userName, getOld);
         List<NotificationDTO> retList = new List<NotificationDTO>(notifs.Count); 
-        Console.WriteLine($"length of notifcations list in service {retList.Count}");
 
         foreach(var notif in notifs) {
             retList.Add(new NotificationDTO(notif.cheep.Text, notif.cheep.Author!.UserName!, notif.tagNotification)); 
