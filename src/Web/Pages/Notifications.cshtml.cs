@@ -19,7 +19,6 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
         }
         var author = await userManager.GetUserAsync(User); 
         Notifications = await service.GetAuthorsNotifications(author!.UserName!, true); 
-        Console.WriteLine($"Length of notifications in pagemodel {Notifications.Count()}");
         return Page();
     }
 
@@ -31,7 +30,6 @@ public class NotificationsModel (ICheepService service, UserManager<Author> user
         var newNotifications = await service.GetAuthorsNotifications(author!.UserName!, false); 
         
         var res = new JsonResult(newNotifications); 
-        Console.WriteLine($"Sending: {res.ToJson()}");
 
         return new JsonResult(newNotifications);
     }
