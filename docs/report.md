@@ -23,6 +23,15 @@ Provide an illustration of your domain model. Make sure that it is correct and c
 ## Architecture — In the small
 Illustrate the organization of your code base. That is, illustrate which layers exist in your (onion) architecture. Make sure to illustrate which part of your code is residing in which layer.
 ![Illustration of the _Chirp!_ onion architecture.](images/onion.svg)
+As the illustration shows, the _Chirp!_ application is organized in an onion architecture.
+The onion architecture pattern has the benefits of making the code highly modular. The dependencies go inwards only,
+which means that the inner layers are not dependent on the outer layers. This makes it easy to replace layer implementations,
+allowing for a high degree of flexibility and testability.
+
+At the core are the entities of the domain model, which are stored in the SQLite database.
+At the 
+
+At the core are the entities of the domain model.
 ## Architecture of deployed application
 Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
 ## User activities
@@ -37,7 +46,6 @@ Make sure that your illustration is complete. That is, likely for many of you th
 
 ## Build, test, release, and deployment
 Illustrate with a UML activity diagram how your Chirp! applications are build, tested, released, and deployed. That is, illustrate the flow of activities in your respective GitHub Actions workflows.
-
 Describe the illustration briefly, i.e., how your application is built, tested, released, and deployed.
 ## Team work
 Show a screenshot of your project board right before hand-in. Briefly describe which tasks are still unresolved, i.e., which features are missing from your applications or which functionality is incomplete.
