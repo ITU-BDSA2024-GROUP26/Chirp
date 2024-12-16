@@ -12,12 +12,6 @@ public class Author : IdentityUser
     [Required]
     public ICollection<Author>? FollowingList { get; set; }
 
-    public bool FollowsAuthor(Author authorToCheck) 
-    {
-        if(FollowingList == null) { return false; }
-        return FollowingList.Contains(authorToCheck); 
-    }
-
     public bool FollowsAuthor(string authorNameToCheck) 
     {
         if(FollowingList == null) { return false; }
