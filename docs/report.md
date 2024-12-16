@@ -39,6 +39,34 @@ Make sure that your illustration is complete. That is, likely for many of you th
 Illustrate with a UML activity diagram how your Chirp! applications are build, tested, released, and deployed. That is, illustrate the flow of activities in your respective GitHub Actions workflows.
 
 Describe the illustration briefly, i.e., how your application is built, tested, released, and deployed.
+![Diagram of our deployment workflow](images/deployazure.svg)
+Note: I have taken the liberty of making the lines from negative conditions red, to make the diagram more readable considering that there are a considerable amount of points of failure. In addition, some repetitive steps(like checking out the repository, cleaning up ect) have been omitted
+
+Note that the diagram doesn't include the release process, since it wasn't a part of the process at the time of writing(Essentially we let Chirp be a web-only application). 
+
+In our case a successful deployment requires 4 parallel processes to all succeed, where 3 of these are tests. In the diagram these sub-processes are marked within the larger *Deploy to Azure* process. They are, from left to right 
+- Test Migration: 
+  - This workflow ensures that any possible migrations the deployment might want to apply to the production database won't break anything, by mimicking the migration 1:1. Obviously this would be unfeasible in a larger application with a db of many TBs, here you would instead create a database with an identical schema and seed it with some small, representative sample of the real database.
+  - This is important as we have one *persistant* database across Chirp's entire lifetime, instead of just pushing a *chirp.db* file with every deployment(thus resetting the database on every deployment, which seemed undesirable) 
+- Unit/Integration tests: 
+  - By far the simplest of the test workflows. Here we just figure out what test projects exit(omitting UI-tests since they require a lot of additional set-up) and then run those test projects in parallel. 
+- UI Tests: 
+  - The bulk of this workflow is in setting up for the UI tests. The way they are implemented, the test runner expects an up to date Chirp.Web binary in it's own bin/ folder. Whatever binary is there is what will be tested, so for accurate tests we have to make sure we export the newest version of Chirp.Web. 
+  - In addition to that, Playwright just has a lot of large dependencies(powershell and several browsers(who we cache since they take up ~500MB)) that aren't installed by default on the github actions machines. 
+- Deployment Setup 
+  - Here we build the Chirp.Web project binaries that we want to deploy as well as the bundled migration we (might) want to apply to the production database. Note that we always push a bundle, even if there is no new migrations to apply. In that case nothing happens when you try to apply the migration on the server. Naturally we can't deploy if we fail to generate either of these artifacts, but this step should usually succeed. 
+
+If a single step fails, the entire workflow fails and nothing will be deployed. 
+
+### Issues/Points of improvement 
+As one can see, there is a few instances of redundancy in the workflow. The worst offender is probably the fact that we generate the exact same migration bundle and Chirp.Web binaries twice; once for testing and once for the actual deployment. Redudancy in, say, setup dotnet is immaterial considering how little time that action usually takes to execute. 
+
+The reason for this redundancy is that the three test-workflows of the deployment workflows are, in Github actions, an entirely different workflow which is called on every push to every branch. The deployment workflow just calls this workflow and has the actual deployment action depend on it's success. 
+
+This then also means that every push on main has the same tests run on it twice; the test workflow is triggered once directly by the push and once by the deployment workflow. 
+
+The double generation of the migration bundle and Chirp.Web binaries could be solved by having the binaries as an output of the Test workflow and input of the Deployment workflow, and the double running of the tests could be solved by either having the test workflow explicitly only trigger on *non-main* branches or by having the deployment workflow query if a successful test run on the same commit exists. 
+
 ## Team work
 Show a screenshot of your project board right before hand-in. Briefly describe which tasks are still unresolved, i.e., which features are missing from your applications or which functionality is incomplete.
 
