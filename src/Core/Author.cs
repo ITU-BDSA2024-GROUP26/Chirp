@@ -12,7 +12,7 @@ public class Author : IdentityUser
     [Required]
     public ICollection<Author>? FollowingList { get; set; }
 
-    public bool FollowsAuthor(string authorNameToCheck) 
+    public bool FollowsAuthor(string author) 
     {
         if(FollowingList == null) { return false; }
 
@@ -20,7 +20,7 @@ public class Author : IdentityUser
         {
             // returns the first element that matches the condition. If no file matches it, throws an 
             // InvalidOperationException if no such file exists. A little janky but should work
-            FollowingList.First(following => following.UserName == authorNameToCheck);
+            FollowingList.First(following => following.UserName == author);
         }
         catch (InvalidOperationException)
         {
