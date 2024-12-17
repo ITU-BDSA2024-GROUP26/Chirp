@@ -34,7 +34,7 @@ Additionally, each entity has a corresponding DTO (Data Transfer Object) as to o
 Illustrate the organization of your code base. That is, illustrate which layers exist in your (onion) architecture. Make sure to illustrate which part of your code is residing in which layer.
 ![Illustration of the _Chirp!_ onion architecture.](images/onion.svg)
 As the illustration shows, the _Chirp!_ application is organized in an onion architecture.
-The onion architecture pattern has the benefits of making the code highly modular. The dependencies go inwards only,
+The onion architecture pattern has the benefits of making the code highly modular. The dependencies exclusively go inwards,
 which means that the inner layers are not dependent on the outer layers. This makes it easy to replace layer implementations,
 allowing for a high degree of flexibility and testability.
 
