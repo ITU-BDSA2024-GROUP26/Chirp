@@ -18,7 +18,17 @@ Here comes a description of our domain model.
 
 Provide an illustration of your domain model. Make sure that it is correct and complete. In case you are using ASP.NET Identity, make sure to illustrate that accordingly.
 
-![Illustration of the _Chirp!_ data model as UML class diagram.](docs/images/domain_model.png)
+![Illustration of the _Chirp!_ data model as UML class diagram.](images/domain_model_uml.drawio.svg)
+
+_Chirp_ has three entities: Author, Cheep, and Notification. Using Entity Framework Core (EF Core), these entities are mapped to tables in an SQLite database and LINQ queries are used to interact with the database.
+- An `Author` represents the user of the application. It inherits from ASP.NET IdentityUser, which handles user authentication and authorization. Each author has a unique username and the ability to follow other authors.
+- A `Cheep` is a message that an author can post. A timestamp is added to each cheep when it is created as well.
+- A `Notification` is sent to all followers of a cheep's author, when it is posted. If an author is tagged in a cheep by starting it with `@<Username>` a notification is sent to the tagged author as well.
+
+Each entity has a corresponding repository that is responsible for reading and writing to the database.
+Additionally, each entity has a corresponding DTO (Data Transfer Object) as to only transfer the necessary data to the presentation layer.
+
+  
 
 ## Architecture — In the small
 Illustrate the organization of your code base. That is, illustrate which layers exist in your (onion) architecture. Make sure to illustrate which part of your code is residing in which layer.
