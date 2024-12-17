@@ -80,7 +80,7 @@ This then also means that every push on main has the same tests run on it twice;
 The double generation of the migration bundle and Chirp.Web binaries could be solved by having the binaries as an output of the Test workflow and input of the Deployment workflow, and the double running of the tests could be solved by either having the test workflow explicitly only trigger on *non-main* branches or by having the deployment workflow query if a successful test run on the same commit exists. 
 
 ## Team work
-Below is an image of our project board on GitHub right before hand-in. As seen in the picture there are unfinished issues. The unfinished issues are from the wild style week that aren't implemented due to focusing on higher priority issues based on the project requirements or time constraints.
+Below is an image of our project board on GitHub right before hand-in. As seen in the picture there are unfinished issues. The unfinished issues are from the wild style week that aren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it is visible that each issue are assigned to one or more team members. 
 ![Illustration of issue activities](images/Project_board.png)
 
 When issues were created a person/persons were assigned for the responsibility of the new feature. The responsible person creates a branch and starts working on the issue. Once an issue is done the assigned person submits a pull request and the PR is tested and reviewed by another team member that hasn't worked on the specific issue. This part of the timeline is iterative, meaning that if the PR is not approved or fails tests, the assigned person will continuously improve it until it is approved, and the branch is successfully merged into the main branch. After this step will the issue be moved to ‘Done’ on our project board.
@@ -88,8 +88,6 @@ When issues were created a person/persons were assigned for the responsibility o
 ![Illustration of issue activities](images/Issue_Diagram.svg)
 
 ## How to make _Chirp!_ work locally
-There has to be some documentation on how to come from cloning your project to a running system. That is, Adrian or Helge have to know precisely what to do in which order. Likely, it is best to describe how we clone your project, which commands we have to execute, and what we are supposed to see then
-
 How to Git Clone and Run the Program: 
 
 1. Open a new terminal window at the preferred directory and run the following command: 
@@ -121,6 +119,56 @@ Clicking on the link will direct to the locally run Chirp! application.
 List all necessary steps that Adrian or Helge have to perform to execute your test suites. Here, you can assume that we already cloned your repository in the step above.
 
 Briefly describe what kinds of tests you have in your test suites and what they are testing.
+
+
+To run test on the unit tests, you have to have powershell as well as dotnet and Playwright installed. 
+
+How to install powershell:
+
+1. Linux: `sudo apt update && sudo apt install \-y powershell`
+
+2. MacOS: `brew install \--cask powershell`
+
+3. Windows: You can skip this step if you are using powershell. 
+
+How to install Playwright:
+
+1. Go to the root directory of the project
+
+2. Run the following command: `./tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install`
+
+How to run test suite locally:
+
+1. Navigate to the Chirp directory.
+
+2. Run `scripts/setup_UI_tests.sh`
+
+3. Ensure it has execute permissions  (on Linux/MacOS)
+
+    1. Run the command: `chmod +x scripts/setup_UI_tests.sh`
+
+    2. Run the command: `./scripts/setup_UI_tests.sh`
+
+4. Run the tests by using the command: `dotnet test`
+
+
+The different test suites:
+
+Our webapplication Chirp includes three test suites. 
+
+1. Repository.Tests
+
+2. Service.Test
+
+3. Web.UITest
+
+The Repository.Test folder contains unit and integration tests for the functionality of the repository classes within the Chirp application. 
+
+The Service.Test folder contains unit tests for validating the functionality of the Cheepservice class within the Chirp application.  
+
+The Web.UITest folder contains UI tests that were made using Playwright. The UI tests tests the user interface, and the user interactions of our webapplication, Chirp!. 
+
+
 # Ethics
 
 ## License
@@ -129,9 +177,7 @@ State which software license you chose for your application.
 We have chosen the standard MIT License for its simplicity and widespread use. The license is commonly used with the .NET, which is the main platform we are working with.
 
 ## LLMs, ChatGPT, CoPilot, and others
-State which LLM(s) were used during development of your project. In case you were not using any, just state so. In case you were using an LLM to support your development, briefly describe when and how it was applied. Reflect in writing to which degree the responses of the LLM were helpful. Discuss briefly if application of LLMs sped up your development or if the contrary was the case.
+During the development of our project, we used the following LLMs: ChatGPT GitHub and Copilot. ChatGPT was primarily used when we needed clarification, a better overview, boilerplate code or help understanding specific errors and bugs that we couldn't resolve within the group. It assisted us through the project development with issues and questions, where the textbook material wasn't enough to guide us. On the other hand, Copilot was more code-specific, directly assisting us in writing and completing code.
 
-During the development of our project, we used the following LLMs: ChatGPT GitHub and Copilot. ChatGPT was primarily used when we needed clarification, a better overview, boilerplate code or help understanding specific errors and bugs that we couldn't resolve within the group. It assisted us through the project development with issues and questions where the textbook material wasn't enough to guide us. On the other hand, Copilot was more code-specific, directly assisting us in writing and completing code.
-
-Both of the LLMs improved our productivity by saving time on repetitive tasks, such as generating boilerplate code or rewriting previously written code by the group. The biggest disadvantage we noticed when using ChatGPT, was that we had to be careful with our prompts and know exaclty what we wanted to ask, to receive relevant and helpful responses. At times, especially for obscure code-related issues, ChatGPT's answers weren't useful, requiring us to either rephrase our questions, or simply not rely on ChatGPT for that issue.
+Both of the LLMs improved our productivity by saving time on repetitive tasks, such as generating boilerplate code or rewriting previously written code by the group.  The biggest disadvantage we noticed when using ChatGPT, was that we had to be careful with our prompts and know exaclty what we wanted to ask, to receive relevant and helpful responses. At times, especially for obscure code-related issues, ChatGPT's answers weren't useful, requiring us to either rephrase our questions, or simply not rely on ChatGPT for that issue.
 
