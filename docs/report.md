@@ -28,10 +28,14 @@ The onion architecture pattern has the benefits of making the code highly modula
 which means that the inner layers are not dependent on the outer layers. This makes it easy to replace layer implementations,
 allowing for a high degree of flexibility and testability.
 
-At the core are the entities of the domain model, which are stored in the SQLite database.
-At the 
-
-At the core are the entities of the domain model.
+- Core:
+  - At the core are the entities of the domain model. As the program uses EF Core, the entities are also tables in an SQLite database
+- Second layer:
+  - In the second layer, we have our repositories, which are responsible for reading and writing to the database. Each domain model gets one repository. Additionally, we have a DBRepository, which is responsible for general database operations, that are not tied to a specific domain model. Currently, it has two methods, one for seeding the database and one for resetting it.
+- Third layer:
+  - The CheepService resides in the third layer and is responsible for the business logic of the application. All the razor pages have a reference to an instance of the service.
+- The outermost layer: 
+  - The presentation layer. It has the razor pages and the controllers. This layer is responsible for tying it all together as well as rendering UI rendering
 ## Architecture of deployed application
 Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
 ## User activities
