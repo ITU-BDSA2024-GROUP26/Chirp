@@ -39,13 +39,9 @@ allowing for a high degree of flexibility and testability.
 ## Architecture of deployed application
 Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
 ## User activities
-Illustrate typical scenarios of a user journey through your Chirp! application. That is, start illustrating the first page that is presented to a non-authorized user, illustrate what a non-authorized user can do with your Chirp! application, and finally illustrate what a user can do after authentication.
-
 ![Illutration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.svg)
+The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The potential user journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
 
-The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
-
-Make sure that the illustrations are in line with the actual behavior of your application.
 ## Sequence of functionality/calls trough _Chirp!_
 With a UML sequence diagram, illustrate the flow of messages and data through your Chirp! application. Start with an HTTP request that is send by an unauthorized user to the root endpoint of your application and end with the completely rendered web-page that is returned to the user.
 
@@ -84,9 +80,12 @@ This then also means that every push on main has the same tests run on it twice;
 The double generation of the migration bundle and Chirp.Web binaries could be solved by having the binaries as an output of the Test workflow and input of the Deployment workflow, and the double running of the tests could be solved by either having the test workflow explicitly only trigger on *non-main* branches or by having the deployment workflow query if a successful test run on the same commit exists. 
 
 ## Team work
-Show a screenshot of your project board right before hand-in. Briefly describe which tasks are still unresolved, i.e., which features are missing from your applications or which functionality is incomplete.
+Below is an image of our project board on GitHub right before hand-in. As seen in the picture there are unfinished issues. The unfinished issues are from the wild style week that aren't implemented due to focusing on higher priority issues based on the project requirements or time constraints.
+![Illustration of issue activities](images/Project_board.png)
 
-Briefly describe and illustrate the flow of activities that happen from the new creation of an issue (task description), over development, etc. until a feature is finally merged into the main branch of your repository.
+When issues were created a person/persons were assigned for the responsibility of the new feature. The responsible person creates a branch and starts working on the issue. Once an issue is done the assigned person submits a pull request and the PR is tested and reviewed by another team member that hasn't worked on the specific issue. This part of the timeline is iterative, meaning that if the PR is not approved or fails tests, the assigned person will continuously improve it until it is approved, and the branch is successfully merged into the main branch. After this step will the issue be moved to ‘Done’ on our project board.
+
+![Illustration of issue activities](images/Issue_Diagram.svg)
 
 ## How to make _Chirp!_ work locally
 There has to be some documentation on how to come from cloning your project to a running system. That is, Adrian or Helge have to know precisely what to do in which order. Likely, it is best to describe how we clone your project, which commands we have to execute, and what we are supposed to see then
