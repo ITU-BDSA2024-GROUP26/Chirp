@@ -107,10 +107,10 @@ How to Git Clone and Run the Program:
 
 5. Once in the web directory, run the program: 
 
-    1. To run the program on Windows, write following command: 
-    `$env:ASPNETCORE_ENVIRONMENT= "Development"`
+    1. To run the program on Windows, write following command : 
+    `&{ $env:ASPNETCORE_ENVIRONMENT = "Development"; dotnet run}`
 
-    2. To run the program on MacOS, write following command: 
+    2. To run the program on MacOS and Linux, write following command: 
     `ASPNETCORE_ENVIRONMENT=Development dotnet run`
      
 Once the build has finished, this line should be visible containing a link to the localhost:  
@@ -132,7 +132,7 @@ We have chosen the standard MIT License for its simplicity and widespread use. T
 ## LLMs, ChatGPT, CoPilot, and others
 State which LLM(s) were used during development of your project. In case you were not using any, just state so. In case you were using an LLM to support your development, briefly describe when and how it was applied. Reflect in writing to which degree the responses of the LLM were helpful. Discuss briefly if application of LLMs sped up your development or if the contrary was the case.
 
-During the development of our project, we used the following LLMs: ChatGPT GitHub and Copilot. ChatGPT was primarily used when we needed clarification, a better overview, or help understanding specific errors and bugs that we couldn't resolve within the group. It assisted us through the project development with issues and questions where the textbook material wasn't enough to guide us. On the other hand, Copilot was more code-specific, directly assisting us in writing and completing code.
+During the development of our project, we used the following LLMs: ChatGPT GitHub and Copilot. ChatGPT was primarily used when we needed clarification, a better overview, boilerplate code or help understanding specific errors and bugs that we couldn't resolve within the group. It assisted us through the project development with issues and questions where the textbook material wasn't enough to guide us. On the other hand, Copilot was more code-specific, directly assisting us in writing and completing code.
 
 Both of the LLMs improved our productivity by saving time on repetitive tasks, such as generating boilerplate code or rewriting previously written code by the group. The biggest disadvantage we noticed when using ChatGPT, was that we had to be careful with our prompts and know exaclty what we wanted to ask, to receive relevant and helpful responses. At times, especially for obscure code-related issues, ChatGPT's answers weren't useful, requiring us to either rephrase our questions, or simply not rely on ChatGPT for that issue.
 
