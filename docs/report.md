@@ -23,10 +23,27 @@ Provide an illustration of your domain model. Make sure that it is correct and c
 ## Architecture — In the small
 Illustrate the organization of your code base. That is, illustrate which layers exist in your (onion) architecture. Make sure to illustrate which part of your code is residing in which layer.
 ![Illustration of the _Chirp!_ onion architecture.](images/onion.svg)
+As the illustration shows, the _Chirp!_ application is organized in an onion architecture.
+The onion architecture pattern has the benefits of making the code highly modular. The dependencies go inwards only,
+which means that the inner layers are not dependent on the outer layers. This makes it easy to replace layer implementations,
+allowing for a high degree of flexibility and testability.
+
+- Core:
+  - At the core are the entities of the domain model. As the program uses EF Core, the entities are also tables in an SQLite database
+- Second layer:
+  - In the second layer, we have our repositories, which are responsible for reading and writing to the database. Each domain model gets one repository. Additionally, we have a DBRepository, which is responsible for general database operations, that are not tied to a specific domain model. Currently, it has two methods, one for seeding the database and one for resetting it.
+- Third layer:
+  - The CheepService resides in the third layer and is responsible for the business logic of the application. All the razor pages have a reference to an instance of the service.
+- The outermost layer: 
+  - The presentation layer. It has the razor pages and the controllers. This layer is responsible for tying it all together as well as rendering UI rendering
 ## Architecture of deployed application
 Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
 ## User activities
 Illustrate typical scenarios of a user journey through your Chirp! application. That is, start illustrating the first page that is presented to a non-authorized user, illustrate what a non-authorized user can do with your Chirp! application, and finally illustrate what a user can do after authentication.
+
+![Illutration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.svg)
+
+The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
 
 Make sure that the illustrations are in line with the actual behavior of your application.
 ## Sequence of functionality/calls trough _Chirp!_
@@ -37,7 +54,6 @@ Make sure that your illustration is complete. That is, likely for many of you th
 
 ## Build, test, release, and deployment
 Illustrate with a UML activity diagram how your Chirp! applications are build, tested, released, and deployed. That is, illustrate the flow of activities in your respective GitHub Actions workflows.
-
 Describe the illustration briefly, i.e., how your application is built, tested, released, and deployed.
 ![Diagram of our deployment workflow](images/deployazure.svg)
 Note: I have taken the liberty of making the lines from negative conditions red, to make the diagram more readable considering that there are a considerable amount of points of failure. In addition, some repetitive steps(like checking out the repository, cleaning up ect) have been omitted
