@@ -105,7 +105,7 @@ How to Git Clone and Run the Program:
 5. Once in the web directory, run the program: 
 
     1. To run the program on Windows, write following command : 
-    `&{ $env:ASPNETCORE_ENVIRONMENT = "Development"; dotnet run}`
+    `& { $env:ASPNETCORE_ENVIRONMENT = "Development"; dotnet run }`
 
     2. To run the program on MacOS and Linux, write following command: 
     `ASPNETCORE_ENVIRONMENT=Development dotnet run`
