@@ -119,6 +119,56 @@ Clicking on the link will direct to the locally run Chirp! application.
 List all necessary steps that Adrian or Helge have to perform to execute your test suites. Here, you can assume that we already cloned your repository in the step above.
 
 Briefly describe what kinds of tests you have in your test suites and what they are testing.
+
+
+To run test on the unit tests, you have to have powershell as well as dotnet and Playwright installed. 
+
+How to install powershell:
+
+1. Linux: `sudo apt update && sudo apt install \-y powershell`
+
+2. MacOS: `brew install \--cask powershell`
+
+3. Windows: You can skip this step if you are using powershell. 
+
+How to install Playwright:
+
+1. Go to the root directory of the project
+
+2. Run the following command: `./tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install`
+
+How to run test suite locally:
+
+1. Navigate to the Chirp directory.
+
+2. Run `scripts/setup_UI_tests.sh`
+
+3. Ensure it has execute permissions  (on Linux/MacOS)
+
+    1. Run the command: `chmod +x scripts/setup_UI_tests.sh`
+
+    2. Run the command: `./scripts/setup_UI_tests.sh`
+
+4. Run the tests by using the command: `dotnet test`
+
+
+The different test suites:
+
+Our webapplication Chirp includes three test suites. 
+
+1. Repository.Tests
+
+2. Service.Test
+
+3. Web.UITest
+
+The Repository.Test folder contains unit and integration tests for the functionality of the repository classes within the Chirp application. 
+
+The Service.Test folder contains unit tests for validating the functionality of the Cheepservice class within the Chirp application.  
+
+The Web.UITest folder contains UI tests that were made using Playwright. The UI tests tests the user interface, and the user interactions of our webapplication, Chirp!. 
+
+
 # Ethics
 
 ## License
