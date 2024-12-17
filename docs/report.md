@@ -26,13 +26,9 @@ Illustrate the organization of your code base. That is, illustrate which layers 
 ## Architecture of deployed application
 Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
 ## User activities
-Illustrate typical scenarios of a user journey through your Chirp! application. That is, start illustrating the first page that is presented to a non-authorized user, illustrate what a non-authorized user can do with your Chirp! application, and finally illustrate what a user can do after authentication.
-
 ![Illutration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.svg)
+The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The potential user journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
 
-The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
-
-Make sure that the illustrations are in line with the actual behavior of your application.
 ## Sequence of functionality/calls trough _Chirp!_
 With a UML sequence diagram, illustrate the flow of messages and data through your Chirp! application. Start with an HTTP request that is send by an unauthorized user to the root endpoint of your application and end with the completely rendered web-page that is returned to the user.
 
