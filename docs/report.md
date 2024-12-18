@@ -18,29 +18,27 @@ Here comes a description of our domain model.
 
 ![Illustration of the _Chirp!_ data model as UML class diagram.](images/domain_model_uml.drawio.svg)
 
-_Chirp_ has three entities: Author, Cheep, and Notification. Using Entity Framework Core (EF Core), these entities are mapped to tables in a SQLite database, and LINQ queries are used to interact with the database.
-- An `Author` represents the user of the application. It inherits from ASP.NET IdentityUser, which handles user authentication and authorization. Each author has a unique username and the ability to follow other authors.
-- A `Cheep` is a message that an author can post. A timestamp is added to each cheep when it is created as well.
-- A `Notification` is sent to all followers of a cheep's author when it is posted. If an author is tagged in a cheep by starting it with `@<Username>`, a notification is sent to the tagged author as well.
+_Chirp_ has three entities: Author, Cheep, and Notification. Using Entity Framework Core (EF Core), these entities are mapped to tables in an SQLite database, and LINQ queries are used to interact with the database.
+- An `Author` represents a user of the application. It inherits from ASP.NET IdentityUser, which handles user authentication and authorization. Each author has a unique username, the ability to follow other authors and to send cheeps.
+- A `Cheep` is a message that an author can post. A current timestamp is added to each cheep when it's created.
+- A `Notification` is an object which contains information about how to notify a specific user about a specific cheep. Whenever an author cheeps, notifications will be created for all his followers. Additionally, an author can be tagged in a cheep if it contains his username with the format `@<Username> `. In that case a notification is also created for the tagged user. Tagging take priority over following; if a user tags a follower, the follower will only recieve the tag-notification. 
 
-Each entity has a corresponding repository class responsible for reading and writing to the database.
-Additionally, each entity has a corresponding DTO (Data Transfer Object) to transfer only the necessary data to the presentation layer.
-
-  
+Each entity has a corresponding repository class responsible for interacting with the database.
+Additionally, each entity has a corresponding DTO (Data Transfer Object) which transfers only necessary data to the presentation layer.
 
 ## Architecture — In the small
 
 ![Illustration of the _Chirp!_ onion architecture.](images/onion.svg)
-As the illustration shows, the _Chirp!_ application is organized using the onion architecture.
-This pattern has the benefit of making the code highly modular. The dependencies exclusively go inwards,
-meaning that the inner layers are not dependent on the outer layers. This makes it easy to replace layer implementations, allowing for a high degree of flexibility and testability.
+As the illustration shows, the _Chirp!_ application is organized using onion architecture.
+
+This pattern makes the code highly modular. Dependencies exclusively go inwards, which means inner layers are not dependent on outer layers. This ensures low coupling, making it easy to replace layer implementations, which allows for a high degree of flexibility and testability.
 
 - Core:
   - At the core are the entities of the domain model. That is the `Cheep`, `Author`, and `Notification` classes. Their respective DTO's also reside in this layer.
 - Second layer:
-  - In the second layer, we have our repositories, which are responsible for reading and writing to the database. Each domain model has one repository. Additionally, we have a `DBRepository`, which is responsible for general database operations that are not tied to a specific domain model. Currently, it includes two methods, one for seeding the database and one for resetting it.
+  - The second layer contains the repositories who interact with the database. Each domain model corresponds to one repository. Additionally, we have a `DBRepository` which is responsible for general database operations not tied to a specific domain model. Currently, it includes two methods, one for seeding the database and one for resetting it.
 - Third layer:
-  - The `CheepService` resides in the third layer and is responsible for the business logic of the application. All the razor pages have a reference to an instance of the service. Calling it `CheepService` instead of `ChirpService` is a bit of a misnomer, as it also handles the business logic for the `Author` and `Notification` entities. However, we wanted to maintain the same name as in the project description.
+  - `CheepService` resides in the third layer and is responsible for the business logic of the application. All razor pages have a reference to an instance of the service. The service is responsible for encapsulating domain model entities into DTO's. Naming it `CheepService` instead of `ChirpService` is a bit of a misnomer, as it also handles the business logic for the `Author` and `Notification` entities. However, we wanted to maintain the same name as in the project description.
 - The outermost layer: 
   - The presentation layer, which includes the Razor pages, controllers, and the `program.cs` file. This layer is responsible for tying everything together and rendering the UI. 
 
