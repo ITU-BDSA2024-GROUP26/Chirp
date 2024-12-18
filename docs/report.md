@@ -51,14 +51,22 @@ Illustrate the architecture of your deployed application. Remember, you develope
 
 ![Diagram of the deployed application](images/deployment_uml.drawio.svg)
 
-As one can see, our backend architecture consists of two components we host on Azure as well as an external authentication provider(Github). Our server components are
+As one can see, our backend architecture consists of two components we host on Azure as well as an external authentication provider(Github). Our server components are:
 - An Azure App Service instance running our Chirp.Web application
 - AN Azure File Share where we host our database, to enable persistance and let it scale to more than the 1 GB provided by Azure App Service. 
   - The file share is mounted to the app service and the app service has been granted read and write permissions to the fileshare. 
   - The file share contains a `chirp.db` file which is an Sqlite3 database. 
   - On deployment the App Service executes a `startup.sh` script, which attempts to run a provided migration bundle against the `chirp.db` file. If there are no new migrations/no changes to the database schema, nothing happens. If there are changes, the database schema is updated. We have a *Migration test* that tests this scenario. 
 
-Clients communicate to our server via HTTP requests, where they can ``GET`` various pages and notifications, ``POST`` cheeps, authentication requests(logging in), requests to follow and requests to download or delete their user data. 
+Clients communicate to our server via HTTP requests, where they can ``GET``:
+- the pages(endpoints) of the application
+- notifications(if authorized)  
+
+and can ``POST``: 
+- cheeps 
+- authorization requests(logging in) 
+- requests to follow 
+- requests to download or delete their user data. 
 
 Users can also log in via one third party service, Github. Here they first ask our server to do that, which then redirects them to Github's authorization servers. Here they authenticate themselves via their Github-account and are then redirected back to our server which they provide with an access token. Our server then sends this token to the Github authorization server, who if valid sends back username and email, after which our server creates or logs the user in and then finally can return a logged-in page to the user. 
 
