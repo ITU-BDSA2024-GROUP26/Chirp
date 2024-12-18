@@ -74,11 +74,14 @@ Users can also log in via one third party service, Github. Here they first ask o
 ![Illutration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.svg)
 The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The potential user journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
 
-## Sequence of functionality/calls trough _Chirp!_
+## Sequence of functionality/calls through _Chirp!_
 With a UML sequence diagram, illustrate the flow of messages and data through your Chirp! application. Start with an HTTP request that is send by an unauthorized user to the root endpoint of your application and end with the completely rendered web-page that is returned to the user.
 
 Make sure that your illustration is complete. That is, likely for many of you there will be different kinds of "calls" and responses. Some HTTP calls and responses, some calls and responses in C# and likely some more. (Note the previous sentence is vague on purpose. I want that you create a complete illustration.)
-![Illutration of sequence of functionality.](images/sqcall.drawio.png)
+ 
+The following UML diagram illustrates the flow of messages through the Chirp! application. Although, it isn't shown explicitly on the diagram, the sequence of calls begins with an unauthorized user requesting to see the default public timeline page and ends with the same user receiving the fully rendered web-page. 
+![Illutration of calls trough _Chirp!_ with an unauthorized user.](images/sqcall.drawio.png)
+
 # Process
 
 ## Build, test, release, and deployment
