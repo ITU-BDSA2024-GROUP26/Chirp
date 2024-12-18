@@ -48,6 +48,20 @@ allowing for a high degree of flexibility and testability.
   - The presentation layer. It has the razor pages and the controllers. This layer is responsible for tying it all together as well as rendering UI rendering
 ## Architecture of deployed application
 Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
+
+![Diagram of the deployed application](images/deployment_uml.drawio.svg)
+
+As one can see, our backend architecture consists of two components we host on Azure as well as an external authentication provider(Github). Our server components are
+- An Azure App Service instance running our Chirp.Web application
+- AN Azure File Share where we host our database, to enable persistance and let it scale to more than the 1 GB provided by Azure App Service. 
+  - The file share is mounted to the app service and the app service has been granted read and write permissions to the fileshare. 
+  - The file share contains a `chirp.db` file which is an Sqlite3 database. 
+  - On deployment the App Service executes a `startup.sh` script, which attempts to run a provided migration bundle against the `chirp.db` file. If there are no new migrations/no changes to the database schema, nothing happens. If there are changes, the database schema is updated. We have a *Migration test* that tests this scenario. 
+
+Clients communicate to our server via HTTP requests, where they can ``GET`` various pages and notifications, ``POST`` cheeps, authentication requests(logging in), requests to follow and requests to download or delete their user data. 
+
+Users can also log in via one third party service, Github. Here they first ask our server to do that, which then redirects them to Github's authorization servers. Here they authenticate themselves via their Github-account and are then redirected back to our server which they provide with an access token. Our server then sends this token to the Github authorization server, who if valid sends back username and email, after which our server creates or logs the user in and then finally can return a logged-in page to the user. 
+
 ## User activities
 ![Illutration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.svg)
 The typical scenarios of a user journey through our Chirp! webapplication are displayed in the Diagram above. The potential user journey begins with opening the webapplication as a non-authorized user being only able to visit the public timeline, visit users from public timelines pages, login as an authorized user and register as such. In addition to the user journey in the illustration, the user can logout of the application from every page. 
@@ -130,10 +144,22 @@ List all necessary steps that Adrian or Helge have to perform to execute your te
 
 Briefly describe what kinds of tests you have in your test suites and what they are testing.
 
+The different test suites:
 
-To run test on the unit tests, you have to have powershell as well as dotnet and Playwright installed. 
+Our webapplication Chirp includes three test suites. 
 
-How to install powershell:
+1. Repository.Tests
+   - The Repository.Test folder contains unit and integration tests for the functionality of the repository classes within the Chirp application. 
+
+2. Service.Test
+   - The Service.Test folder contains unit and integration tests for validating the functionality of the Cheepservice class within the Chirp application, which essentially just routes calls to the repositories, making sure domain objects are converted to DTO's. 
+
+3. Web.UITest
+   - The Web.UITest folder contains UI tests that were made using Playwright. The UI tests whether a user can perform the various actions possible in Chirp and if the result of those actions is what we expect.
+
+Before you can run the unit tests you need to have powershell installed and Playwright browsers and other dependencies in your `Web.UITest/bin/` folder.
+
+How to install powershell(if not already installed):
 
 1. Linux: `sudo apt update && sudo apt install \-y powershell`
 
@@ -141,43 +167,27 @@ How to install powershell:
 
 3. Windows: You can skip this step if you are using powershell. 
 
-How to install Playwright:
+How to install Playwright browsers:
 
 1. Go to the root directory of the project
 
-2. Run the following command: `./tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install`
+2. Run `dotnet build`
+
+3. Run the following command: `./tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install`
 
 How to run test suite locally:
 
-1. Navigate to the Chirp directory.
+1. Go to the root directory of the project
 
-2. Run `scripts/setup_UI_tests.sh`
-
-3. Ensure it has execute permissions  (on Linux/MacOS)
+2. Ensure the setup script has execute permissions  (on Linux/MacOS)
 
     1. Run the command: `chmod +x scripts/setup_UI_tests.sh`
 
-    2. Run the command: `./scripts/setup_UI_tests.sh`
+3. Run `scripts/setup_UI_tests.sh`
+   - This script builds the UITest project(so we are sure that a relevant `/bin` folder exists), then builds and publishes `Chirp.Web` into that folder such that the UI-tests can launch a local instance of the app to run the UI tests against. 
+   - Note that if you installed playwright browsers in the previous step building the UITest project is redundant, but it allows us to just run this script and then `dotnet test` as long as the playwright browsers ect. stay in the `/bin` folder.  
 
 4. Run the tests by using the command: `dotnet test`
-
-
-The different test suites:
-
-Our webapplication Chirp includes three test suites. 
-
-1. Repository.Tests
-
-2. Service.Test
-
-3. Web.UITest
-
-The Repository.Test folder contains unit and integration tests for the functionality of the repository classes within the Chirp application. 
-
-The Service.Test folder contains unit tests for validating the functionality of the Cheepservice class within the Chirp application.  
-
-The Web.UITest folder contains UI tests that were made using Playwright. The UI tests tests the user interface, and the user interactions of our webapplication, Chirp!. 
-
 
 # Ethics
 
