@@ -14,9 +14,9 @@ numbersections: true
 
 ## Domain model
 
---FJERN-- Here comes a description of our domain model.
+Here comes a description of our domain model.
 
---FJERN-- Provide an illustration of your domain model. Make sure that it is correct and complete. In case you are using ASP.NET Identity, make sure to illustrate that accordingly.
+Provide an illustration of your domain model. Make sure that it is correct and complete. In case you are using ASP.NET Identity, make sure to illustrate that accordingly.
 
 ![Illustration of the _Chirp!_ data model as UML class diagram.](images/domain_model_uml.drawio.svg)
 
@@ -48,7 +48,7 @@ allowing for a high degree of flexibility and testability.
   - The presentation layer. It has the razor pages, controllers and the `program.cs` file. This layer is responsible for tying it all together as well as rendering the UI
 
 ## Architecture of deployed application
---FJERN-- Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
+Illustrate the architecture of your deployed application. Remember, you developed a client-server application. Illustrate the server component and to where it is deployed, illustrate a client component, and show how these communicate with each other.
 
 ![Diagram of the deployed application](images/deployment_uml.drawio.svg)
 
@@ -82,15 +82,15 @@ Users can also log in via one third party service, GitHub. Under the hood, the p
 The typical scenarios of a user journey through our _Chirp!_ application are displayed in the Diagram above. The potential user journey begins with going to the site. A non-authorized user is only able to visit the public timeline and other authors timelines. If the user registers or logs in, then they send cheeps, follow authors, see their private timeline, download their data, and more. 
 
 ## Sequence of functionality/calls trough _Chirp!_
---FJERN-- With a UML sequence diagram, illustrate the flow of messages and data through your Chirp! application. Start with an HTTP request that is send by an unauthorized user to the root endpoint of your application and end with the completely rendered web-page that is returned to the user.
+With a UML sequence diagram, illustrate the flow of messages and data through your Chirp! application. Start with an HTTP request that is send by an unauthorized user to the root endpoint of your application and end with the completely rendered web-page that is returned to the user.
 
---FJERN-- Make sure that your illustration is complete. That is, likely for many of you there will be different kinds of "calls" and responses. Some HTTP calls and responses, some calls and responses in C# and likely some more. (Note the previous sentence is vague on purpose. I want that you create a complete illustration.)
+Make sure that your illustration is complete. That is, likely for many of you there will be different kinds of "calls" and responses. Some HTTP calls and responses, some calls and responses in C# and likely some more. (Note the previous sentence is vague on purpose. I want that you create a complete illustration.)
 ![Illutration of sequence of functionality.](images/sqcall.drawio.png)
 # Process
 
 ## Build, test, release, and deployment
---FJERN-- Illustrate with a UML activity diagram how your Chirp! applications are build, tested, released, and deployed. That is, illustrate the flow of activities in your respective GitHub Actions workflows.
---FJERN-- Describe the illustration briefly, i.e., how your application is built, tested, released, and deployed.
+Illustrate with a UML activity diagram how your Chirp! applications are build, tested, released, and deployed. That is, illustrate the flow of activities in your respective GitHub Actions workflows.
+Describe the illustration briefly, i.e., how your application is built, tested, released, and deployed.
 ![Diagram of our deployment workflow](images/deployazure.svg)
 Note: We have taken the liberty of making the lines from negative conditions red, to make the diagram more readable considering that there are a considerable amount of points of failure. In addition, some repetitive steps (like checking out the repository, cleaning up ect) have been omitted
 
@@ -133,26 +133,30 @@ How to Git Clone and Run the Program:
 1. Open a new terminal window at the preferred directory and run the following command: 
 `git clone https://github.com/ITU-BDSA2024-GROUP26/Chirp.git`
 
-2. Navigate to the Web project, once the cloning has finished: 
+2. Navigate to the Web project: 
 `cd src/Web`
 
 3. Once in the Web directory, run the program: 
+   - If login with GitHub is wanted, then set the user secrets before running the program:
+         `dotnet user-secrets init`
 
-    1. To run the program on Windows, write following command: 
+   - To run the program on Windows, write following command: 
     `& { $env:ASPNETCORE_ENVIRONMENT = "Development"; dotnet run }`
 
-    2. To run the program on macOS or Linux, write following command: 
+   - To run the program on macOS or Linux, write following command: 
     `ASPNETCORE_ENVIRONMENT=Development dotnet run`
-     
+
+
+
 Once the build has finished, this line should be visible containing a link to the localhost:  
 `Now listening on: http://localhost:5273`
 
 Clicking on the link will direct to the locally run Chirp! application. 
 
 ## How to run test suite locally
---FJERN-- List all necessary steps that Adrian or Helge have to perform to execute your test suites. Here, you can assume that we already cloned your repository in the step above.
+List all necessary steps that Adrian or Helge have to perform to execute your test suites. Here, you can assume that we already cloned your repository in the step above.
 
---FJERN-- Briefly describe what kinds of tests you have in your test suites and what they are testing.
+Briefly describe what kinds of tests you have in your test suites and what they are testing.
 
 _Chirp!_ includes three test suites:
 
@@ -202,8 +206,6 @@ How to run test suite locally:
 # Ethics
 
 ## License
-State which software license you chose for your application.
-
 We have chosen the standard MIT License for its simplicity and widespread use. The license is commonly used with the .NET, which is the main platform we are working with.
 
 ## LLMs, ChatGPT, CoPilot, and others
