@@ -126,23 +126,20 @@ How to Git Clone and Run the Program:
 1. Open a new terminal window at the preferred directory and run the following command: 
 `git clone https://github.com/ITU-BDSA2024-GROUP26/Chirp.git`
 
-2. Navigate to the Chirp directory, once the cloning has finished: 
-`cd Chirp`
+2. Navigate to the Chirp directory, the src, and finally the web directory:
+`cd Chirp/src/Web`
 
-3. Navigate to the src folder, where the source code lies: 
-`cd src`
-
-4. Navigate to the Web folder, containing the razor pages and program: 
-`cd Web`
-
-5. Once in the web directory, run the program: 
+3. Once in the web directory, run the program: 
 
     1. To run the program on Windows, write following command : 
     `& { $env:ASPNETCORE_ENVIRONMENT = "Development"; dotnet run }`
 
     2. To run the program on MacOS and Linux, write following command: 
     `ASPNETCORE_ENVIRONMENT=Development dotnet run`
-     
+
+4. If login with GitHub is wanted, then set the user secrets before running the program: 
+`dotnet user-secrets init`
+
 Once the build has finished, this line should be visible containing a link to the localhost:  
 `Now listening on: http://localhost:5273`
 
@@ -201,8 +198,6 @@ How to run test suite locally:
 # Ethics
 
 ## License
-State which software license you chose for your application.
-
 We have chosen the standard MIT License for its simplicity and widespread use. The license is commonly used with the .NET, which is the main platform we are working with.
 
 ## LLMs, ChatGPT, CoPilot, and others
