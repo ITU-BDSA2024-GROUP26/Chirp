@@ -42,6 +42,7 @@ Additionally, each entity has a corresponding DTO (Data Transfer Object) which t
 ## Architecture — In the small
 
 ![Illustration of the _Chirp!_ onion architecture.](images/onion.svg)
+
 As the illustration shows, the _Chirp!_ application is organized using the onion architecture.
 
 This pattern makes the code highly modular. Dependencies exclusively go inwards, which means inner layers are not dependent on outer layers. This ensures low coupling, making it easy to replace layer implementations, which allows for a high degree of flexibility and testability.
@@ -74,9 +75,9 @@ Our backend architecture consists of two components we host on Azure, as well as
 - An Azure File Share where we host our database
   - This enables persistence of the production database, as opposed to pushing it with every deployment.  
 
-  - The File Share is mounted to the App Service where the App Aervice has read and write permissions to the File Share. 
+  - The File Share is mounted to the App Service where the App Service has read and write permissions to the File Share. 
 
-  - The File Share contains our production database, an sqliite3 file named `chirp.db` 
+  - The File Share contains our production database, an sqlite3 file named `chirp.db` 
 
   - On deployment, the App Service executes a `startup.sh` script, which attempts to run a provided migration bundle against `chirp.db`. If no new changes to the database schema have been deployed, nothing happens. If there are changes the migration is executed. We have a *Migration test* to test this scenario.
 
@@ -140,6 +141,7 @@ One can clearly see the different roles of different components and layers
 ## Build, test, release, and deployment
 
 ![Diagram of our deployment workflow](images/deployazure.svg)
+
 Note: We have taken the liberty of making the lines from negative conditions red to make the diagram more readable, considering there is a considerable number of points of failure. In addition, some repetitive steps (like checking out the repository) have been omitted.
 
 The diagram doesn't include the release process since it wasn't part of the process at the time of writing (Essentially we let Chirp be a web-only application). Releasing instead was it's own workflow, triggered manually or by pushes of new version tags.  
@@ -185,6 +187,7 @@ Double running of the tests could be solved either by having the test workflow e
 
 ## Team work
 Below is an image of our project board on GitHub right before hand-in. As seen in the picture, there are unresolved issues. The unresolved issues are from the wild style week and weren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it can be seen that each issue is assigned to one or more team members. 
+
 ![Illustration of project board](images/Project_board.png)
 
 Upon issue creation team member(s) were assigned to be responsible for the issue. The responsible person created a branch worked on the issue. Once an issue was complete and tests had been written, the assigned person would submit a pull request. Which would be reviewed by a team member who hadn't worked on that issue. Our code review process was iterative; the reviewer would point out problems and improvements, the assignee would work on these and then resubmit for review. When a pull-request was approved, it would be merged into main and automatically deployed.   
@@ -233,7 +236,7 @@ Chirp!_ includes three (proper)test suites and one only runnable automatically i
 
    - In order to isolate the tests, we made an API that is only active when in the `Development` environment which allows us to reset and seed the database after every test.
 
-     - Alternatively, we could have started multiple instances of the application and run the tests in parallel, but this would have been more complex and potentially slower as every test needed to start its own server. 
+     - Alternatively, we could have started multiple instances of the application and run the tests in parallel, but this would have been more complex and potentially slower as every test would need to start its own server. 
 
 - Migration tests
 
@@ -252,22 +255,24 @@ How to install PowerShell(if not already installed):
 
 How to install Playwright browsers:
 
-1. Go to the root directory of the project
+1. Go to the directory of the UI-test project(`Chirp/tests/Web.UITest'`)
 
 2. Run `dotnet build`
 
-3. Run the following command: `./tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install`
+3. Run the following command: `./bin/Debug/net8.0/playwright.ps1 install`
 
 How to run test suite locally:
 
-1. Go to the root directory of the project
+1. Go to the root directory of the project(`Chirp/`)
 
 2. Ensure the setup script has execute permissions  (on Linux/MacOS)
 
     1. Run the command: `chmod +x scripts/setup_UI_tests.sh`
 
 3. Run `scripts/setup_UI_tests.sh`
+
    - This script builds the UITest project (so we are sure that a relevant `/bin` folder exists), then builds and publishes `Chirp.Web` into that folder so the UI-tests can launch a local instance of the app to run the UI tests against. 
+
    - Note that if you installed playwright browsers in the previous step building the UITest project is redundant, but it allows us to just run this script and then `dotnet test` as long as the playwright browsers etc. stay in the `/bin` folder. Thus all future local runs require much less setup.   
 
 4. Run the tests by using the command: `dotnet test`
