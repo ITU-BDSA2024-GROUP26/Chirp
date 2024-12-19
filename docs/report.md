@@ -78,7 +78,7 @@ Users can also log in via a third-party service, GitHub. Under the hood, the pro
 7. The user is then automatically logged in and redirected to the (logged-in) public timeline 
 
 ## User activities
-![Illustration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.svg)
+![Illustration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.png)
 The typical scenarios of a user journey through our _Chirp!_ application are displayed in the diagram above. The potential user journey begins with visiting the site. An unauthorized user can only view the public timeline and other authors timelines. If the user registers or logs in, they can send cheeps, follow authors, view their private timeline, download their data, and more. 
 
 ## Sequence of functionality/calls through _Chirp!_
