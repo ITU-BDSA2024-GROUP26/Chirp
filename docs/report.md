@@ -91,32 +91,35 @@ The following UML diagram illustrates the flow of messages through the Chirp! ap
 ## Build, test, release, and deployment
 
 ![Diagram of our deployment workflow](images/deployazure.svg)
-Note: We have taken the liberty of making the lines from negative conditions red to make the diagram more readable, considering that there is a considerable number of points of failure. In addition, some repetitive steps (like checking out the repository, cleaning up, etc.) have been omitted.
+Note: We have taken the liberty of making the lines from negative conditions red to make the diagram more readable, considering there is a considerable number of points of failure. In addition, some repetitive steps (like checking out the repository) have been omitted.
 
-Note that the diagram doesn't include the release process, since it wasn't a part of the process at the time of writing (Essentially we let Chirp be a web-only application). 
+The diagram doesn't include the release process since it wasn't part of the process at the time of writing (Essentially we let Chirp be a web-only application). Releasing instead was it's own workflow, triggered manually or by pushes of new version tags.  
 
-In our case a successful deployment requires four parallel processes to all succeed, where three of these are tests. In the diagram, these sub-processes are marked within the larger *Deploy to Azure* process. They are, from left to right:
+A successful deployment of our application requires four parallel processes to all succeed, where three of these are tests. In the diagram, these sub-processes are marked within the larger *Deploy to Azure* process. They are, from left to right:
 - Test Migration: 
-  - This workflow ensures that any possible migrations the deployment might want to apply to the production database won't break anything, by mimicking the migration 1:1. Obviously, this would be unfeasible in a larger application with a database of many terabytes; here, you would instead create a database with an identical schema and seed it with a small, representative sample of the real database.
-  - This is important as we have one *persistent* database across Chirp's entire lifetime, instead of just pushing a *chirp.db* file with every deployment (thus resetting the database on every deployment, which seemed undesirable). 
+  - Ensures that any possible migrations that might be applied to the production database won't break anything, by mimicking such a migration 1:1. This would be unfeasible in a larger application with a database of many terabytes; here, you would instead create a database with an identical schema and seed it with a small, representative sample of the real database.
+  - This is important as we have one *persistent* database across Chirp's entire lifetime, instead of just pushing a *chirp.db* file with every deployment (thus resetting the database on every deployment). 
 - Unit/Integration tests: 
-  - By far the simplest of the test workflows. Here, we just figure out what test projects exit (omitting UI tests since they require a lot of additional setup) and then run those test projects in parallel. 
+  - By far the simplest of the test workflows. We just figure out what test projects exist (omitting UI tests since they require additional setup) and run those test projects in parallel. 
 - UI Tests: 
-  - The bulk of this workflow is in setting up for the UI tests. The way they are implemented, the test runner expects an up-to-date Chirp.Web binary in its own `bin` folder. The containing binary is what will be tested, so for accurate tests we have to make sure we export the newest version of `Chirp.Web`. 
-  - In addition to that, Playwright just has a lot of large dependencies (Powershell and several browsers, which we cache since they take up ~500MB) that aren't installed by default on the GitHub actions machines. 
+  - Our UI-tests require the `Chirp.Web` binary you wish to test to be in the `bin` folder of the test project. Thus we need to build not just the UI-tests, but also `Chirp.Web`. 
+  - Playwright has a lot of large dependencies (Powershell and several browsers, which we cache since they take up ~500MB) that aren't installed by default on the GitHub actions machines. 
+  - After this setup, the UI tests can be run normally. 
 - Deployment Setup: 
-  - Here we build the `Chirp.Web` project binaries that we want to deploy as well as the bundled migration we (might) want to apply to the production database. Note that we always push a bundle, even if there are no new migrations to apply. In that case, nothing happens when you try to apply the migration on the server. Naturally, we can't deploy if we fail to generate either of these artifacts, but this step should usually succeed. 
+  - We build the `Chirp.Web` project binaries that we want to deploy as well as the bundled migration we (might) want to apply to the production database. Note that we always push a bundle, even if there are no new migrations to apply. In that case, nothing happens when you try to apply the migration on the server.
 
 If a single step fails, the entire workflow fails, and nothing will be deployed. 
 
 ### Issues/Points of improvement 
-There are a few instances of redundancy in the workflow. The worst offender is probably the fact that we generate the exact same migration bundle and `Chirp.Web` binaries twice; once for testing and once for the actual deployment. Redundancy in setup dotnet is immaterial considering how little time that action usually takes to execute. 
+There are a few redundancies in the workflow. The worst offender is probably that we generate the exact same migration bundle twice and `Chirp.Web` binaries thrice; for testing and for actual deployment. Redundancy in setup dotnet is immaterial considering how little time that action usually takes to execute. 
 
-The reason for this redundancy is that the three test workflows of the deployment workflows are, in GitHub actions, an entirely different workflow that is called on every push to every branch. The deployment workflow simply calls this workflow and has the actual deployment action depend on its success. 
+The reason for this redundancy is the three test workflows of this "master" workflow are an entirely different workflow, called on every push to every branch. The deployment workflow calls the test workflow and depends on its success to deploy. 
 
-Additionally, this also means that every push on main has the same tests run on it twice; the test workflow is triggered once directly by the push and once by the deployment workflow. 
+Additionally, this also means every push on main has the same tests run twice; the test workflow is triggered once directly by the push and once by the deployment workflow. 
 
-The double generation of the migration bundle and `Chirp.Web` binaries could be solved by having the binaries as an output of the Test workflow and input of the Deployment workflow. The double running of the tests could be solved by either having the test workflow explicitly only trigger on *non-main* branches or by having the deployment workflow query if a successful test run on the same commit exists. 
+Double generation of the migration bundle and `Chirp.Web` binaries could be solved by having the binaries as an output of the Test workflow and input of the Deployment workflow or vice versa, although some speed is sacrificed(since you would need to upload and download artifacts). 
+
+Double running of the tests could be solved either by having the test workflow explicitly only trigger on *non-main* branches or having the deployment workflow query if a successful test run on the same commit exists. Again, this would sacrifice some speed due to less parallelism.  
 
 ## Team work
 Below is an image of our project board on GitHub right before hand-in. As seen in the picture, there are unresolved issues. The unresolved issues are from the wild style week and weren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it can be seen that each issue is assigned to one or more team members. 
