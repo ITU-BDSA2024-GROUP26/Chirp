@@ -94,14 +94,14 @@ Users can also log in via a third-party service, GitHub. Under the hood, the pro
 4. Our server then returns this token to the GitHub authorization server.
 5. If the token is valid, then the GitHub server sends back the user's GitHub username and email
 6. If the account is not already in our database, then one is created. The user is then automatically logged in and redirected to the (logged-in) public timeline 
-4. Our server then sends this token back to the GitHub authorization server.
-5. If the token is valid, the GitHub server sends back the user's GitHub username and email.
-6. If the account is not already in our database, one is created. 
-7. The user is then automatically logged in and redirected to the (logged-in) public timeline 
+
+<a id="UserActivities"></a>
 
 ## User activities
 ![Illustration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.png)
-The typical scenarios of a user journey through our _Chirp!_ application are displayed in the diagram above. The potential user journey begins with visiting the site. An unauthorized user can only view the public timeline and other authors timelines. If the user registers or logs in, they can send cheeps, follow authors, view their private timeline, download their data, and more. 
+
+A typical users journey through _Chirp!_ is displayed in the diagram above. The potential users journey begins with visiting the site. An unauthorized user can only view the public timeline and other authors timelines. If the user registers or logs in, they can send cheeps, follow authors, view their private timeline, download their data, and recieve notifications. 
+
 
 ## Sequence of functionality/calls through _Chirp!_
  
