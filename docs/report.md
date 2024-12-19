@@ -32,7 +32,7 @@ _Chirp_ has three entities: Author, Cheep, and Notification. Using Entity Framew
 
 - A `Cheep` is a message that an author can post. A current timestamp is added to each cheep when it's created.
 
-- A `Notification` contains information about how to notify a specific user about a specific cheep. Whenever an author cheeps, notifications will be created for all his followers. Additionally, an author can be tagged in a cheep if it contains his username with the format `@<Username> `. In that case a notification is also created for the tagged user. Tagging take priority over following; if a user tags a follower, the follower will only recieve the tag-notification. 
+- A `Notification` contains information about how to notify a specific user about a specific cheep. Whenever an author cheeps, notifications will be created for all his followers. Additionally, an author can be tagged in a cheep if it contains his username with the format `@<Username> `. In that case a notification is also created for the tagged user. Tagging takes priority over following; if a user tags a follower, the follower will only recieve the tag-notification. 
 
 Each entity has a corresponding repository class responsible for interacting with the database.
 Additionally, each entity has a corresponding DTO (Data Transfer Object) which transfers only necessary data to the presentation layer.
@@ -76,7 +76,7 @@ Our backend architecture consists of two components we host on Azure, as well as
 
   - The File Share is mounted to the App Service where the App Aervice has read and write permissions to the File Share. 
 
-  - The File Share contains our production database, an sqliite3 file named `chirp.db` 
+  - The File Share contains our production database, an SQLite3 file named `chirp.db` 
 
   - On deployment, the App Service executes a `startup.sh` script, which attempts to run a provided migration bundle against `chirp.db`. If no new changes to the database schema have been deployed, nothing happens. If there are changes the migration is executed. We have a *Migration test* to test this scenario.
 
@@ -217,7 +217,7 @@ Clicking on the link will direct to the locally run Chirp! application.
 
 ## How to run test suite locally
 
-Chirp!_ includes three (proper)test suites and one only runnable automatically in Github Actions:
+Chirp!_ includes three (proper) test suites and one only runnable automatically in Github Actions:
 
 - Repository.Tests
 
@@ -237,12 +237,12 @@ Chirp!_ includes three (proper)test suites and one only runnable automatically i
 
 - Migration tests
 
-  - We have no mechanism of running the migration tests locally, as they require access to the Azure file share to download the database. This was deemed acceptable as they very rarely failed(as we had quite few migrations), so not finding out untill you push was a fine tradeoff vs the effort required.   
+  - We have no mechanism of running the migration tests locally, as they require access to the Azure file share to download the database. This was deemed acceptable as they very rarely failed (as we had quite few migrations), so not finding out untill you push was a fine tradeoff vs the effort required.   
 
 
 Before you can run the unit tests you need to have PowerShell, Playwright and Playwright's browsers and other dependencies installed in your `Chirp/tests/Web.UITest/bin/` folder.
 
-How to install PowerShell(if not already installed):
+How to install PowerShell (if not already installed):
 
 1. Linux: `sudo apt update && sudo apt install \-y powershell`
 
