@@ -185,11 +185,11 @@ Double running of the tests could be solved either by having the test workflow e
 
 ## Team work
 Below is an image of our project board on GitHub right before hand-in. As seen in the picture, there are unresolved issues. The unresolved issues are from the wild style week and weren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it can be seen that each issue is assigned to one or more team members. 
-![Illustration of issue activities](images/Project_board.png)
+![Illustration of project board](images/Project_board.png)
 
 Upon issue creation team member(s) were assigned to be responsible for the issue. The responsible person created a branch worked on the issue. Once an issue was complete and tests had been written, the assigned person would submit a pull request. Which would be reviewed by a team member who hadn't worked on that issue. Our code review process was iterative; the reviewer would point out problems and improvements, the assignee would work on these and then resubmit for review. When a pull-request was approved, it would be merged into main and automatically deployed.   
 
-![Illustration of issue activities](images/Issue_Diagram.svg){with=40%}
+![Illustration of issue activities](images/Issue_Diagram.svg){width=80%}
 
 
 ## How to make _Chirp!_ work locally
