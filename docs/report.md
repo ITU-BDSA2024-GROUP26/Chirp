@@ -178,9 +178,7 @@ How to Git Clone and Run the Program:
 2. Navigate to the Web project: 
 `cd Chirp/src/Web`
 
-3. Once in the Web directory, run the program: 
-   - If login with GitHub is wanted, then set the user secrets before running the program:
-         `dotnet user-secrets init`
+1. Once in the Web directory, run the program: 
 
    - To run the program on Windows, write following command: 
     `& { $env:ASPNETCORE_ENVIRONMENT = "Development"; dotnet run }`
