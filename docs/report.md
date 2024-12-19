@@ -14,7 +14,7 @@ numbersections: true
 
 ## Domain model
 
-Here comes a description of our domain model.
+Here comes a description of our domain model. 
 
 Provide an illustration of your domain model. Make sure that it is correct and complete. In case you are using ASP.NET Identity, make sure to illustrate that accordingly.
 
@@ -120,9 +120,6 @@ Clicking on the link will direct to the locally run Chirp! application.
 ## How to run test suite locally
 List all necessary steps that Adrian or Helge have to perform to execute your test suites. Here, you can assume that we already cloned your repository in the step above.
 
-<<<<<<< HEAD
-Briefly describe what kinds of tests you have in your test suites and what they are testing.
-=======
 _Chirp!_ includes three (proper)test suites and one only runnable automatically in Github Actions:
 
 - Repository.Tests
@@ -171,7 +168,6 @@ How to run test suite locally:
 
 <a id="Ethics"></a>
 
->>>>>>> 9d9e0a6 (remove windows instructions)
 # Ethics
 
 ## License
