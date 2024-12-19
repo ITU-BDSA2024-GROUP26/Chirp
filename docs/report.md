@@ -33,8 +33,6 @@ numbersections: true
 
 ## Domain model
 
-Here comes a description of our domain model.
-
 ![Illustration of the _Chirp!_ data model as UML class diagram.](images/domain_model_uml.drawio.svg)
 
 _Chirp_ has three entities: Author, Cheep, and Notification. Using Entity Framework Core (EF Core), these entities are mapped to tables in an SQLite database, and LINQ queries are used to interact with the database.

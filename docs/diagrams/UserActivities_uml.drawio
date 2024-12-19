@@ -151,7 +151,7 @@
         <mxCell id="g5xIlPz1RoVh0aVdC3tX-150" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;labelBackgroundColor=none;fontColor=default;" edge="1" parent="1" source="g5xIlPz1RoVh0aVdC3tX-151" target="g5xIlPz1RoVh0aVdC3tX-174">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="g5xIlPz1RoVh0aVdC3tX-151" value="Go to &#39;Notification&#39; page" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
+        <mxCell id="g5xIlPz1RoVh0aVdC3tX-151" value="Go to &#39;Notifications&#39; page" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
           <mxGeometry x="1699" y="326" width="102" height="44" as="geometry" />
         </mxCell>
         <mxCell id="g5xIlPz1RoVh0aVdC3tX-153" value="" style="endArrow=none;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;labelBackgroundColor=none;fontColor=default;" edge="1" parent="1" source="OzGk9A_Nq_OVbRPWzcMN-6">
@@ -208,8 +208,8 @@
         <mxCell id="g5xIlPz1RoVh0aVdC3tX-172" value="Open webapplication" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
           <mxGeometry x="1444" y="-157" width="119" height="49" as="geometry" />
         </mxCell>
-        <mxCell id="g5xIlPz1RoVh0aVdC3tX-173" value="Look at all my and my followers cheeps as well as the ones i&#39;m tagged in" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
-          <mxGeometry x="1282" y="152" width="121" height="81" as="geometry" />
+        <mxCell id="g5xIlPz1RoVh0aVdC3tX-173" value="Look at all my and my followers cheeps" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1280.5" y="168" width="107" height="60" as="geometry" />
         </mxCell>
         <mxCell id="g5xIlPz1RoVh0aVdC3tX-174" value="Gets updated every 5 second" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
           <mxGeometry x="1648" y="238" width="97" height="41" as="geometry" />
