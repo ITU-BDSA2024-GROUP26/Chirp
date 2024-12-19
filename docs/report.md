@@ -189,7 +189,7 @@ Below is an image of our project board on GitHub right before hand-in. As seen i
 
 Upon issue creation team member(s) were assigned to be responsible for the issue. The responsible person created a branch worked on the issue. Once an issue was complete and tests had been written, the assigned person would submit a pull request. Which would be reviewed by a team member who hadn't worked on that issue. Our code review process was iterative; the reviewer would point out problems and improvements, the assignee would work on these and then resubmit for review. When a pull-request was approved, it would be merged into main and automatically deployed.   
 
-![Illustration of issue activities](images/Issue_Diagram.svg){width=80%}
+![Illustration of issue activities](images/Issue_Diagram.svg){width=40%}
 
 
 ## How to make _Chirp!_ work locally
