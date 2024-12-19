@@ -120,7 +120,58 @@ Clicking on the link will direct to the locally run Chirp! application.
 ## How to run test suite locally
 List all necessary steps that Adrian or Helge have to perform to execute your test suites. Here, you can assume that we already cloned your repository in the step above.
 
+<<<<<<< HEAD
 Briefly describe what kinds of tests you have in your test suites and what they are testing.
+=======
+_Chirp!_ includes three (proper)test suites and one only runnable automatically in Github Actions:
+
+- Repository.Tests
+   - The Repository.Test folder contains unit and integration tests for the four repository classes all in one. 
+
+- Service.Test
+   - The Service.Test folder contains unit and integration tests for validating the functionality of `CheepService`.
+
+- Web.UITest
+   - The Web.UITest folder contains UI tests made using Playwright. They test whether a user can perform the various actions possible in Chirp and if the result of those actions is what we expect.
+   - In order to isolate the tests, we made an API that is only active when in the `Development` environment which allows us to reset and seed the database after every test.
+     - Alternatively, we could have started multiple instances of the application and run the tests in parallel, but this would have been more complex and potentially slower as every test needed to start its own server. 
+
+- Migration tests
+  - We have no mechanism of running the migration tests locally, as they require access to the Azure file share to download the database. This was deemed acceptable as they very rarely failed(as we had quite few migrations), so not finding out untill you push was a fine tradeoff vs the effort required.   
+
+Before you can run the unit tests you need to have PowerShell, Playwright and Playwright's browsers and other dependencies installed in your `Chirp/tests/Web.UITest/bin/` folder.
+
+How to install PowerShell(if not already installed):
+
+1. Linux: `sudo apt update && sudo apt install \-y powershell`
+
+2. MacOS: `brew install \--cask powershell`
+
+How to install Playwright browsers:
+
+1. Go to the root directory of the project
+
+2. Run `dotnet build`
+
+3. Run the following command: `./tests/Web.UITest/bin/Debug/net8.0/playwright.ps1 install`
+
+How to run test suite locally:
+
+1. Go to the root directory of the project(`Chirp/`)
+
+2. Ensure the setup script has execute permissions  (on Linux/MacOS)
+
+    1. Run the command: `chmod +x scripts/setup_UI_tests.sh`
+
+3. Run `scripts/setup_UI_tests.sh`
+   - This script builds the UITest project (so we are sure that a relevant `/bin` folder exists), then builds and publishes `Chirp.Web` into that folder so the UI-tests can launch a local instance of the app to run the UI tests against. 
+   - Note that if you installed playwright browsers in the previous step building the UITest project is redundant, but it allows us to just run this script and then `dotnet test` as long as the playwright browsers etc. stay in the `/bin` folder. Thus all future local runs require much less setup.  
+
+4. Run the tests by using the command: `dotnet test`
+
+<a id="Ethics"></a>
+
+>>>>>>> 9d9e0a6 (remove windows instructions)
 # Ethics
 
 ## License
