@@ -125,7 +125,7 @@ Double running of the tests could be solved either by having the test workflow e
 Below is an image of our project board on GitHub right before hand-in. As seen in the picture, there are unresolved issues. The unresolved issues are from the wild style week and weren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it can be seen that each issue is assigned to one or more team members. 
 ![Illustration of issue activities](images/Project_board.png)
 
-When issues were created, a team member(s) was assigned and was therefore responsible for it. The responsible person created a branch and started working on the issue. Once an issue was completed and tested, the assigned person submitted a pull request, which was subsequently reviewed by another team member who hadn't worked on the specific issue. This was an iterative process, meaning that if the PR was not approved or failed tests, the assigned person would continuously improve it until it was approved, in which case the issue would be moved to ‘Done’ on our project board.
+Upon issue creation team member(s) were assigned to be responsible for the issue. The responsible person created a branch worked on the issue. Once an issue was complete and tests had been written, the assigned person would submit a pull request. Which would be reviewed by a team member who hadn't worked on that issue. Our code review process was iterative; the reviewer would point out problems and improvements, the assignee would work on these and then resubmit for review. When a pull-request was approved, it would be merged into main and automatically deployed.   
 
 ![Illustration of issue activities](images/Issue_Diagram.svg)
 
@@ -156,20 +156,24 @@ Clicking on the link will direct to the locally run Chirp! application.
 
 ## How to run test suite locally
 
-_Chirp!_ includes three test suites:
+Chirp!_ includes three (proper)test suites and one only runnable automatically in Github Actions:
 
 - Repository.Tests
-   - The Repository.Test folder contains unit and integration tests for the functionality of the repository classes within the Chirp application. 
+   - The Repository.Test folder contains unit and integration tests for the four repository classes all in one. 
 
 - Service.Test
-   - The Service.Test folder contains unit and integration tests for validating the functionality of the `CheepService` class within the Chirp application.
+   - The Service.Test folder contains unit and integration tests for validating the functionality of `CheepService`.
 
 - Web.UITest
-   - The Web.UITest folder contains UI tests that were made using Playwright. The UI tests, test whether a user can perform the various actions possible in Chirp and if the result of those actions is what we expect.
-   - In order to make the test isolated, we made an API that is only active when in the `Development` environment, which allows us to reset and seed the database after every test.
+   - The Web.UITest folder contains UI tests made using Playwright. They test whether a user can perform the various actions possible in Chirp and if the result of those actions is what we expect.
+   - In order to isolate the tests, we made an API that is only active when in the `Development` environment which allows us to reset and seed the database after every test.
      - Alternatively, we could have started multiple instances of the application and run the tests in parallel, but this would have been more complex and potentially slower as every test needed to start its own server. 
 
-Before you can run the unit tests you need to have PowerShell installed and Playwright browsers and other dependencies in your `Web.UITest/bin/` folder.
+- Migration tests
+  - We have no mechanism of running the migration tests locally, as they require access to the Azure file share to download the database. This was deemed acceptable as they very rarely failed(as we had quite few migrations), so not finding out untill you push was a fine tradeoff vs the effort required.   
+
+
+Before you can run the unit tests you need to have PowerShell, Playwright and Playwright's browsers and other dependencies installed in your `Chirp/tests/Web.UITest/bin/` folder.
 
 How to install PowerShell(if not already installed):
 
@@ -196,8 +200,8 @@ How to run test suite locally:
     1. Run the command: `chmod +x scripts/setup_UI_tests.sh`
 
 3. Run `scripts/setup_UI_tests.sh`
-   - This script builds the UITest project (so we are sure that a relevant `/bin` folder exists), then builds and publishes `Chirp.Web` into that folder such that the UI-tests can launch a local instance of the app to run the UI tests against. 
-   - Note that if you installed playwright browsers in the previous step building the UITest project is redundant, but it allows us to just run this script and then `dotnet test` as long as the playwright browsers etc. Stay in the `/bin` folder.  
+   - This script builds the UITest project (so we are sure that a relevant `/bin` folder exists), then builds and publishes `Chirp.Web` into that folder so the UI-tests can launch a local instance of the app to run the UI tests against. 
+   - Note that if you installed playwright browsers in the previous step building the UITest project is redundant, but it allows us to just run this script and then `dotnet test` as long as the playwright browsers etc. stay in the `/bin` folder. Thus all future local runs require much less setup.   
 
 4. Run the tests by using the command: `dotnet test`
 
@@ -209,5 +213,5 @@ We have chosen the standard MIT License for its simplicity and widespread use. T
 ## LLMs, ChatGPT, CoPilot, and others
 During the development of our project, we used the following LLMs: ChatGPT and GitHub Copilot. ChatGPT was primarily used when we needed clarification, a better overview, boilerplate code or help understanding specific errors and bugs that we couldn't resolve within the group. It assisted us through the project development with issues and questions, where the textbook material wasn't enough to guide us. On the other hand, Copilot was more code-specific, directly assisting us in writing and completing code.
 
-Both of the LLMs improved our productivity by saving time on repetitive tasks, such as generating boilerplate code or rewriting previously written code by the group.  The biggest disadvantage we noticed when using ChatGPT, was that we had to be careful with our prompts and know exactly what we wanted to ask, to receive relevant and helpful responses. At times, especially for obscure code-related issues, ChatGPT's answers weren't helpful, requiring us to either rephrase our questions, or simply not rely on ChatGPT for that issue.
+Both of the LLMs improved our productivity by saving time on repetitive tasks, such as generating boilerplate code or refactoring. The biggest disadvantage with ChatGPT was that we had to be careful with our prompts and know exactly what we wanted to ask, to receive relevant and helpful responses. At times, especially for obscure code-related issues, ChatGPT's answers weren't helpful, requiring us to either rephrase our questions, or simply not rely on ChatGPT for that issue. Occasionally, it would even hallucinate functions that didn't exist, such as when we were working with migrations. Overall, ChatGPT had a positive impact on our productivity.  
 
