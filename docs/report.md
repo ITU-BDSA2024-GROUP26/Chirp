@@ -102,13 +102,25 @@ Users can also log in via a third-party service, GitHub. Under the hood, the pro
 
 A typical users journey through _Chirp!_ is displayed in the diagram above. The potential users journey begins with visiting the site. An unauthorized user can only view the public timeline and other authors timelines. If the user registers or logs in, they can send cheeps, follow authors, view their private timeline, download their data, and recieve notifications. 
 
+<a id="SequenceFunctionality"></a>
 
 ## Sequence of functionality/calls through _Chirp!_
  
 The following UML diagram illustrates the flow of messages through the Chirp! application. Although it isn't shown explicitly on the diagram, the sequence of calls begins with an unauthorized user requesting to see the default public timeline page and ends with the same user receiving the fully rendered web-page. 
+
 ![Illustration of calls trough _Chirp!_ with an unauthorized user.](images/sqcall.drawio.png)
 
+One can clearly see the different roles of different components and layers 
+- The database actually contains the data 
+- The CheepRepository is responsible for querying the database
+- The service propegates calls from the presentation layer to the repository, and encapsulates returned data in DTOs which it retuns to the frontend
+- The presentation layer handles communications with the client and converting data from the Service into a rendered page for users 
+
+<a id="Process"></a>
+
 # Process
+
+<a id="Build"></a>
 
 ## Build, test, release, and deployment
 
