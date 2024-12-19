@@ -8,26 +8,15 @@ author:
 - "Torbjørn Elias Rafael Johannsen <toej@itu.dk>"
 - "Vicki Hauge Bjørnskov <vbjo@itu.dk>"
 numbersections: true
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+
+toc: true
 ---
-## Table of contents:
 
-- [Design and Architecture of _Chirp!_](#design-and-architecture-of-chirp)
-  - [Domain model](#domain-model)
-  - [Architecture — In the small](#architecture--in-the-small)
-  - [Architecture of deployed application](#architecture-of-deployed-application)
-  - [User activities](#user-activities)
-  - [Sequence of functionality/calls through _Chirp!_](#sequence-of-functionalitycalls-through-chirp)
-- [Process](#process)
-  - [Build, test, release, and deployment](#build-test-release-and-deployment)
-    - [Issues/Points of improvement](#issuespoints-of-improvement)
-  - [Team work](#team-work)
-  - [How to make _Chirp!_ work locally](#how-to-make-chirp-work-locally)
-  - [How to run test suite locally](#how-to-run-test-suite-locally)
-- [Ethics](#ethics)
-  - [License](#license)
-  - [LLMs, ChatGPT, CoPilot, and others](#llms-chatgpt-copilot-and-others)
 
-<a id="Design"></a>
+\pagebreak
 
 # Design and Architecture of _Chirp!_
 
@@ -38,14 +27,17 @@ Here comes a description of our domain model.
 ![Illustration of the _Chirp!_ data model as UML class diagram.](images/domain_model_uml.drawio.svg)
 
 _Chirp_ has three entities: Author, Cheep, and Notification. Using Entity Framework Core (EF Core), these entities are mapped to tables in an SQLite database, and LINQ queries are used to interact with the database.
+
 - An `Author` represents a user of the application. It inherits from ASP.NET IdentityUser, which handles user authentication and authorization. Each author has a unique username, the ability to follow other authors and to send cheeps.
+
 - A `Cheep` is a message that an author can post. A current timestamp is added to each cheep when it's created.
+
 - A `Notification` contains information about how to notify a specific user about a specific cheep. Whenever an author cheeps, notifications will be created for all his followers. Additionally, an author can be tagged in a cheep if it contains his username with the format `@<Username> `. In that case a notification is also created for the tagged user. Tagging take priority over following; if a user tags a follower, the follower will only recieve the tag-notification. 
 
 Each entity has a corresponding repository class responsible for interacting with the database.
 Additionally, each entity has a corresponding DTO (Data Transfer Object) which transfers only necessary data to the presentation layer.
 
-<a id="ArchitectureSmall"></a> 
+
 
 ## Architecture — In the small
 
@@ -55,54 +47,75 @@ As the illustration shows, the _Chirp!_ application is organized using the onion
 This pattern makes the code highly modular. Dependencies exclusively go inwards, which means inner layers are not dependent on outer layers. This ensures low coupling, making it easy to replace layer implementations, which allows for a high degree of flexibility and testability.
 
 - Core:
+
   - At the core are the entities of the domain model. That is the `Cheep`, `Author`, and `Notification` classes. Their respective DTO's also reside in this layer.
+
 - Second layer:
+
   - The second layer contains the repositories who interact with the database. Each domain model corresponds to one repository. Additionally, we have a `DBRepository` which is responsible for general database operations not tied to a specific domain model. Currently, it includes two methods, one for seeding the database and one for resetting it.
+
 - Third layer:
+
   - `CheepService` resides in the third layer and is responsible for the business logic of the application. All razor pages have a reference to an instance of the service. The service is responsible for encapsulating domain model entities into DTO's. Naming it `CheepService` instead of `ChirpService` is a bit of a misnomer, as it also handles the business logic for the `Author` and `Notification` entities. However, we wanted to maintain the same name as in the project description.
+
 - The outermost layer: 
+
   - The presentation layer, which includes the Razor pages, controllers, and the `program.cs` file. This layer is responsible for rendering the UI via the Razor Pages. In addition `program.cs` defines implementations of the different classes in all the layers via Dependency Injection.  
 
-<a id="ArchitectureDeployed"></a>
 
 ## Architecture of deployed application
 
 ![Diagram of the deployed application](images/deployment_uml.drawio.svg)
 
 Our backend architecture consists of two components we host on Azure, as well as an external authentication provider (Github). The server components are:
+
 - An Azure App Service instance running our Chirp.Web application
+
 - An Azure File Share where we host our database
   - This enables persistence of the production database, as opposed to pushing it with every deployment.  
+
   - The File Share is mounted to the App Service where the App Aervice has read and write permissions to the File Share. 
+
   - The File Share contains our production database, an sqliite3 file named `chirp.db` 
+
   - On deployment, the App Service executes a `startup.sh` script, which attempts to run a provided migration bundle against `chirp.db`. If no new changes to the database schema have been deployed, nothing happens. If there are changes the migration is executed. We have a *Migration test* to test this scenario.
 
 Clients communicate with our server via HTTP requests, where they can ``GET``:
+
 - The Razor pages (endpoints) of the application
+
 - Notifications (if authorized) 
 
 and can ``POST``: 
+
 - Cheeps 
+
 - Authorization requests(logging in) 
+
 - Requests to follow other authors 
+
 - Requests to download or delete their user data.  
 
-Users can also log in via a third-party service, GitHub. Under the hood, the process is as follows: 
+Users can also log in via a third-party service, GitHub. Under the hood, the process is as follows:
+
 1. The user clicks the "Log in using your GitHub account" button, which redirects them to GitHub's authorization servers.
+
 2. Here they authenticate themselves via their GitHub account.
+
 3. They are then redirected back with an access token.
+
 4. Our server then returns this token to the GitHub authorization server.
+
 5. If the token is valid, then the GitHub server sends back the user's GitHub username and email
+
 6. If the account is not already in our database, then one is created. The user is then automatically logged in and redirected to the (logged-in) public timeline 
 
-<a id="UserActivities"></a>
 
 ## User activities
 ![Illustration of the _Chirp!_ User activities.](images/UserActivities_uml.drawio.png)
 
 A typical users journey through _Chirp!_ is displayed in the diagram above. The potential users journey begins with visiting the site. An unauthorized user can only view the public timeline and other authors timelines. If the user registers or logs in, they can send cheeps, follow authors, view their private timeline, download their data, and recieve notifications. 
 
-<a id="SequenceFunctionality"></a>
 
 ## Sequence of functionality/calls through _Chirp!_
  
@@ -111,16 +124,18 @@ The following UML diagram illustrates the flow of messages through the Chirp! ap
 ![Illustration of calls trough _Chirp!_ with an unauthorized user.](images/sqcall.drawio.png)
 
 One can clearly see the different roles of different components and layers 
+
 - The database actually contains the data 
+
 - The CheepRepository is responsible for querying the database
+
 - The service propegates calls from the presentation layer to the repository, and encapsulates returned data in DTOs which it retuns to the frontend
+
 - The presentation layer handles communications with the client and converting data from the Service into a rendered page for users 
 
-<a id="Process"></a>
 
 # Process
 
-<a id="Build"></a>
 
 ## Build, test, release, and deployment
 
@@ -130,21 +145,31 @@ Note: We have taken the liberty of making the lines from negative conditions red
 The diagram doesn't include the release process since it wasn't part of the process at the time of writing (Essentially we let Chirp be a web-only application). Releasing instead was it's own workflow, triggered manually or by pushes of new version tags.  
 
 A successful deployment of our application requires four parallel processes to all succeed, where three of these are tests. In the diagram, these sub-processes are marked within the larger *Deploy to Azure* process. They are, from left to right:
+
 - Test Migration: 
+
   - Ensures that any possible migrations that might be applied to the production database won't break anything, by mimicking such a migration 1:1. This would be unfeasible in a larger application with a database of many terabytes; here, you would instead create a database with an identical schema and seed it with a small, representative sample of the real database.
+
   - This is important as we have one *persistent* database across Chirp's entire lifetime, instead of just pushing a *chirp.db* file with every deployment (thus resetting the database on every deployment). 
+
 - Unit/Integration tests: 
+
   - By far the simplest of the test workflows. We just figure out what test projects exist (omitting UI tests since they require additional setup) and run those test projects in parallel. 
+
 - UI Tests: 
+
   - Our UI-tests require the `Chirp.Web` binary you wish to test to be in the `bin` folder of the test project. Thus we need to build not just the UI-tests, but also `Chirp.Web`. 
+
   - Playwright has a lot of large dependencies (Powershell and several browsers, which we cache since they take up ~500MB) that aren't installed by default on the GitHub actions machines. 
+
   - After this setup, the UI tests can be run normally. 
+
 - Deployment Setup: 
+
   - We build the `Chirp.Web` project binaries that we want to deploy as well as the bundled migration we (might) want to apply to the production database. Note that we always push a bundle, even if there are no new migrations to apply. In that case, nothing happens when you try to apply the migration on the server.
 
 If a single step fails, the entire workflow fails, and nothing will be deployed. 
 
-<a id="Issues/Improvements"></a>
 
 ### Issues/Points of improvement 
 There are a few redundancies in the workflow. The worst offender is probably that we generate the exact same migration bundle twice and `Chirp.Web` binaries thrice; for testing and for actual deployment. Redundancy in setup dotnet is immaterial considering how little time that action usually takes to execute. 
@@ -157,7 +182,6 @@ Double generation of the migration bundle and `Chirp.Web` binaries could be solv
 
 Double running of the tests could be solved either by having the test workflow explicitly only trigger on *non-main* branches or having the deployment workflow query if a successful test run on the same commit exists. Again, this would sacrifice some speed due to less parallelism.  
 
-<a id="TeamWork"></a>
 
 ## Team work
 Below is an image of our project board on GitHub right before hand-in. As seen in the picture, there are unresolved issues. The unresolved issues are from the wild style week and weren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it can be seen that each issue is assigned to one or more team members. 
@@ -167,7 +191,6 @@ Upon issue creation team member(s) were assigned to be responsible for the issue
 
 ![Illustration of issue activities](images/Issue_Diagram.svg)
 
-<a id="ChirpLocal"></a>
 
 ## How to make _Chirp!_ work locally
 How to Git Clone and Run the Program: 
@@ -192,24 +215,28 @@ Once the build has finished, this line should be visible containing a link to th
 
 Clicking on the link will direct to the locally run Chirp! application. 
 
-<a id="TestLocal"></a>
-
 ## How to run test suite locally
 
 Chirp!_ includes three (proper)test suites and one only runnable automatically in Github Actions:
 
 - Repository.Tests
+
    - The Repository.Test folder contains unit and integration tests for the four repository classes all in one. 
 
 - Service.Test
+
    - The Service.Test folder contains unit and integration tests for validating the functionality of `CheepService`.
 
 - Web.UITest
+
    - The Web.UITest folder contains UI tests made using Playwright. They test whether a user can perform the various actions possible in Chirp and if the result of those actions is what we expect.
+
    - In order to isolate the tests, we made an API that is only active when in the `Development` environment which allows us to reset and seed the database after every test.
+
      - Alternatively, we could have started multiple instances of the application and run the tests in parallel, but this would have been more complex and potentially slower as every test needed to start its own server. 
 
 - Migration tests
+
   - We have no mechanism of running the migration tests locally, as they require access to the Azure file share to download the database. This was deemed acceptable as they very rarely failed(as we had quite few migrations), so not finding out untill you push was a fine tradeoff vs the effort required.   
 
 
