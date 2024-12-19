@@ -144,6 +144,8 @@ A successful deployment of our application requires four parallel processes to a
 
 If a single step fails, the entire workflow fails, and nothing will be deployed. 
 
+<a id="Issues/Improvements"></a>
+
 ### Issues/Points of improvement 
 There are a few redundancies in the workflow. The worst offender is probably that we generate the exact same migration bundle twice and `Chirp.Web` binaries thrice; for testing and for actual deployment. Redundancy in setup dotnet is immaterial considering how little time that action usually takes to execute. 
 
@@ -155,6 +157,8 @@ Double generation of the migration bundle and `Chirp.Web` binaries could be solv
 
 Double running of the tests could be solved either by having the test workflow explicitly only trigger on *non-main* branches or having the deployment workflow query if a successful test run on the same commit exists. Again, this would sacrifice some speed due to less parallelism.  
 
+<a id="TeamWork"></a>
+
 ## Team work
 Below is an image of our project board on GitHub right before hand-in. As seen in the picture, there are unresolved issues. The unresolved issues are from the wild style week and weren't implemented due to focusing on higher priority issues based on the project requirements or time constraints. On the project board, it can be seen that each issue is assigned to one or more team members. 
 ![Illustration of issue activities](images/Project_board.png)
@@ -162,6 +166,8 @@ Below is an image of our project board on GitHub right before hand-in. As seen i
 Upon issue creation team member(s) were assigned to be responsible for the issue. The responsible person created a branch worked on the issue. Once an issue was complete and tests had been written, the assigned person would submit a pull request. Which would be reviewed by a team member who hadn't worked on that issue. Our code review process was iterative; the reviewer would point out problems and improvements, the assignee would work on these and then resubmit for review. When a pull-request was approved, it would be merged into main and automatically deployed.   
 
 ![Illustration of issue activities](images/Issue_Diagram.svg)
+
+<a id="ChirpLocal"></a>
 
 ## How to make _Chirp!_ work locally
 How to Git Clone and Run the Program: 
@@ -187,6 +193,8 @@ Once the build has finished, this line should be visible containing a link to th
 `Now listening on: http://localhost:5273`
 
 Clicking on the link will direct to the locally run Chirp! application. 
+
+<a id="TestLocal"></a>
 
 ## How to run test suite locally
 
