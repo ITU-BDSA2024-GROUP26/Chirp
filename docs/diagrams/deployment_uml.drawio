@@ -1,0 +1,123 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0" version="25.0.3">
+  <diagram name="Page-1" id="9u7tEufaJ4J1jKUX5Mik">
+    <mxGraphModel dx="1434" dy="782" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-2" value="&lt;b&gt;Client Computer A&lt;/b&gt;" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="120" y="270" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-3" value="«client»&lt;br&gt;&lt;b&gt;Web Browser&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="170" y="320" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-4" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" parent="vlhpCK-a-QOtBn3Cq4Dz-3" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-5" value="&lt;b&gt;Client Computer B&lt;/b&gt;" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="415" y="270" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-6" value="«client»&lt;br&gt;&lt;b&gt;Web Browser&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="465" y="320" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-7" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" parent="vlhpCK-a-QOtBn3Cq4Dz-6" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-8" value="&lt;b&gt;Azure App Service&lt;/b&gt;" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="415" y="545" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-9" value="«webserver»&lt;br&gt;&lt;b&gt;Chirp.Web&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="465" y="595" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-10" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" parent="vlhpCK-a-QOtBn3Cq4Dz-9" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-11" value="OAuth2 Login Request" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-3" edge="1">
+          <mxGeometry x="0.0588" width="160" relative="1" as="geometry">
+            <mxPoint x="720" y="515" as="sourcePoint" />
+            <mxPoint x="240" y="485" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-12" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-6" edge="1">
+          <mxGeometry x="0.0588" y="15" width="160" relative="1" as="geometry">
+            <mxPoint x="320" y="535" as="sourcePoint" />
+            <mxPoint x="535" y="485" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-13" value="&lt;div&gt;&lt;b&gt;Azure File Shares&lt;/b&gt;&lt;/div&gt;&lt;div&gt;(Mounted to App Service)&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="710" y="545" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-16" value="Read/Write" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-9" target="jixTkaNCWDppYyV2hb4V-1" edge="1">
+          <mxGeometry x="-0.0256" y="15" width="160" relative="1" as="geometry">
+            <mxPoint x="680" y="1110" as="sourcePoint" />
+            <mxPoint x="760" y="635" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-17" value="&lt;b&gt;GitHub OAuth2 Server&lt;/b&gt;" style="verticalAlign=top;align=center;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="120" y="545" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-18" value="«external service»&lt;br&gt;GitHub OAuth2 Server" style="html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="170" y="595" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-19" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" parent="vlhpCK-a-QOtBn3Cq4Dz-18" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-20" value="" style="endArrow=oval;endFill=1;endSize=24;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-18" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="590" y="895" as="sourcePoint" />
+            <mxPoint x="240" y="505" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-21" value="&lt;b&gt;HTTP&lt;/b&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="180" y="510" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-22" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-3" edge="1">
+          <mxGeometry x="0.4899" y="-16" width="160" relative="1" as="geometry">
+            <mxPoint x="220" y="357.5" as="sourcePoint" />
+            <mxPoint x="520" y="495" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-23" value="OAuth2 Login Request" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-6" edge="1">
+          <mxGeometry x="0.2742" y="5" width="160" relative="1" as="geometry">
+            <mxPoint x="330" y="505" as="sourcePoint" />
+            <mxPoint x="250" y="495" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-24" value="" style="endArrow=oval;endFill=1;endSize=24;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-9" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="535" y="595" as="sourcePoint" />
+            <mxPoint x="535" y="505" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-25" value="&lt;b&gt;HTTP&lt;/b&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="535" y="510" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vlhpCK-a-QOtBn3Cq4Dz-26" value="Access Token Validation" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0;exitDx=0;exitDy=0;" parent="1" source="vlhpCK-a-QOtBn3Cq4Dz-9" edge="1">
+          <mxGeometry x="-0.0073" y="-23" width="160" relative="1" as="geometry">
+            <mxPoint x="514.4200000000001" y="594.9999999999999" as="sourcePoint" />
+            <mxPoint x="260" y="505" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="370" y="535" />
+            </Array>
+            <mxPoint x="4" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jixTkaNCWDppYyV2hb4V-1" value="«sqlite»&lt;br&gt;&lt;b&gt;chirp.db&lt;/b&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="800" y="595" width="60" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

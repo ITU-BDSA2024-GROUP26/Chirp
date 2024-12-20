@@ -1,0 +1,73 @@
+@page "/notifications"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Web.Pages.NotificationsModel
+@inject SignInManager<Core.Author> SignInManager
+@inject UserManager<Core.Author> UserManager
+
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    @*Entire script by chatgpt*@
+    <script>
+        async function fetchNewNotifications() {
+            try {
+                const response = await fetch('/notifications?handler=NewNotifications');
+                if (response.ok) {
+                    const newNotifications = await response.json();
+                    if (newNotifications.length > 0) {
+                        appendNotifications(newNotifications);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching new notifications:", error);
+            }
+        }
+
+        function appendNotifications(notifications) {
+            const ul = document.getElementById('notifications-list');
+            notifications.forEach(notification => {
+                window.alert(JSON.stringify(notification))
+                const li = document.createElement('li');
+                //NOTE: apparently whatever JSON we sent gets converted to camelCase
+                li.innerHTML = `
+                    <p>
+                        <span>
+                            <a href="/${notification.authorName}">${notification.authorName}</a>
+                            ${notification.tagNotification ? 'tagged you!' : 'chirped!'}
+                        </span>
+                    </p> 
+                    <p>${notification.cheepContent}</p>`;
+                ul.appendChild(li);
+            });
+        }
+
+        setInterval(fetchNewNotifications, 5000); // Check every 5 seconds
+    </script>
+</head>
+<body>
+    <ul id="notifications-list">
+        @foreach (var notif in Model.Notifications)
+        {
+            <li>
+                <p>
+                    <span>
+                        <a href="/@notif.AuthorName">@notif.AuthorName</a>
+                        @(notif.TagNotification ? "tagged you!" : "chirped!")
+                    </span>
+                </p>
+                <p>@notif.CheepContent</p>
+            </li>
+        }
+    </ul>
+</body>
+</html>
+

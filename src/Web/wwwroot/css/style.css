@@ -300,9 +300,6 @@ ul.nav li a:hover {
   cursor: pointer;
 }
 
-
-
-
 .btn {
   padding: 10px 20px;
   border: none;
@@ -310,6 +307,17 @@ ul.nav li a:hover {
   cursor: pointer;
   font-family: 'Trebuchet MS', sans-serif;
   font-size: 14px;
+}
+
+.follow-btn-size {
+  font-size: 10;
+  padding: 5px 8px; 
+}
+
+.follow-btn-position {
+  float: left; 
+  margin-right: 10px;
+  margin-top: 3px;
 }
 
 .btn-primary {
