@@ -426,4 +426,29 @@ public class UiTests : PageTest
 
         await Expect(Page.GetByText("Helge chirped!")).ToBeVisibleAsync();
      }
+
+     [Test]
+     public async Task TestGithubOAuth() 
+    {
+        // Arrange 
+        await Page.GotoAsync("http://localhost:5000");
+        await Context.ClearCookiesAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Register"}).ClickAsync(); 
+
+        // Act
+        await Page.GetByRole(AriaRole.Button, new() { Name = "GitHub"}).ClickAsync();
+         
+        var gitUsername = Environment.GetEnvironmentVariable("GITHUBCLIENTID") ?? "testjojostar"; 
+        var gitPassword = Environment.GetEnvironmentVariable("GITHUBCLIENTSECRET")?? "JoeJoestar123"; 
+        
+        await Page.GetByLabel("Username or email address").FillAsync(gitUsername);
+        await Page.GetByLabel("Password").ClickAsync(); 
+        
+        await Page.GetByLabel("Password").FillAsync(gitPassword); 
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Sign in" }).ClickAsync();
+       // await Page.GetByRole(AriaRole.Button, new() { Name = "Authorize ITU-BDSA2024-GROUP26" }).ClickAsync();
+        // Assert
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name= "my timeline" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "logout" })).ToBeVisibleAsync();
+    }
 }
