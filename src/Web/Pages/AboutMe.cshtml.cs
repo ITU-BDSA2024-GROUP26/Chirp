@@ -17,7 +17,6 @@ namespace Web.Pages;
 /// <summary>
 ///  The page model for the about-me page, which is responsible for fetching all the users data, as well as deleting it if he so desires. 
 /// </summary>
-
 [Authorize]
 public class AboutMeModel : PageModel
 {
