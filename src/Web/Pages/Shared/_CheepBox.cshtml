@@ -2,6 +2,8 @@
 @inject UserManager<Core.Author> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@* Partial for the form to send cheeps, only displayed for logged in authors *@
+
 @model string
 
 @if (SignInManager.IsSignedIn(User))

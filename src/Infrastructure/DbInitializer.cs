@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure;
 
+/// <summary>
+/// Class to initialize the database with example data given directly by Helge. 
+/// We have since modified it to support the various changes in our domain wrt users(Asp.Net Identity and no spaces in usernames to support tagging)
+/// </summary>
 public static class DbInitializer
 {
     public static async Task SeedDatabase(CheepDbContext cheepContext, UserManager<Author> userManager)

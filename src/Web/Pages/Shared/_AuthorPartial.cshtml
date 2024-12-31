@@ -3,6 +3,8 @@
 @using Core
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@* A simple partial class that displays an authors name as well as follow/unfollow buttons if the current user is logged in *@
+
 @{
     var currentUser = await UserManager.GetUserAsync(User);
 }

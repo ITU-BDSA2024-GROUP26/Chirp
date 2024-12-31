@@ -3,34 +3,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
+/// <summary>
+/// A repository class which enables queries and commands to the Authors table
+/// </summary>
+/// <param name="context">The EF-Core database context this repository interacts with, injected via DI</param>
 public class AuthorRepository(CheepDbContext context) : IAuthorRepository
 {
+    // Simple query to get author by name
     public async Task<Author?> FindAuthorByName(string name)
     {
         return await context.Users.FirstOrDefaultAsync(a => a.UserName == name);
     }
-
+    // Simple query to get author by email. We needed this for the first implementation of the author class where the primary key was the email, and saw no reason to remove the functionality from the repository
     public async Task<Author?> FindAuthorByEmail(string email)
     {
         return await context.Users.FirstOrDefaultAsync(a => a.Email == email);
     }
-
+    // Query that, given the primary key(username) of an author returns a list of everyone he follows
     public async Task<ICollection<Author>> GetAuthorsFollowing(string name)
     {
-        //Author author = await FindAuthorByName(name) ?? throw new Exception($"Null author {name}");
-
         Author author = await
             (from a in context.Users
             .Include(a => a.FollowingList) /* need this or nothing works */
             where a.UserName == name
             select a).FirstAsync();
-
-        if(author.FollowingList != null && author.FollowingList.Contains(author)) { throw new Exception("Author follows himself"); }
+        
 
         return author.FollowingList ?? new List<Author>();
     }
 
-    // Adds the follower, if user is already following unfollow instead
+    // Command which adds the follower, if user is already following unfollow instead
     public async Task AddOrRemoveFollower(string userName, string usernmToFollow)
     {
         if (userName == usernmToFollow) { throw new Exception("User can't follow himself"); }
@@ -57,6 +59,7 @@ public class AuthorRepository(CheepDbContext context) : IAuthorRepository
         await context.SaveChangesAsync();
     }
 
+    // Command that removes the author via identified by his username
     public async Task<Author?> DeleteAuthorByName(string name)
     {
         // Find author by name

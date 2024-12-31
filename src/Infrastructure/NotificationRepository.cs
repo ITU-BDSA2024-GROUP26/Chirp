@@ -5,8 +5,15 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure;
 
+/// <summary>
+/// A class to interface with the notification part of the database. 
+/// </summary>
+/// <param name="context">The EF-Core database context to interface with</param>
 public class NotificationRepository(CheepDbContext context) : INotificationRepository
 {
+    // Command to create a new notification. 
+    // Note that this is passed an EntityEntry since cheepID is an autoincrement primary key, and thus isn't known untill the cheep has been inserted in the database. 
+    // An EntityEntry is a copy of the actual cheep in the database, which can be returned after the command to insert the cheap returns successfully. 
     public async Task CreateNotification(EntityEntry<Cheep> cheepTracker)
     {
         Author sender = cheepTracker.Entity.Author ?? throw new Exception("Sender null when trying to create notification");
@@ -51,6 +58,8 @@ public class NotificationRepository(CheepDbContext context) : INotificationRepos
         await context.SaveChangesAsync();
     }
 
+    // Simple query to get all the notifications addressed to *authorName*, with *getOld* indicating whether we should refetch old notifications, i.e. notifications that have already been fetched once before. 
+    // Note that we also set every notification fetched here to be "old"
     public async Task<ICollection<Notification>> GetNotifications(string authorName, bool getOld) 
     {
         var author = await context.Users.FirstOrDefaultAsync(a => a.UserName == authorName); 

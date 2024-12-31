@@ -9,6 +9,7 @@
     Layout = "Shared/_Layout";
 }
 
+@* The notifications page which allows the user to view all his notifications, as well as recieve new ones in real time *@
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +17,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications</title>
-    @*Entire script by chatgpt*@
+    @*Entire script by chatgpt
+        Funny little note, this resulted in a quite tricky bug due to Json converting our PascalCase to camelCase automatically, which chat didn't account for.*@
     <script>
         async function fetchNewNotifications() {
             try {
