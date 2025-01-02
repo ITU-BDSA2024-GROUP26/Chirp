@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Web;
 
+/// <summary>
+/// Our "master class", which sets up our webapplication and dependencies for dependency injection
+/// </summary>
 public class Program
 {
     public static async Task Main()
@@ -32,7 +35,6 @@ public class Program
                     options.UseSqlite(connection);
                     options.EnableSensitiveDataLogging();}
                     );
-            CheepDbContext.TestingSetup = true;
         } else {
             if(builder.Environment.IsEnvironment("Production")) {
                 connectionString = builder.Configuration.GetConnectionString("ProductionConnection");

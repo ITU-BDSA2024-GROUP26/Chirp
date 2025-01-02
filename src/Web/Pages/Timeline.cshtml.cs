@@ -7,7 +7,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Web.Pages;
 
-// Base class for timelines, containing the functionality all three timelines use(Author and Cheep fields, following, sending cheeps)
+/// <summary>
+/// Base class for all timelines, containing the functionality both timelines use(Author and Cheep fields, following, sending cheeps)
+/// This class uses lazy initialization, for the simple reason that an unauthenticated user can view a timeline just fine. 
+/// Thus we only generate the models requiring an authenticated user when we need them, i.e. when the user is authenticated. 
+/// If a user manually sends post requests to these endpoints he will get a 500 response due to being unauthenticated, which is not an issue as that isn't normal user behaviour. 
+/// </summary>
+/// <param name="service">Our service, injected</param>
+/// <param name="userManager">The usermanager, which is required for the respective sending and following models</param>
 public class TimelineModel(ICheepService service, UserManager<Author> userManager) 
     : PageModel
 {

@@ -15,5 +15,5 @@ public interface ICheepService
     public Task<IEnumerable<NotificationDTO>> GetAuthorsNotifications(string userName, bool getOld); 
     public Task SeedDatabaseAsync();
     public Task ResetDatabaseAsync();
-    public Task<(byte[] FileData, string ContentType, string FileName)> DownloadAuthorInfo(Author author);
+    public Task<(byte[] FileData, string ContentType, string FileName)> DownloadAuthorInfo(string name, string email);
 }

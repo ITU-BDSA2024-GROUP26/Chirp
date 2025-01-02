@@ -11,6 +11,9 @@ using Xunit.Abstractions;
 
 
 namespace Repository.Tests;
+/// <summary>
+/// Integration tests for our repository classes. 
+/// </summary>
 public class RepositoryTests
 {
     private static async Task<( CheepDbContext, ICheepRepository, IAuthorRepository, INotificationRepository)> GetContext() // creates a seperate database for every test
@@ -354,7 +357,7 @@ public class RepositoryTests
         Assert.Null(await _context!.Users.FirstOrDefaultAsync(a => a.UserName == "TestUser"));
 
         // Verify that all cheeps belonging to the author are removed from the Cheeps table
-        Assert.Empty(await _context!.Cheeps.Where(c => c.AuthorId == deletedAuthor.Id).ToListAsync());
+        Assert.Empty(await _context!.Cheeps.Where(c => c.Author!.Id == deletedAuthor.Id).ToListAsync());
 
         // Verify that the returned author matches the expected one
         Assert.Equal("TestUser", deletedAuthor.UserName);

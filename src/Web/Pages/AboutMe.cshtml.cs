@@ -14,6 +14,9 @@ using System.Text;
 
 namespace Web.Pages;
 
+/// <summary>
+///  The page model for the about-me page, which is responsible for fetching all the users data, as well as deleting it if he so desires. 
+/// </summary>
 [Authorize]
 public class AboutMeModel : PageModel
 {
@@ -62,7 +65,7 @@ public class AboutMeModel : PageModel
     public async Task<IActionResult> OnPostDownloadInfoAsync()
     {
         var user = await _userManager.GetUserAsync(User) ?? throw new UnauthorizedAccessException();
-        var (fileBytes, contentType, fileName) = await _cheepService.DownloadAuthorInfo(user);
+        var (fileBytes, contentType, fileName) = await _cheepService.DownloadAuthorInfo(user.UserName!, user.Email!);
         return File(fileBytes, contentType, fileName);
     }
 

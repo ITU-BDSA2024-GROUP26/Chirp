@@ -9,6 +9,11 @@ using NuGet.Protocol;
 
 namespace Web.Pages;
 
+/// <summary>
+/// The page model for the nofications page, which supports fetching notifications, both a one-time fetch of all the notification and periodic fetches of only new notifications
+/// </summary>
+/// <param name="service">Our service, injected</param>
+/// <param name="userManager">The usermanager, needed to fetch the username of the current user</param>
 public class NotificationsModel (ICheepService service, UserManager<Author> userManager) : PageModel
 {
     public IEnumerable<NotificationDTO> Notifications; 

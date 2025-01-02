@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Core;
 
+/// <summary>
+/// The Author class represents our users, inheriting authorization and authentication logic from IdentityUser. 
+/// An author can send cheeps and follow other authors. Both of these are 0..N relations
+/// </summary>
 public class Author : IdentityUser
 {
     [Required]
@@ -24,8 +28,7 @@ public class Author : IdentityUser
 
         try
         {
-            // returns the first element that matches the condition. If no file matches it, throws an 
-            // InvalidOperationException if no such file exists. A little janky but should work
+            // returns the first element that matches the condition. If no element matches it, throws an InvalidOperationException.
             FollowingList.First(following => following.UserName == authorNameToCheck);
         }
         catch (InvalidOperationException)

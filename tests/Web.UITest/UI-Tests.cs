@@ -7,6 +7,9 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 
 namespace Web.UITest;
 
+/// <summary>
+/// End-to-end UI tests for our application, that run against a locally run 
+/// </summary>
 [NonParallelizable]
 public class UiTests : PageTest
 {
@@ -130,6 +133,10 @@ public class UiTests : PageTest
         _client.Dispose();
     }
 
+    /// <summary>
+    /// Run before every request, ensures consistent database state(only the initilalization data)
+    /// </summary>
+    /// <returns></returns>
     [SetUp]
     public async Task SetUpAsync()
     {

@@ -2,6 +2,8 @@
 @inject UserManager<Core.Author> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@* Our navigation bar, which looks different depending on whether you are logged in or not.  *@
+
 @{
     var author = await UserManager.GetUserAsync(User);
 }

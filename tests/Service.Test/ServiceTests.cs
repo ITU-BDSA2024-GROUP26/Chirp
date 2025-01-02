@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Service.Test;
 
+/// <summary>
+/// Integration tests for our service class
+/// </summary>
 public class ServiceTests
 {
     private static async Task<(ICheepService, CheepDbContext, ICheepRepository, IAuthorRepository, INotificationRepository, UserManager<Author>)> GetContext() // creates a seperate database for every test
@@ -75,7 +78,7 @@ public class ServiceTests
         (_service, _context, _, _authorRepository, _, _userManager) = await GetContext(); 
 
         var author = await Register("test", _authorRepository, _userManager);
-        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!);
+        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!.UserName!, author!.Email!);
         var content = Encoding.UTF8.GetString(fileBytes);
         const string expectedContent = """
                                        test's information:
@@ -105,7 +108,7 @@ public class ServiceTests
 
         var author = await Register("test", _authorRepository, _userManager);
         await _authorRepository!.AddOrRemoveFollower("test", "Helge");
-        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!);
+        var (fileBytes, _, _) = await _service!.DownloadAuthorInfo(author!.UserName!, author!.Email!);
         var content = Encoding.UTF8.GetString(fileBytes);
         const string expectedContent = """
                                        test's information:

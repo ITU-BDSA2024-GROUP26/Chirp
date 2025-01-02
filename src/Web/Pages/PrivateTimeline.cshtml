@@ -10,6 +10,10 @@
     var routeName = HttpContext.GetRouteValue("userName");
 }
 
+@* The private timeline endpoint. 
+    If not the timeline of the current user(either because user isn't logged in or because a logged in user is viewing another users timeline), show only the cheeps of userName
+    If the user is viewing his own timeline, also show the cheeps of everyone he follows and all the cheeps he is tagged in. *@
+
 <div>
     
     <h2> @routeName's Timeline </h2>

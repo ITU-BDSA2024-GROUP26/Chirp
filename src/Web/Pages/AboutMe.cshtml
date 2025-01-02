@@ -1,5 +1,10 @@
 @page "/about-me"
 @model Web.Pages.AboutMeModel
+
+@* Page where a logged in user can see his data as well as download or delete it, to comply with GDPR
+    Note that if you aren't logged in no navigation element will be shown, but you can still write chirp.com/about-me, which would give you an error page.
+    This isn't really a problem as a user not logged in has no reason to go to that address.  *@
+
 @{
     ViewData["Title"] = "About Me";
 }
