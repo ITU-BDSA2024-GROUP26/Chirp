@@ -82,19 +82,19 @@ public class Program
                     o.Scope.Add("user:");
                     o.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
                 });
-        
-            // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
-            builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(365));
-        
-            // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-8.0
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowChirp", policy =>
-                {
-                    policy.WithOrigins("https://bdsagroup26chirprazor.azurewebsites.net"); //Only allow chirp
-                });
-            });
+            
         }
+        
+        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromHours(365));
+        
+        // inspired by, https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-8.0
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowChirp", policy =>
+            {
+                policy.WithOrigins("https://bdsagroup26chirprazor.azurewebsites.net"); //Only allow chirp
+            });
+        });
         
         var app = builder.Build();
         
@@ -130,7 +130,6 @@ public class Program
         {
             MinimumSameSitePolicy = SameSiteMode.Lax,     // Enforces "Lax" as the minimum SameSite policy
             HttpOnly = HttpOnlyPolicy.Always,             // Ensures cookies are only accessible over HTTP, not JavaScript
-            //Secure = CookieSecurePolicy.Always          // Forces cookies to be sent only over HTTPS
         });
 
         app.UseAuthentication();
